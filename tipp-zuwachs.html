@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Tipp: Um wie viel wächst die Höhe?</title>
 <!-- V.1 Was ist eine Funktion?: lila Tipp-Seite (minimale Hilfe) zum Auftrag „Um wie viel wächst die Höhe, wenn man 10 m weitergeht?“.
-     ANDERES Beispiel als im Skript und in der Übung: Torbogen 60 m weit, 9 m hoch (0 | 5 | 8 | 9 | 8 | 5 | 0), Rampe 4 % (0 | 0,4 | 0,8 | 1,2).
+     ANDERES Beispiel als im Skript und in der Übung: Torbogen 60 m weit, 9 m hoch (0 | 5 | 8 | 9 | 8 | 5 | 0), Rampe 4 m auf 100 m (0 | 0,4 | 0,8 | 1,2).
      Schritt für Schritt: Zuwachs = neue Höhe − alte Höhe, im Graphen als Treppenstufe. Nie die Lösung der Skriptaufgabe. -->
 <style>
   :root{--tipp:#6d4a9e;--tippH:#f1eaf8;--tippL:#b79bd6;--hl:#c0700f;--hlH:#fde7c8;--rot:#b33c3c;--gr:#3f8f3a;--bl:#2e5d9f;
@@ -43,7 +43,7 @@
 <body>
 <header><h1>Tipp: Um wie viel wächst die Höhe?</h1></header>
 <main>
-  <div class="start">Beispiel mit anderen Zahlen: ein Torbogen (60 m weit, 9 m hoch) und eine Rampe mit 4 %</div>
+  <div class="start">Beispiel mit anderen Zahlen: ein Torbogen (60 m weit, 9 m hoch) und eine Rampe, die auf 100 m um 4 m steigt</div>
   <div class="knoepfe"><button class="haupt" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
   <div class="wrap">
     <div class="links">
@@ -66,7 +66,7 @@ const S=[
  {i:1,k:"Wieder: neue Höhe minus alte Höhe."},
  {i:2,k:"Die Stufen werden kleiner."},
  {i:3,k:"Jetzt geht es wieder nach unten: Der Zuwachs ist negativ."},
- {r:true,k:"Bei der Rampe: Auf 10 m geht es jedes Mal 0,4 m hoch (4 % von 10 m)."},
+ {r:true,k:"Die Rampe steigt auf 100 m um 4 m, auf 10 m also um den zehnten Teil: 0,4 m. Jedes Mal gleich viel."},
 ];
 let n=0,timer=null;
 const NS="http://www.w3.org/2000/svg",svg=document.getElementById("s");
