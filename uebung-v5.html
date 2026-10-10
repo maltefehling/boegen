@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Übung V.5 · Parabeln y = ax² + c</title>
+<!-- Kapitel V Funktionen: Online-Übung nach dem Buchkapitel (QR-Code im Skript). Nur Aufgaben – gerechnet wird im Heft.
+     Aufbau wie „I.3a Vermischte Übungen“: Aufgabe 1 für alle, dann ★ / ★★ / ★★★. Lösungen gemischt mit typischen Fehlern. -->
+<style>
+  :root{--ink:#1b2a3a;--muted:#5b6b7c;--acc:#1f4e79;--bg:#f4f7fb;--card:#fff;--line:#c9d6e5;
+    --merk:#dde8f5;--merkL:#a9c1e0;--auf:#e8f4e6;--aufL:#c6e8c0;--hilf:#fdf6ea;--hilfL:#fbd9a8;--grau:#f2f2f2;--rot:#b03a2e;--gruen:#3f8f3a}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff}
+  header h1{font-size:20px;margin:0}
+  main{max-width:880px;margin:0 auto;padding:14px 16px 32px}
+  .hinweis{background:#fff;border:1px solid #bfbfbf;border-radius:12px;padding:10px 14px;font-size:18px;line-height:1.45;margin-bottom:12px}
+  details.erin{background:var(--merk);border:1px solid var(--merkL);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:18px;line-height:1.5}
+  details.erin summary{font-weight:700;color:var(--acc);cursor:pointer;min-height:30px}
+  details.erin ul{margin:6px 0 0;padding-left:22px}
+  h2{font-size:21px;color:var(--acc);margin:18px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--acc)}
+  .aufg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .aufg .kopf{font-weight:700;color:var(--acc);font-size:18px;margin-bottom:4px}
+  .aufg .txt{font-size:20px;line-height:1.45}
+  .aufg ol{margin:6px 0 0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:6px 18px}
+  .aufg li{font-size:21px;line-height:1.5;overflow-x:auto}
+  .aufg li b{color:var(--muted);font-weight:600;margin-right:6px}
+  .tag{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+  .tag.v{background:#fff3c4;color:#7a5b00}.tag.w{background:#e2d6f0;color:#4f2f7a}
+  details.idee{margin-top:8px;font-size:18px}
+  details.idee summary{color:var(--acc);cursor:pointer;font-weight:600}
+  details.idee div{background:var(--grau);border-radius:8px;padding:8px 10px;margin-top:6px;line-height:1.45}
+  .wahl{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+  .wahl button{flex:1 1 200px;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:12px;padding:12px 14px;font-size:19px;font-weight:700;min-height:56px;text-align:left}
+  .wahl button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .wahl small{display:block;font-weight:500;font-size:15px;opacity:.85}
+  .stufe[hidden]{display:none}
+  .loesbtn{border:1px solid var(--hilfL);background:var(--hilf);color:var(--ink);border-radius:10px;padding:10px 16px;font-size:18px;font-weight:700;min-height:48px;margin-top:4px}
+  .loes{background:var(--hilf);border:1px solid var(--hilfL);border-radius:12px;padding:10px 14px;margin-top:8px}
+  .loes p{margin:0 0 8px;font-size:16px;color:var(--rot);font-weight:700}
+  .loes .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+  .loes .grid span{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 8px;text-align:center;font-size:19px}
+  .loes[hidden]{display:none}
+  footer{color:var(--muted);font-size:13px;text-align:center;margin-top:24px}
+  .frage{font-size:18px;font-weight:700;color:var(--acc);margin:4px 0 2px}
+  .teilkopf{font-size:22px;font-weight:800;color:var(--acc);margin:14px 0 8px}
+  .teil[hidden]{display:none}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.88em;margin:0 3px;line-height:1.15;white-space:nowrap}
+  .frac>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
+  .frac>span:last-child{padding:0 4px}
+  table.wt{border-collapse:collapse;margin:6px 0;font-size:20px;font-variant-numeric:tabular-nums}
+  table.wt td{border:1px solid var(--line);padding:4px 12px;text-align:center;background:#fff}
+  table.wt td:first-child{font-weight:700;color:var(--acc);background:var(--merk)}
+</style>
+</head>
+<body>
+<header><h1>Übung V.5 · Parabeln y = ax² + c</h1></header>
+<main>
+  <div class="hinweis">✎ <b>Rechne alle Aufgaben in deinem Heft.</b> Schreibe die Nummer der Aufgabe dazu. Kontrolliere erst am Ende mit den Lösungen.<br>⏱ <b>In der Stunde: Aufgabe 1. Zu Hause: eine Stufe (ca. 15 Minuten).</b></div>
+  <div id="teilwahl" hidden><div class="frage">Welche Stunde hattet ihr zuletzt?</div><div class="wahl" id="tw"></div></div>
+  <div id="teile"></div>
+  <footer>Fehling · V Lineare und quadratische Funktionen</footer>
+</main>
+<script>
+"use strict";
+// D.teile: ein Teil pro Stunde eines aufgeteilten Buchkapitels (z. B. II.2a/b/c); Stundenauswahl nur bei aufgeteilten Kapiteln (D.mehrteilig).
+const D={"untertitel": ["Mit Tipps in den Aufgaben", "Ohne Tipps", "Mehr Nachdenken"], "mehrteilig": false, "teile": [{"name": "", "stunde": "", "kurz": "", "erinnerung": ["Liegt der Scheitel auf der y-Achse, hat die Parabel die Gleichung y = a · x² + c. Der Scheitel ist S ( 0 | c ).", "a > 0: nach oben geöffnet. a < 0: nach unten geöffnet (ein Bogen).", "Ist a (ohne Vorzeichen) größer als 1, wird die Parabel schmaler, kleiner als 1: breiter.", "1-4-9-Methode: vom Scheitel 1, 2, 3 nach rechts (und links) → 1 · a, 4 · a, 9 · a nach oben (bei negativem a nach unten).", "Negative Zahlen beim Quadrieren in Klammern: ( −3 )² = 9."], "a1": {"t": "Gib den Scheitel an und sage, ob die Parabel nach oben oder unten geöffnet ist. Berechne mit der 1-4-9-Methode die Punkte bei x = 1, 2 (und 3). Achte bei b) auf das negative a.", "sub": ["y = 2x² − 3", "y = −0,5x² + 4"], "loes": ["a) S ( 0 | −3 ), nach oben, ( 1 | −1 ), ( 2 | 5 )", "b) S ( 0 | 4 ), nach unten, ( 1 | 3,5 ), ( 2 | 2 ), ( 3 | −0,5 )"], "falsch": ["a) S ( −3 | 0 )", "b) ( 2 | 6 )", "b) ( 3 | −5 )"], "mix": ["b) ( 3 | −5 )", "a) S ( 0 | −3 ), nach oben, ( 1 | −1 ), ( 2 | 5 )", "b) S ( 0 | 4 ), nach unten, ( 1 | 3,5 ), ( 2 | 2 ), ( 3 | −0,5 )", "a) S ( −3 | 0 )", "b) ( 2 | 6 )"]}, "stufen": {"1": {"name": "Mit Hilfe", "aufg": [{"t": "Gib den Scheitel an und sage, ob die Parabel nach oben oder unten geöffnet ist. Tipp: S ( 0 | c ), das Vorzeichen von a entscheidet.", "sub": ["y = x² + 2", "y = −3x² + 1", "y = 0,25x² − 4"]}, {"t": "Vom Scheitel aus 1, 2, 3 nach rechts: Wie weit geht es nach oben oder unten? Tipp: 1 · a, 4 · a, 9 · a.", "sub": ["a = 3", "a = −1"]}, {"t": "Ein Bogen hat den Scheitel S ( 0 | 6 ) und ist nach unten geöffnet. Welche Gleichung passt?  y = −2x² + 6  ·  y = 2x² + 6  ·  y = −2x² − 6"}, {"t": "Jemand behauptet: „Bei y = x² − 5 liegt der Scheitel bei ( −5 | 0 ).“ Überprüfe.", "tag": "v", "idee": "Falsch. Bei y = a · x² + c liegt der Scheitel immer auf der y-Achse, bei ( 0 | c ). Hier ist c = −5, also S ( 0 | −5 )."}, {"t": "Wiederholung: Berechne  ( −4 )²  und  −4².", "tag": "w"}], "mix": ["S ( 0 | 2 ), nach oben", "S ( 0 | 1 ), nach unten", "3 | 6 | 9", "y = −2x² + 6", "16 und −16", "−1 | 4 | 9", "falsch: S ( 0 | −5 )", "−1 | −4 | −9", "S ( 0 | 1 ), nach oben", "16 und 16", "S ( 0 | −4 ), nach oben", "y = 2x² + 6", "S ( 2 | 0 ), nach oben", "richtig", "3 | 12 | 27"]}, "2": {"name": "Sicher rechnen", "aufg": [{"t": "Berechne mit der 1-4-9-Methode die Punkte bei x = 1, 2, 3 und zeichne die Parabel für x von −3 bis 3.", "sub": ["y = 0,5x² − 2", "y = −x² + 9"]}, {"t": "Kann man die Parabel mit y = a · x² + c beschreiben? Entscheide am Scheitel.", "sub": ["S ( 0 | 3 )", "S ( 2 | 0 )", "S ( 0 | −1 )", "S ( −1 | 4 )"]}, {"t": "Jemand behauptet: „Das Dach y = −0,5x² + 8 steht bei x = −4 und x = 4 auf dem Boden (y = 0).“ Überprüfe.", "tag": "v", "idee": "Vom Scheitel 4 nach rechts: 16 · a = 16 · ( −0,5 ) = −8. Von 8 aus 8 nach unten ist 0 – stimmt. Links genauso (Spiegelachse)."}, {"t": "Wiederholung V.4: Gib die Steigung der Senkrechten zu m = 4 an.", "tag": "w"}], "mix": ["a) ja", "m₂ = −4", "b) ( 2 | 7 )", "b) nein", "b) ja", "b) ( 1 | 8 ), ( 2 | 5 ), ( 3 | 0 )", "stimmt nicht", "stimmt", "d) nein", "m₂ = −0,25", "a) ( 2 | 2 )", "d) ja", "a) ( 1 | −1,5 ), ( 2 | 0 ), ( 3 | 2,5 )", "c) ja"]}, "3": {"name": "Knifflig", "aufg": [{"t": "Lies rückwärts: Der Scheitel liegt auf der y-Achse. Bestimme a und gib die Gleichung an.", "sub": ["S ( 0 | 1 ); vom Scheitel 2 nach rechts → 8 nach oben", "S ( 0 | 6 ); vom Scheitel 2 nach rechts → 2 nach unten"]}, {"t": "Jemand behauptet: „y = 2x² + 3 schneidet die x-Achse zweimal, weil 3 positiv ist.“ Überprüfe. Welche Parabel schneidet sie wirklich zweimal:  y = −x² + 4  oder  y = x²?", "tag": "v", "idee": "Falsch: Der Scheitel ( 0 | 3 ) liegt über der x-Achse und die Parabel ist nach oben geöffnet – sie trifft die x-Achse nie. y = −x² + 4 hat den Scheitel oben und ist nach unten geöffnet: zweimal. y = x² berührt die x-Achse nur im Scheitel."}, {"t": "Ein Torbogen ist unten 6 m breit und 4 m hoch. Lege das Koordinatensystem so, dass der Scheitel auf der y-Achse liegt und der Boden auf der x-Achse. Gib den Scheitel und die beiden Fußpunkte an."}, {"t": "Wiederholung: Löse  2x² − 8 = 0.", "tag": "w"}], "mix": ["a) y = 2x² + 1", "b) y = −0,5x² + 6", "b) y = −2x² + 6", "falsch: nie; zweimal schneidet y = −x² + 4", "S ( 3 | 4 ), Fußpunkte ( 0 | 0 ) und ( 6 | 0 )", "a) y = 8x² + 1", "L = { −2 ; 2 }", "stimmt", "S ( 0 | 4 ), Fußpunkte ( −3 | 0 ) und ( 3 | 0 )", "L = { 2 }"]}}}]};
+// Brüche im Text: [frac Zähler|Nenner] (Kap. V, Malte 11.10.2026: Steigung als Bruch statt mit Doppelpunkt)
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\[frac ([^|\]]+)\|([^\]]+)\]/g,'<span class="frac"><span>$1</span><span>$2</span></span>');
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const tagHtml=t=>t==="v"?'<span class="tag v">💡 Verständnis</span>':t==="w"?'<span class="tag w">↩ Wiederholung</span>':"";
+function aufgabe(nr,a){
+  let h=`<div class="kopf">Aufgabe ${nr}${tagHtml(a.tag)}</div><div class="txt">${esc(a.tag==="w"?a.t.replace(/^Wiederholung: /,""):a.t)}</div>`;
+  // Wertetabelle: a.tab = [[x-Zeile], [y-Zeile]]; Teilaufgabe als Tabelle: sub-Eintrag ist eine Liste von Zeilen
+  const wt=rows=>'<table class="wt">'+rows.map(r=>"<tr>"+r.map(c=>"<td>"+esc(String(c))+"</td>").join("")+"</tr>").join("")+"</table>";
+  if(a.tab)h+=wt(a.tab);
+  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li><b>${"abcdefgh"[i]})</b>${Array.isArray(s)?wt(s):esc(s)}</li>`).join("")+"</ol>";
+  if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
+  return el("div","aufg",h);
+}
+function loesung(l){
+  const box=el("div");
+  const b=el("button","loesbtn");b.textContent="Lösungen anzeigen";
+  const w=el("div","loes",'<p>Achtung: Nicht alle Ergebnisse stimmen! Findest du dein Ergebnis nicht, suche den Fehler in deiner Rechnung.</p><div class="grid">'+l.map(x=>`<span>${esc(x)}</span>`).join("")+"</div>");w.hidden=true;
+  b.onclick=()=>{w.hidden=!w.hidden;b.textContent=w.hidden?"Lösungen anzeigen":"Lösungen ausblenden";};
+  box.append(b,w);return box;
+}
+function teil(T){
+  const root=el("section","teil");
+  if(D.mehrteilig)root.appendChild(el("div","teilkopf",esc(T.name)));
+  root.appendChild(el("details","erin",`<summary>Erinnerung: Das brauchst du</summary><ul>${T.erinnerung.map(e=>"<li>"+esc(e)+"</li>").join("")}</ul>`));
+  root.appendChild(el("h2","","Aufgabe 1 · für alle"));
+  root.append(aufgabe(1,T.a1),loesung(T.a1.mix));
+  root.appendChild(el("h2","","Jetzt wählst du dein Niveau"));
+  const wahl=el("div","wahl"),st=el("div");root.append(wahl,st);
+  [["1","★"],["2","★★"],["3","★★★"]].forEach(([k,stern])=>{
+    const s=T.stufen[k];
+    const b=el("button","",`${stern}  ${esc(s.name)}<small>${D.untertitel[k-1]}</small>`);b.setAttribute("aria-pressed","false");
+    const sec=el("section","stufe");sec.hidden=true;
+    sec.appendChild(el("h2","",esc(stern+"  "+s.name)));
+    s.aufg.forEach((a,i)=>sec.appendChild(aufgabe(stern+" "+(i+2),a)));
+    sec.appendChild(loesung(s.mix));
+    b.onclick=()=>{wahl.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));st.querySelectorAll(".stufe").forEach(x=>x.hidden=x!==sec);};
+    wahl.appendChild(b);st.appendChild(sec);
+  });
+  return root;
+}
+const box=document.getElementById("teile"),secs=D.teile.map(teil);
+secs.forEach(s=>box.appendChild(s));
+if(D.mehrteilig){
+  document.getElementById("teilwahl").hidden=false;const tw=document.getElementById("tw");
+  const zeig=i=>{secs.forEach((s,j)=>s.hidden=j!==i);tw.querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));};
+  D.teile.forEach((T,i)=>{const b=el("button","",esc(T.stunde)+`<small>${esc(T.kurz)}</small>`);b.onclick=()=>zeig(i);tw.appendChild(b);});
+  zeig(D.teile.length-1);
+}
+</script>
+</body>
+</html>

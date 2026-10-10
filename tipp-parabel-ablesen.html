@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Tipp: Parabel ablesen</title>
+<!-- V.5 Parabeln y = ax² + c: lila Tipp-Seite zur Dach-Zuordnung. ANDERES Beispiel: y = −x² + 5 (kein Dach im Skript, nicht in der Übung).
+     Zeigt Scheitel ablesen und 1-4-9 rückwärts. -->
+<style>
+  :root{--tipp:#6d4a9e;--tippH:#f1eaf8;--tippL:#b79bd6;--hl:#c0700f;--hlH:#fde7c8;--rot:#b33c3c;--gr:#3f8f3a;--bl:#2e5d9f;
+    --ink:#1b2a3a;--muted:#5b6b7c;--bg:#f7f4fb;--card:#fff;--line:#d8cce8}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--tipp);color:#fff}
+  header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:860px;margin:0 auto}
+  .start{font-size:18px;color:var(--tipp);font-weight:700;margin:4px 0 10px}
+  .knoepfe{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .knoepfe button{flex:1 1 180px;min-height:52px;border-radius:12px;font-size:18px;font-weight:700;border:2px solid var(--tipp);background:#fff;color:var(--tipp)}
+  .knoepfe button.haupt{background:var(--tipp);color:#fff}
+  .knoepfe button:disabled{opacity:.4}
+  .tafel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;min-height:120px}
+  .zeile{opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s;margin:8px 0}
+  .zeile.da{opacity:1;transform:none}
+  .zeile .m{font-size:28px;line-height:1.6;white-space:nowrap;overflow-x:auto;font-variant-numeric:tabular-nums}
+  .zeile .k{font-size:17px;color:var(--muted);margin-top:2px}
+  .zeile.neu .k{color:var(--tipp);font-weight:600}
+  .r{color:var(--rot);font-weight:700}.g{color:var(--gr);font-weight:700}.bl{color:var(--bl);font-weight:700}.li{color:#7B4FA0;font-weight:700}.or{color:#C0700F;font-weight:700}
+  .hl{color:var(--hl);font-weight:800;background:var(--hlH);border-radius:6px;padding:0 4px}
+  .zeile.neu .hl{animation:puls 1.2s ease-in-out 2}
+  @keyframes puls{50%{background:#f9c98a}}
+  .box{border:2px solid var(--tipp);border-radius:8px;padding:0 4px}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.85em;margin:0 2px}
+  .frac span:first-child{border-bottom:2px solid var(--ink);padding:0 4px}
+  .du{display:none;margin-top:14px;background:var(--tippH);border:1px solid var(--tippL);border-radius:12px;padding:10px 14px;font-size:19px;line-height:1.45}
+  .du.da{display:block}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:14px 0}
+</style>
+</head>
+<body>
+<header><h1>Tipp: Parabel ablesen</h1></header>
+<main>
+  <div class="start">Beispiel mit einem anderen Bogen</div>
+  <svg viewBox="0 0 260 260" style="display:block;width:260px;max-width:100%;background:#fff;border:1px solid #d8cce8;border-radius:12px;margin:0 auto 12px">
+<line x1="28" x2="28" y1="26" y2="230" stroke="#e6e0ef"/><line x1="62" x2="62" y1="26" y2="230" stroke="#e6e0ef"/><line x1="96" x2="96" y1="26" y2="230" stroke="#e6e0ef"/><line x1="130" x2="130" y1="26" y2="230" stroke="#e6e0ef"/><line x1="164" x2="164" y1="26" y2="230" stroke="#e6e0ef"/><line x1="198" x2="198" y1="26" y2="230" stroke="#e6e0ef"/><line x1="232" x2="232" y1="26" y2="230" stroke="#e6e0ef"/><line x1="28" x2="232" y1="230" y2="230" stroke="#e6e0ef"/><line x1="28" x2="232" y1="196" y2="196" stroke="#e6e0ef"/><line x1="28" x2="232" y1="162" y2="162" stroke="#e6e0ef"/><line x1="28" x2="232" y1="128" y2="128" stroke="#e6e0ef"/><line x1="28" x2="232" y1="94" y2="94" stroke="#e6e0ef"/><line x1="28" x2="232" y1="60" y2="60" stroke="#e6e0ef"/><line x1="28" x2="232" y1="26" y2="26" stroke="#e6e0ef"/><line x1="21.19999999999999" x2="242.2" y1="230" y2="230" stroke="#333" stroke-width="2"/><line x1="130" x2="130" y1="230" y2="12.399999999999977" stroke="#333" stroke-width="2"/>
+<polyline points="51.8,239.9 53.5,232.1 55.2,224.6 56.9,217.2 58.6,209.9 60.3,202.9 62.0,196.0 63.7,189.3 65.4,182.7 67.1,176.4 68.8,170.2 70.5,164.1 72.2,158.3 73.9,152.6 75.6,147.0 77.3,141.7 79.0,136.5 80.7,131.5 82.4,126.6 84.1,122.0 85.8,117.5 87.5,113.1 89.2,109.0 90.9,105.0 92.6,101.1 94.3,97.5 96.0,94.0 97.7,90.7 99.4,87.5 101.1,84.6 102.8,81.8 104.5,79.1 106.2,76.7 107.9,74.4 109.6,72.2 111.3,70.3 113.0,68.5 114.7,66.9 116.4,65.4 118.1,64.2 119.8,63.1 121.5,62.1 123.2,61.4 124.9,60.8 126.6,60.3 128.3,60.1 130.0,60.0 131.7,60.1 133.4,60.3 135.1,60.8 136.8,61.4 138.5,62.1 140.2,63.1 141.9,64.2 143.6,65.4 145.3,66.9 147.0,68.5 148.7,70.3 150.4,72.2 152.1,74.4 153.8,76.7 155.5,79.1 157.2,81.8 158.9,84.6 160.6,87.5 162.3,90.7 164.0,94.0 165.7,97.5 167.4,101.1 169.1,105.0 170.8,109.0 172.5,113.1 174.2,117.5 175.9,122.0 177.6,126.6 179.3,131.5 181.0,136.5 182.7,141.7 184.4,147.0 186.1,152.6 187.8,158.3 189.5,164.1 191.2,170.2 192.9,176.4 194.6,182.7 196.3,189.3 198.0,196.0 199.7,202.9 201.4,209.9 203.1,217.2 204.8,224.6 206.5,232.1 208.2,239.9" fill="none" stroke="#b5432f" stroke-width="3"/>
+<line x1="130" x2="208.2" y1="60" y2="60" stroke="#c0700f" stroke-dasharray="5 4"/>
+<line x1="164" x2="164" y1="60" y2="94" stroke="#c0700f" stroke-width="4"/><line x1="198" x2="198" y1="60" y2="196" stroke="#c0700f" stroke-width="4"/>
+<circle cx="130" cy="60" r="6" fill="#c0392b"/>
+<text x="168" y="82.0" font-size="14" fill="#c0700f" font-weight="700">1</text><text x="202" y="133" font-size="14" fill="#c0700f" font-weight="700">4</text>
+<text x="124" y="52" font-size="14" fill="#c0392b" text-anchor="end">S</text>
+<text x="28" y="247" font-size="13" text-anchor="middle">−3</text><text x="62" y="247" font-size="13" text-anchor="middle">−2</text><text x="96" y="247" font-size="13" text-anchor="middle">−1</text><text x="164" y="247" font-size="13" text-anchor="middle">1</text><text x="198" y="247" font-size="13" text-anchor="middle">2</text><text x="232" y="247" font-size="13" text-anchor="middle">3</text>
+<text x="124" y="201" font-size="13" text-anchor="end">1</text><text x="124" y="167" font-size="13" text-anchor="end">2</text><text x="124" y="133" font-size="13" text-anchor="end">3</text><text x="124" y="99" font-size="13" text-anchor="end">4</text><text x="124" y="65" font-size="13" text-anchor="end">5</text><text x="124" y="31" font-size="13" text-anchor="end">6</text>
+</svg>
+  <div class="knoepfe"><button class="haupt" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
+  <div class="tafel" id="tafel">
+    <div class="zeile"><div class="m">Scheitel:&nbsp; S ( 0 | <span class='hl'>5</span> )</div><div class="k">Der höchste Punkt liegt auf der y-Achse – also passt y = a · x² + c, und c = 5.</div></div>
+    <div class="zeile"><div class="m">1 nach rechts → <span class='hl'>1 nach unten</span></div><div class="k">Vom Scheitel 1 nach rechts gehen und schauen, wie weit es hinuntergeht.</div></div>
+    <div class="zeile"><div class="m">1 · a = −1 &nbsp;→&nbsp; a = <span class='hl'>−1</span></div><div class="k">Nach unten heißt: a ist negativ.</div></div>
+    <div class="zeile"><div class="m">Probe: 2 nach rechts → 4 · ( −1 ) = <span class='hl'>−4</span>&nbsp; ✓</div><div class="k">Von 5 auf 1 – das sind 4 nach unten. Passt.</div></div>
+    <div class="zeile"><div class="m">y = −x² + 5</div><div class="k">Scheitel und a zusammen ergeben die Gleichung.</div></div>
+  </div>
+  <div class="du" id="du"><b>Jetzt du:</b> Lies bei deinem Dach genauso ab: Liegt der Scheitel auf der y-Achse? Wie hoch liegt er? Wie weit geht es 1 oder 2 nach rechts hinunter?</div>
+</main>
+<footer>Fehling · V.5 Parabeln y = ax² + c · Tipp</footer>
+<script>
+"use strict";
+const Z=[...document.querySelectorAll(".zeile")],du=document.getElementById("du");
+let n=0,timer=null;
+function zeig(){Z.forEach((z,i)=>{z.classList.toggle("da",i<n);z.classList.toggle("neu",i===n-1);});
+  du.classList.toggle("da",n>=Z.length);document.getElementById("next").disabled=n>=Z.length;}
+function weiter(){if(n<Z.length){n++;zeig();}}
+document.getElementById("next").onclick=()=>{clearInterval(timer);weiter();};
+document.getElementById("reset").onclick=()=>{clearInterval(timer);n=0;zeig();};
+document.getElementById("play").onclick=()=>{clearInterval(timer);n=0;zeig();weiter();
+  timer=setInterval(()=>{weiter();if(n>=Z.length)clearInterval(timer);},2600);};
+zeig();
+</script>
+</body>
+</html>
