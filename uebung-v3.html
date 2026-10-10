@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Übung V.3 · Gerade durch zwei Punkte</title>
+<!-- Kapitel V Funktionen: Online-Übung nach dem Buchkapitel (QR-Code im Skript). Nur Aufgaben – gerechnet wird im Heft.
+     Aufbau wie „I.3a Vermischte Übungen“: Aufgabe 1 für alle, dann ★ / ★★ / ★★★. Lösungen gemischt mit typischen Fehlern. -->
+<style>
+  :root{--ink:#1b2a3a;--muted:#5b6b7c;--acc:#1f4e79;--bg:#f4f7fb;--card:#fff;--line:#c9d6e5;
+    --merk:#dde8f5;--merkL:#a9c1e0;--auf:#e8f4e6;--aufL:#c6e8c0;--hilf:#fdf6ea;--hilfL:#fbd9a8;--grau:#f2f2f2;--rot:#b03a2e;--gruen:#3f8f3a}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff}
+  header h1{font-size:20px;margin:0}
+  main{max-width:880px;margin:0 auto;padding:14px 16px 32px}
+  .hinweis{background:#fff;border:1px solid #bfbfbf;border-radius:12px;padding:10px 14px;font-size:18px;line-height:1.45;margin-bottom:12px}
+  details.erin{background:var(--merk);border:1px solid var(--merkL);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:18px;line-height:1.5}
+  details.erin summary{font-weight:700;color:var(--acc);cursor:pointer;min-height:30px}
+  details.erin ul{margin:6px 0 0;padding-left:22px}
+  h2{font-size:21px;color:var(--acc);margin:18px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--acc)}
+  .aufg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .aufg .kopf{font-weight:700;color:var(--acc);font-size:18px;margin-bottom:4px}
+  .aufg .txt{font-size:20px;line-height:1.45}
+  .aufg ol{margin:6px 0 0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:6px 18px}
+  .aufg li{font-size:21px;line-height:1.5;overflow-x:auto}
+  .aufg li b{color:var(--muted);font-weight:600;margin-right:6px}
+  .tag{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+  .tag.v{background:#fff3c4;color:#7a5b00}.tag.w{background:#e2d6f0;color:#4f2f7a}
+  details.idee{margin-top:8px;font-size:18px}
+  details.idee summary{color:var(--acc);cursor:pointer;font-weight:600}
+  details.idee div{background:var(--grau);border-radius:8px;padding:8px 10px;margin-top:6px;line-height:1.45}
+  .wahl{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+  .wahl button{flex:1 1 200px;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:12px;padding:12px 14px;font-size:19px;font-weight:700;min-height:56px;text-align:left}
+  .wahl button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .wahl small{display:block;font-weight:500;font-size:15px;opacity:.85}
+  .stufe[hidden]{display:none}
+  .loesbtn{border:1px solid var(--hilfL);background:var(--hilf);color:var(--ink);border-radius:10px;padding:10px 16px;font-size:18px;font-weight:700;min-height:48px;margin-top:4px}
+  .loes{background:var(--hilf);border:1px solid var(--hilfL);border-radius:12px;padding:10px 14px;margin-top:8px}
+  .loes p{margin:0 0 8px;font-size:16px;color:var(--rot);font-weight:700}
+  .loes .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+  .loes .grid span{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 8px;text-align:center;font-size:19px}
+  .loes[hidden]{display:none}
+  footer{color:var(--muted);font-size:13px;text-align:center;margin-top:24px}
+  .frage{font-size:18px;font-weight:700;color:var(--acc);margin:4px 0 2px}
+  .teilkopf{font-size:22px;font-weight:800;color:var(--acc);margin:14px 0 8px}
+  .teil[hidden]{display:none}
+  table.wt{border-collapse:collapse;margin:6px 0;font-size:20px;font-variant-numeric:tabular-nums}
+  table.wt td{border:1px solid var(--line);padding:4px 12px;text-align:center;background:#fff}
+  table.wt td:first-child{font-weight:700;color:var(--acc);background:var(--merk)}
+</style>
+</head>
+<body>
+<header><h1>Übung V.3 · Gerade durch zwei Punkte</h1></header>
+<main>
+  <div class="hinweis">✎ <b>Rechne alle Aufgaben in deinem Heft.</b> Schreibe die Nummer der Aufgabe dazu. Kontrolliere erst am Ende mit den Lösungen.</div>
+  <div id="teilwahl" hidden><div class="frage">Welche Stunde hattet ihr zuletzt?</div><div class="wahl" id="tw"></div></div>
+  <div id="teile"></div>
+  <footer>Fehling · V Lineare und quadratische Funktionen</footer>
+</main>
+<script>
+"use strict";
+// D.teile: ein Teil pro Stunde eines aufgeteilten Buchkapitels (z. B. II.2a/b/c); Stundenauswahl nur bei aufgeteilten Kapiteln (D.mehrteilig).
+const D={"untertitel": ["Mit Tipps in den Aufgaben", "Ohne Tipps", "Mehr Nachdenken"], "mehrteilig": false, "teile": [{"name": "", "stunde": "", "kurz": "", "erinnerung": ["Steigung m = Höhenunterschied : Längenunterschied = ( y₂ − y₁ ) : ( x₂ − x₁ ).", "Oben und unten in derselben Reihenfolge abziehen (beide Male zweiter Punkt minus erster Punkt).", "Fällt die Gerade, ist m negativ.", "Dann einen Punkt einsetzen und nach c umstellen (wie in V.2).", "Probe: Setze den anderen Punkt ein – es muss stimmen."], "a1": {"t": "Bestimme die Gleichung der Geraden durch P und Q.", "sub": ["P ( 1 | 2 ),  Q ( 3 | 8 )", "P ( 0 | 4 ),  Q ( 2 | 0 )", "P ( 2 | 5 ),  Q ( 6 | 7 )", "P ( −1 | 1 ),  Q ( 2 | 7 )"], "loes": ["y = 3x − 1", "y = −2x + 4", "y = 0,5x + 4", "y = 2x + 3"], "falsch": ["y = 3x + 5", "y = 2x + 4", "y = 2x + 1", "y = 2x − 1"], "mix": ["y = 0,5x + 4", "y = 2x + 4", "y = 2x + 3", "y = −2x + 4", "y = 2x + 1", "y = 3x − 1", "y = 2x − 1", "y = 3x + 5"]}, "stufen": {"1": {"name": "Mit Hilfe", "aufg": [{"t": "Berechne nur die Steigung. Tipp: m = ( y₂ − y₁ ) : ( x₂ − x₁ ).", "sub": ["P ( 2 | 1 ),  Q ( 4 | 7 )", "P ( 0 | 3 ),  Q ( 5 | 13 )", "P ( 1 | 6 ),  Q ( 3 | 2 )", "P ( 10 | 1 ),  Q ( 30 | 2 )"]}, {"t": "Bestimme die Gleichung der Geraden durch P ( 1 | 4 ) und Q ( 3 | 10 ). Tipp: Erst m ausrechnen, dann P einsetzen."}, {"t": "Stimmt das?   P ( 1 | 5 ),  Q ( 3 | 1 ):   m = ( 1 − 5 ) : ( 1 − 3 ) = −4 : −2 = 2", "tag": "v", "idee": "Nein. Oben steht Q minus P, unten P minus Q – die Reihenfolge ist vertauscht. Richtig: ( 1 − 5 ) : ( 3 − 1 ) = −4 : 2 = −2. Die Gerade fällt."}, {"t": "Eine Zufahrt beginnt bei ( 0 | 1 ) und endet bei ( 50 | 4 ). Um wie viel Meter steigt sie auf 100 m?"}, {"t": "Wiederholung V.2: Bestimme die Gleichung der Geraden mit m = 2 durch ( 3 | 9 ).", "tag": "w"}], "mix": ["m = 0,05", "6 m", "m = −0,5", "m = 20", "y = 3x + 1", "3 m", "y = 3x + 4", "y = 2x + 9", "m = −2", "y = 2x + 3", "m = 2", "m = 1/3", "m = 3"]}, "2": {"name": "Sicher rechnen", "aufg": [{"t": "Bestimme die Gleichung.", "sub": ["P ( −2 | −3 ),  Q ( 2 | 5 )", "P ( 1 | 4 ),  Q ( 5 | −4 )", "P ( −4 | 1 ),  Q ( 4 | 5 )", "P ( 3 | 2 ),  Q ( 6 | 2 )"]}, {"t": "Plan C für die Zufahrt: Anfang ( 15 | 2 ), Ende ( 55 | 5 ). Ist sie flach genug (höchstens 6 m auf 100 m)?"}, {"t": "Liegen A ( 1 | 1 ), B ( 3 | 5 ) und C ( 6 | 11 ) auf einer Geraden? Begründe ohne Gleichung.", "tag": "v", "idee": "Berechne die Steigung von A nach B: 4 : 2 = 2, und von B nach C: 6 : 3 = 2. Gleiche Steigung und ein gemeinsamer Punkt B – also liegen alle drei auf einer Geraden."}, {"t": "Eine Gerade geht durch die Scheitelpunkte zweier Parabeln: S₁ ( −1 | 3 ) und S₂ ( 3 | −5 ). Bestimme ihre Gleichung."}, {"t": "Wiederholung: Löse  3x² − 27 = 0.", "tag": "w"}], "mix": ["y = 2x + 9", "y = −2x + 6", "y = −2x + 1", "ja, beide Male m = 2", "y = 2x", "6 m auf 100 m: erlaubt", "y = 2x + 2", "y = 2x − 7", "y = 2x + 1", "L = { −3 ; 3 }", "nein", "7,5 m auf 100 m: zu steil", "L = { 3 }", "y = 2", "y = −2x + 5", "y = 0,5x + 3"]}, "3": {"name": "Knifflig", "aufg": [{"t": "Die Gerade durch P ( 2 | 3 ) und Q ( 6 | 5 ) schneidet die x-Achse. In welchem Punkt?"}, {"t": "Bestimme a so, dass R ( 8 | a ) auf der Geraden durch P ( 0 | 1 ) und Q ( 2 | 4 ) liegt."}, {"t": "Warum gibt es durch P ( 3 | 1 ) und Q ( 3 | 5 ) keine Gerade der Form y = m · x + c?", "tag": "v", "idee": "Der Längenunterschied ist 3 − 3 = 0 – durch 0 kann man nicht teilen. Die Linie durch beide Punkte ist senkrecht. Zu x = 3 gehören dann viele y-Werte, also ist sie keine Funktion (V.1)."}, {"t": "Eine Zufahrt beginnt bei ( 0 | 2 ) und soll genau 6 m auf 100 m steigen. Bei welchem x erreicht sie die Fahrbahn in 5 m Höhe?"}, {"t": "Wiederholung: Löse mit der abc-Formel  2x² − 3x − 2 = 0.", "tag": "w"}], "mix": ["( −4 | 0 )", "L = { −0,5 ; 2 }", "( 4 | 0 )", "a = 13", "( −2 | 0 )", "bei x = 83,33 m", "a = 10", "bei x = 50 m", "Längenunterschied 0: durch 0 teilen geht nicht", "L = { −2 ; 0,5 }"]}}}]};
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const tagHtml=t=>t==="v"?'<span class="tag v">💡 Verständnis</span>':t==="w"?'<span class="tag w">↩ Wiederholung</span>':"";
+function aufgabe(nr,a){
+  let h=`<div class="kopf">Aufgabe ${nr}${tagHtml(a.tag)}</div><div class="txt">${esc(a.tag==="w"?a.t.replace(/^Wiederholung: /,""):a.t)}</div>`;
+  // Wertetabelle: a.tab = [[x-Zeile], [y-Zeile]]; Teilaufgabe als Tabelle: sub-Eintrag ist eine Liste von Zeilen
+  const wt=rows=>'<table class="wt">'+rows.map(r=>"<tr>"+r.map(c=>"<td>"+esc(String(c))+"</td>").join("")+"</tr>").join("")+"</table>";
+  if(a.tab)h+=wt(a.tab);
+  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li><b>${"abcdefgh"[i]})</b>${Array.isArray(s)?wt(s):esc(s)}</li>`).join("")+"</ol>";
+  if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
+  return el("div","aufg",h);
+}
+function loesung(l){
+  const box=el("div");
+  const b=el("button","loesbtn");b.textContent="Lösungen anzeigen";
+  const w=el("div","loes",'<p>Achtung: Nicht alle Ergebnisse stimmen! Findest du dein Ergebnis nicht, suche den Fehler in deiner Rechnung.</p><div class="grid">'+l.map(x=>`<span>${esc(x)}</span>`).join("")+"</div>");w.hidden=true;
+  b.onclick=()=>{w.hidden=!w.hidden;b.textContent=w.hidden?"Lösungen anzeigen":"Lösungen ausblenden";};
+  box.append(b,w);return box;
+}
+function teil(T){
+  const root=el("section","teil");
+  if(D.mehrteilig)root.appendChild(el("div","teilkopf",esc(T.name)));
+  root.appendChild(el("details","erin",`<summary>Erinnerung: Das brauchst du</summary><ul>${T.erinnerung.map(e=>"<li>"+esc(e)+"</li>").join("")}</ul>`));
+  root.appendChild(el("h2","","Aufgabe 1 · für alle"));
+  root.append(aufgabe(1,T.a1),loesung(T.a1.mix));
+  root.appendChild(el("h2","","Jetzt wählst du dein Niveau"));
+  const wahl=el("div","wahl"),st=el("div");root.append(wahl,st);
+  [["1","★"],["2","★★"],["3","★★★"]].forEach(([k,stern])=>{
+    const s=T.stufen[k];
+    const b=el("button","",`${stern}  ${esc(s.name)}<small>${D.untertitel[k-1]}</small>`);b.setAttribute("aria-pressed","false");
+    const sec=el("section","stufe");sec.hidden=true;
+    sec.appendChild(el("h2","",esc(stern+"  "+s.name)));
+    s.aufg.forEach((a,i)=>sec.appendChild(aufgabe(stern+" "+(i+2),a)));
+    sec.appendChild(loesung(s.mix));
+    b.onclick=()=>{wahl.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));st.querySelectorAll(".stufe").forEach(x=>x.hidden=x!==sec);};
+    wahl.appendChild(b);st.appendChild(sec);
+  });
+  return root;
+}
+const box=document.getElementById("teile"),secs=D.teile.map(teil);
+secs.forEach(s=>box.appendChild(s));
+if(D.mehrteilig){
+  document.getElementById("teilwahl").hidden=false;const tw=document.getElementById("tw");
+  const zeig=i=>{secs.forEach((s,j)=>s.hidden=j!==i);tw.querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));};
+  D.teile.forEach((T,i)=>{const b=el("button","",esc(T.stunde)+`<small>${esc(T.kurz)}</small>`);b.onclick=()=>zeig(i);tw.appendChild(b);});
+  zeig(D.teile.length-1);
+}
+</script>
+</body>
+</html>
