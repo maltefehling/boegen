@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Übung V.2 · Gerade aus Steigung und Punkt</title>
+<!-- Kapitel V Funktionen: Online-Übung nach dem Buchkapitel (QR-Code im Skript). Nur Aufgaben – gerechnet wird im Heft.
+     Aufbau wie „I.3a Vermischte Übungen“: Aufgabe 1 für alle, dann ★ / ★★ / ★★★. Lösungen gemischt mit typischen Fehlern. -->
+<style>
+  :root{--ink:#1b2a3a;--muted:#5b6b7c;--acc:#1f4e79;--bg:#f4f7fb;--card:#fff;--line:#c9d6e5;
+    --merk:#dde8f5;--merkL:#a9c1e0;--auf:#e8f4e6;--aufL:#c6e8c0;--hilf:#fdf6ea;--hilfL:#fbd9a8;--grau:#f2f2f2;--rot:#b03a2e;--gruen:#3f8f3a}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff}
+  header h1{font-size:20px;margin:0}
+  main{max-width:880px;margin:0 auto;padding:14px 16px 32px}
+  .hinweis{background:#fff;border:1px solid #bfbfbf;border-radius:12px;padding:10px 14px;font-size:18px;line-height:1.45;margin-bottom:12px}
+  details.erin{background:var(--merk);border:1px solid var(--merkL);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:18px;line-height:1.5}
+  details.erin summary{font-weight:700;color:var(--acc);cursor:pointer;min-height:30px}
+  details.erin ul{margin:6px 0 0;padding-left:22px}
+  h2{font-size:21px;color:var(--acc);margin:18px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--acc)}
+  .aufg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .aufg .kopf{font-weight:700;color:var(--acc);font-size:18px;margin-bottom:4px}
+  .aufg .txt{font-size:20px;line-height:1.45}
+  .aufg ol{margin:6px 0 0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:6px 18px}
+  .aufg li{font-size:21px;line-height:1.5;overflow-x:auto}
+  .aufg li b{color:var(--muted);font-weight:600;margin-right:6px}
+  .tag{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+  .tag.v{background:#fff3c4;color:#7a5b00}.tag.w{background:#e2d6f0;color:#4f2f7a}
+  details.idee{margin-top:8px;font-size:18px}
+  details.idee summary{color:var(--acc);cursor:pointer;font-weight:600}
+  details.idee div{background:var(--grau);border-radius:8px;padding:8px 10px;margin-top:6px;line-height:1.45}
+  .wahl{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+  .wahl button{flex:1 1 200px;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:12px;padding:12px 14px;font-size:19px;font-weight:700;min-height:56px;text-align:left}
+  .wahl button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .wahl small{display:block;font-weight:500;font-size:15px;opacity:.85}
+  .stufe[hidden]{display:none}
+  .loesbtn{border:1px solid var(--hilfL);background:var(--hilf);color:var(--ink);border-radius:10px;padding:10px 16px;font-size:18px;font-weight:700;min-height:48px;margin-top:4px}
+  .loes{background:var(--hilf);border:1px solid var(--hilfL);border-radius:12px;padding:10px 14px;margin-top:8px}
+  .loes p{margin:0 0 8px;font-size:16px;color:var(--rot);font-weight:700}
+  .loes .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+  .loes .grid span{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 8px;text-align:center;font-size:19px}
+  .loes[hidden]{display:none}
+  footer{color:var(--muted);font-size:13px;text-align:center;margin-top:24px}
+  .frage{font-size:18px;font-weight:700;color:var(--acc);margin:4px 0 2px}
+  .teilkopf{font-size:22px;font-weight:800;color:var(--acc);margin:14px 0 8px}
+  .teil[hidden]{display:none}
+  table.wt{border-collapse:collapse;margin:6px 0;font-size:20px;font-variant-numeric:tabular-nums}
+  table.wt td{border:1px solid var(--line);padding:4px 12px;text-align:center;background:#fff}
+  table.wt td:first-child{font-weight:700;color:var(--acc);background:var(--merk)}
+</style>
+</head>
+<body>
+<header><h1>Übung V.2 · Gerade aus Steigung und Punkt</h1></header>
+<main>
+  <div class="hinweis">✎ <b>Rechne alle Aufgaben in deinem Heft.</b> Schreibe die Nummer der Aufgabe dazu. Kontrolliere erst am Ende mit den Lösungen.</div>
+  <div id="teilwahl" hidden><div class="frage">Welche Stunde hattet ihr zuletzt?</div><div class="wahl" id="tw"></div></div>
+  <div id="teile"></div>
+  <footer>Fehling · V Lineare und quadratische Funktionen</footer>
+</main>
+<script>
+"use strict";
+// D.teile: ein Teil pro Stunde eines aufgeteilten Buchkapitels (z. B. II.2a/b/c); Stundenauswahl nur bei aufgeteilten Kapiteln (D.mehrteilig).
+const D={"untertitel": ["Mit Tipps in den Aufgaben", "Ohne Tipps", "Mehr Nachdenken"], "mehrteilig": false, "teile": [{"name": "", "stunde": "", "kurz": "", "erinnerung": ["Gerade:  y = m · x + c.  m = Steigung: um so viel wächst y, wenn x um 1 größer wird.", "c = y-Achsenabschnitt: Dort schneidet die Gerade die y-Achse, im Punkt ( 0 | c ).", "Steckbrief  y = ☐ · x + ☐: zwei Lücken, also braucht man zwei Angaben.", "Gerade aus Steigung und Punkt: ① Steckbrief ② m eintragen ③ Punkt einsetzen ④ nach c umstellen.", "Steigt etwas auf 100 m um 6 m, ist m = 6 : 100 = 0,06."], "a1": {"t": "Bestimme die Gleichung der Geraden mit der Steigung m durch den Punkt P.", "sub": ["m = 2,  P ( 3 | 7 )", "m = −1,  P ( 4 | 1 )", "m = 0,5,  P ( 6 | 1 )", "m = 3,  P ( −2 | −1 )"], "loes": ["y = 2x + 1", "y = −x + 5", "y = 0,5x − 2", "y = 3x + 5"], "falsch": ["y = 2x + 13", "y = −x − 3", "y = 0,5x + 4", "y = 3x − 7"], "mix": ["y = −x + 5", "y = 2x + 13", "y = 3x + 5", "y = 0,5x + 4", "y = 2x + 1", "y = −x − 3", "y = 3x − 7", "y = 0,5x − 2"]}, "stufen": {"1": {"name": "Mit Hilfe", "aufg": [{"t": "Lies m und c ab. Tipp: m steht vor dem x, c ist die Zahl allein.", "sub": ["y = 4x + 1", "y = −2x + 3", "y = 0,5x", "y = x − 6"]}, {"t": "Steigung m = 3, Punkt P ( 2 | 10 ). Rechne weiter. Tipp: y = 3 · x + c  →  10 = 3 · 2 + c  →  10 = 6 + c."}, {"t": "Bestimme die Gleichung: Steigung m = 2, Punkt P ( 5 | 13 ). Tipp: Setze x = 5 und y = 13 ein."}, {"t": "Stimmt das?   m = 0,05,  Punkt ( 40 | 5 ):   5 = 0,05 · 40 + c   →   c = 5", "tag": "v", "idee": "Nein. 0,05 · 40 = 2 muss man ausrechnen: 5 = 2 + c, also c = 3. Die Gleichung ist y = 0,05 · x + 3."}, {"t": "Wiederholung V.1: Eine Zufahrt steigt auf 100 m um 4 m. Wie hoch ist sie nach 50 m?", "tag": "w"}], "mix": ["y = 2x + 3", "m = 4, c = 1", "4 m", "m = −2, c = 3", "m = −6, c = 1", "m = 3, c = −2", "c = 16, y = 3x + 16", "m = 1, c = −6", "m = 1, c = 4", "c = 4, y = 3x + 4", "y = 2x + 8", "2 m", "m = 0,5, c = 0"]}, "2": {"name": "Sicher rechnen", "aufg": [{"t": "Bestimme die Gleichung.", "sub": ["m = −2,  P ( 3 | 1 )", "m = 0,25,  P ( 8 | 5 )", "m = −0,5,  P ( −4 | 6 )", "m = 1,5,  P ( 2 | 0 )"]}, {"t": "Eine Zufahrt steigt auf 100 m um 7 m und endet bei x = 60 auf einer Fahrbahn, die 6,2 m über dem Wasser liegt. Wie hoch über dem Wasser beginnt sie (bei x = 0)? Gib die Gleichung an."}, {"t": "Gib zwei verschiedene Geraden an, die durch den Punkt ( 2 | 5 ) gehen.", "tag": "v", "idee": "Wähle eine Steigung und rechne c aus. Mit m = 1: 5 = 2 + c, also y = x + 3. Mit m = 2: 5 = 4 + c, also y = 2x + 1. Es gibt unendlich viele."}, {"t": "Eine Gerade hat die Steigung 2 und geht durch P ( 3 | 13 ). Liegt auch Q ( 10 | 27 ) auf ihr?"}, {"t": "Wiederholung: Löse  2x² = 50.", "tag": "w"}], "mix": ["beginnt 2 m über dem Wasser:  y = 0,07x + 2", "y = −0,5x + 8", "beginnt 6,2 m über dem Wasser", "y = 1,5x + 2", "y = −2x − 5", "ja: y = 2x + 7, bei x = 10 ist y = 27", "z. B. y = x + 3 oder y = 2x + 1", "y = 0,25x + 3", "nein, Q liegt nicht darauf", "L = { −5 ; 5 }", "y = 0,25x + 7", "y = −2x + 7", "y = 1,5x − 3", "y = −0,5x + 4", "L = { 5 }"]}, "3": {"name": "Knifflig", "aufg": [{"t": "Eine Gerade ist parallel zu  y = 3x − 4  und geht durch P ( 2 | 1 ). Bestimme ihre Gleichung. (Parallele Geraden haben dieselbe Steigung.)"}, {"t": "Eine Gerade fällt: Geht man 1 nach rechts, geht es 0,4 nach unten. Sie geht durch ( 5 | 1 ). Wo schneidet sie die y-Achse?"}, {"t": "Eine Gerade mit der Steigung 2 geht durch ( 1 | 4 ). Wie hoch ist sie bei x = 3? Rechne ohne Gleichung.", "tag": "v", "idee": "Von x = 1 bis x = 3 sind es 2 nach rechts. Pro 1 nach rechts geht es 2 nach oben, also 4 nach oben: y = 4 + 4 = 8."}, {"t": "Die Gerade  y = m · x + 1  geht durch ( 4 | 9 ). Bestimme m."}, {"t": "Wiederholung: Löse mit der abc-Formel  x² + 2x − 8 = 0.", "tag": "w"}], "mix": ["m = 2,5", "y = 3x + 1", "y = 6", "y = 8", "( 0 | −1 )", "y = 3x − 4", "m = 2", "L = { −2 ; 4 }", "y = 3x − 5", "( 0 | 3 )", "L = { −4 ; 2 }"]}}}]};
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const tagHtml=t=>t==="v"?'<span class="tag v">💡 Verständnis</span>':t==="w"?'<span class="tag w">↩ Wiederholung</span>':"";
+function aufgabe(nr,a){
+  let h=`<div class="kopf">Aufgabe ${nr}${tagHtml(a.tag)}</div><div class="txt">${esc(a.tag==="w"?a.t.replace(/^Wiederholung: /,""):a.t)}</div>`;
+  // Wertetabelle: a.tab = [[x-Zeile], [y-Zeile]]; Teilaufgabe als Tabelle: sub-Eintrag ist eine Liste von Zeilen
+  const wt=rows=>'<table class="wt">'+rows.map(r=>"<tr>"+r.map(c=>"<td>"+esc(String(c))+"</td>").join("")+"</tr>").join("")+"</table>";
+  if(a.tab)h+=wt(a.tab);
+  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li><b>${"abcdefgh"[i]})</b>${Array.isArray(s)?wt(s):esc(s)}</li>`).join("")+"</ol>";
+  if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
+  return el("div","aufg",h);
+}
+function loesung(l){
+  const box=el("div");
+  const b=el("button","loesbtn");b.textContent="Lösungen anzeigen";
+  const w=el("div","loes",'<p>Achtung: Nicht alle Ergebnisse stimmen! Findest du dein Ergebnis nicht, suche den Fehler in deiner Rechnung.</p><div class="grid">'+l.map(x=>`<span>${esc(x)}</span>`).join("")+"</div>");w.hidden=true;
+  b.onclick=()=>{w.hidden=!w.hidden;b.textContent=w.hidden?"Lösungen anzeigen":"Lösungen ausblenden";};
+  box.append(b,w);return box;
+}
+function teil(T){
+  const root=el("section","teil");
+  if(D.mehrteilig)root.appendChild(el("div","teilkopf",esc(T.name)));
+  root.appendChild(el("details","erin",`<summary>Erinnerung: Das brauchst du</summary><ul>${T.erinnerung.map(e=>"<li>"+esc(e)+"</li>").join("")}</ul>`));
+  root.appendChild(el("h2","","Aufgabe 1 · für alle"));
+  root.append(aufgabe(1,T.a1),loesung(T.a1.mix));
+  root.appendChild(el("h2","","Jetzt wählst du dein Niveau"));
+  const wahl=el("div","wahl"),st=el("div");root.append(wahl,st);
+  [["1","★"],["2","★★"],["3","★★★"]].forEach(([k,stern])=>{
+    const s=T.stufen[k];
+    const b=el("button","",`${stern}  ${esc(s.name)}<small>${D.untertitel[k-1]}</small>`);b.setAttribute("aria-pressed","false");
+    const sec=el("section","stufe");sec.hidden=true;
+    sec.appendChild(el("h2","",esc(stern+"  "+s.name)));
+    s.aufg.forEach((a,i)=>sec.appendChild(aufgabe(stern+" "+(i+2),a)));
+    sec.appendChild(loesung(s.mix));
+    b.onclick=()=>{wahl.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));st.querySelectorAll(".stufe").forEach(x=>x.hidden=x!==sec);};
+    wahl.appendChild(b);st.appendChild(sec);
+  });
+  return root;
+}
+const box=document.getElementById("teile"),secs=D.teile.map(teil);
+secs.forEach(s=>box.appendChild(s));
+if(D.mehrteilig){
+  document.getElementById("teilwahl").hidden=false;const tw=document.getElementById("tw");
+  const zeig=i=>{secs.forEach((s,j)=>s.hidden=j!==i);tw.querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));};
+  D.teile.forEach((T,i)=>{const b=el("button","",esc(T.stunde)+`<small>${esc(T.kurz)}</small>`);b.onclick=()=>zeig(i);tw.appendChild(b);});
+  zeig(D.teile.length-1);
+}
+</script>
+</body>
+</html>
