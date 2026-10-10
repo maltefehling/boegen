@@ -26,6 +26,8 @@
   .zahl b{color:var(--dr)} .p{color:var(--rot);font-weight:700}
   .gl{font-size:30px;font-weight:700;text-align:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px;white-space:nowrap;overflow-x:auto}
   .hint{font-size:15px;color:var(--muted)}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.9em;margin:0 3px;line-height:1.15}
+  .frac>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
   footer{color:var(--muted);font-size:13px;text-align:center;padding:10px 0 18px}
   svg text{font-family:inherit}
 </style>
@@ -88,7 +90,7 @@ function zeichne(){
   if(dx===0){document.getElementById("un").innerHTML="Längenunterschied 0 – durch 0 kann man nicht teilen. Das ist keine Gerade der Form y = m · x + c.";document.getElementById("gl").textContent="—";return;}
   const m=dy/dx,c=P[1]-m*P[0];
   const kl=v=>v<0?"( "+fmt(v)+" )":fmt(v);   // negative Zahl nach Minus/Geteilt in Klammern
-  document.getElementById("un").innerHTML=`Längenunterschied: ${fmt(Q[0])} − ${kl(P[0])} = <b>${fmt(dx)}</b><br>Höhenunterschied: ${fmt(Q[1])} − ${kl(P[1])} = <b>${fmt(dy)}</b><br>m = ${fmt(dy)} : ${kl(dx)} = <b>${fmt(m)}</b>`;
+  document.getElementById("un").innerHTML=`Längenunterschied: ${fmt(Q[0])} − ${kl(P[0])} = <b>${fmt(dx)}</b><br>Höhenunterschied: ${fmt(Q[1])} − ${kl(P[1])} = <b>${fmt(dy)}</b><br>m = <span class="frac"><span>${fmt(dy)}</span><span>${fmt(dx)}</span></span> = <b>${fmt(m)}</b>`;
   const mt=r2(m)===0?"":(fmt(m)==="1"?"":fmt(m)==="−1"?"−":fmt(m)+" · ")+"x";
   const ct=r2(c)===0?(mt?"":"0"):(mt?(c<0?" − ":" + ")+fmt(Math.abs(c)):fmt(c));
   document.getElementById("gl").textContent="y = "+mt+ct;
