@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Bogen und Zufahrt</title>
+<!-- V.0 Was ist eine Funktion? Kontrolle nach dem Ablesen auf Papier.
+     Bogen: y = 16 − (x − 40)² / 100 (80 m weit, 16 m hoch). Zufahrt: y = 0,06 · x (6 %).
+     Reiter „Rückwärts“: Höhe wählen → waagrechte Linie → zwei / eine / keine Stelle. -->
+<style>
+  :root{--stahl:#b5432f;--stahlH:#f6dcd6;--ink:#1b2a3a;--muted:#5b6b7c;--acc:#1f4e79;--bg:#f4f7fb;--card:#fff;--line:#c9d6e5;--gitter:#dfe6ee;--gelb:#fff3c4;--gelbL:#e0b400;--grau:#f2f2f2}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+  button,input{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  header h1{font-size:20px;margin:0}
+  header span{font-size:15px;opacity:.85}
+  main{padding:12px 16px 20px;max-width:1150px;margin:0 auto}
+  .tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .tabs button{flex:1 1 160px;min-height:52px;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:12px;font-size:19px;font-weight:700}
+  .tabs button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+  svg{flex:1 1 560px;width:100%;max-width:760px;height:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;touch-action:none}
+  .side{flex:1 1 300px;min-width:0}
+  .lbl{font-size:15px;color:var(--muted);margin:2px 0 6px}
+  .ctl{display:flex;align-items:center;gap:10px;margin:4px 0 12px}
+  .ctl button{width:54px;height:54px;border-radius:12px;border:2px solid var(--acc);background:#fff;color:var(--acc);font-size:26px;font-weight:700;flex:none}
+  .ctl input{flex:1;min-width:0;height:44px;accent-color:var(--acc)}
+  .zahl{font-size:22px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;font-variant-numeric:tabular-nums;line-height:1.4}
+  .zahl b{font-size:28px}
+  .gross{min-height:54px;width:100%;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:12px;font-size:19px;font-weight:700;margin-bottom:10px}
+  table{border-collapse:collapse;width:100%;background:#fff;border-radius:12px;overflow:hidden;font-variant-numeric:tabular-nums}
+  td,th{border:1px solid var(--line);padding:8px 6px;text-align:center;font-size:18px;min-width:38px}
+  th{color:var(--acc);text-align:left;white-space:nowrap}
+  .tabbox{overflow-x:auto;margin-bottom:10px}
+  .meld{font-size:20px;background:var(--gelb);border:1px solid var(--gelbL);border-radius:12px;padding:10px 14px;min-height:50px}
+  .hint{font-size:15px;color:var(--muted);margin-top:6px}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:10px 0 18px}
+  svg text{font-family:inherit}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>Bogen und Zufahrt</h1><span>Kontrolle – erst nach deinem Ablesen</span></header>
+<main>
+  <div class="tabs" id="tabs">
+    <button data-m="bogen" aria-pressed="true">Bogen</button>
+    <button data-m="zufahrt" aria-pressed="false">Zufahrt</button>
+    <button data-m="rueck" aria-pressed="false">Rückwärts</button>
+  </div>
+  <div class="wrap">
+    <svg id="s" viewBox="0 0 760 420" aria-label="Koordinatensystem"></svg>
+    <div class="side">
+      <div id="vor">
+        <div class="lbl">Stelle x verschieben (oder Punkt ziehen)</div>
+        <div class="ctl"><button id="minus" aria-label="kleiner">−</button><input id="r" type="range" min="0" max="80" step="1" value="10"><button id="plus" aria-label="größer">+</button></div>
+        <div class="zahl" id="anz"></div>
+        <button class="gross" id="merk">In die Tabelle</button>
+        <div class="tabbox"><table id="tab"></table></div>
+        <div class="hint">Tipp: Mit − und + springst du in 1-m-Schritten, mit dem Regler schneller.</div>
+      </div>
+      <div id="rueck" hidden>
+        <div class="lbl">Höhe y wählen</div>
+        <div class="ctl"><button id="hminus" aria-label="niedriger">−</button><input id="h" type="range" min="0" max="18" step="1" value="12"><button id="hplus" aria-label="höher">+</button></div>
+        <div class="zahl" id="hanz"></div>
+        <div class="meld" id="hmeld"></div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>Fehling · Was ist eine Funktion?</footer>
+<script>
+"use strict";
+const NS="http://www.w3.org/2000/svg",svg=document.getElementById("s");
+const mk=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+const fmt=v=>{const r=Math.round(v*100)/100;return (Object.is(r,-0)?0:r).toString().replace(".",",");};
+const M={
+  bogen:{xmax:80,ymax:18,dx:5,dy:1,xs:10,ys:2,f:x=>16-(x-40)**2/100,step:1,farbe:"var(--stahl)",name:"Bogen"},
+  zufahrt:{xmax:50,ymax:3,dx:5,dy:0.2,xs:10,ys:0.6,f:x=>0.06*x,step:1,farbe:"#55687a",name:"Zufahrt"},
+};
+M.rueck=M.bogen;
+const L=70,R=730,T=30,B=360;               // Zeichenfläche
+let mode="bogen",x=10,h=12;
+const tabellen={bogen:new Map(),zufahrt:new Map()};
+const g=mk("g",{});
+const sx=v=>L+(R-L)*v/M[mode].xmax, sy=v=>B-(B-T)*v/M[mode].ymax;
+function zeichne(){
+  g.replaceChildren();const m=M[mode];
+  for(let v=0;v<=m.xmax+1e-9;v+=m.dx)mk("line",{x1:sx(v),x2:sx(v),y1:T,y2:B,stroke:"var(--gitter)","stroke-width":1},g);
+  for(let i=0;i*m.dy<=m.ymax+1e-9;i++){const v=i*m.dy;mk("line",{x1:L,x2:R,y1:sy(v),y2:sy(v),stroke:"var(--gitter)","stroke-width":1},g);}
+  mk("line",{x1:L,x2:R+16,y1:B,y2:B,stroke:"#333","stroke-width":2},g);mk("line",{x1:L,x2:L,y1:B,y2:T-16,stroke:"#333","stroke-width":2},g);
+  for(let v=0;v<=m.xmax+1e-9;v+=m.xs){const t=mk("text",{x:sx(v),y:B+24,"text-anchor":"middle","font-size":16},g);t.textContent=fmt(v);}
+  for(let i=1;i*m.ys<=m.ymax+1e-9;i++){const v=i*m.ys;const t=mk("text",{x:L-8,y:sy(v)+5,"text-anchor":"end","font-size":16},g);t.textContent=fmt(v);}
+  const tx=mk("text",{x:R+14,y:B+46,"text-anchor":"end","font-size":16,fill:"var(--acc)"},g);tx.textContent="Stelle x in m";
+  const ty=mk("text",{x:L+8,y:T-6,"font-size":16,fill:"var(--acc)"},g);ty.textContent="Höhe y in m";
+  let d="";for(let i=0;i<=200;i++){const v=m.xmax*i/200;d+=(i?"L":"M")+sx(v).toFixed(1)+" "+sy(m.f(v)).toFixed(1);}
+  mk("path",{d,fill:"none",stroke:m.farbe,"stroke-width":4},g);
+  if(mode==="rueck")return rueckZeichnen();
+  for(const [xv,yv] of tabellen[mode])mk("circle",{cx:sx(xv),cy:sy(yv),r:5,fill:"var(--acc)"},g);
+  const y=m.f(x);
+  mk("line",{x1:sx(x),x2:sx(x),y1:B,y2:sy(y),stroke:"var(--acc)","stroke-width":2,"stroke-dasharray":"6 5"},g);
+  mk("line",{x1:L,x2:sx(x),y1:sy(y),y2:sy(y),stroke:"var(--acc)","stroke-width":2,"stroke-dasharray":"6 5"},g);
+  mk("circle",{cx:sx(x),cy:sy(y),r:13,fill:"var(--gelb)",stroke:"var(--acc)","stroke-width":3},g);
+  document.getElementById("anz").innerHTML=`Stelle <b>x = ${fmt(x)} m</b><br>→ Höhe <b>y = ${fmt(y)} m</b>`;
+}
+function tabelle(){
+  const t=document.getElementById("tab"),e=[...tabellen[mode]].sort((a,b)=>a[0]-b[0]);
+  t.innerHTML=e.length?`<tr><th>x in m</th>${e.map(p=>`<td>${fmt(p[0])}</td>`).join("")}</tr><tr><th>y in m</th>${e.map(p=>`<td>${fmt(p[1])}</td>`).join("")}</tr>`
+    :`<tr><td style="text-align:left;color:var(--muted)">Noch leer – tippe auf „In die Tabelle“.</td></tr>`;
+}
+function rueckZeichnen(){
+  const m=M.bogen;mk("line",{x1:L,x2:R,y1:sy(h),y2:sy(h),stroke:"var(--gelbL)","stroke-width":3},g);
+  let stellen=[];
+  if(h<16)stellen=[40-10*Math.sqrt(16-h),40+10*Math.sqrt(16-h)];else if(h===16)stellen=[40];
+  for(const s of stellen){mk("line",{x1:sx(s),x2:sx(s),y1:sy(h),y2:B,stroke:"var(--acc)","stroke-width":2,"stroke-dasharray":"6 5"},g);
+    mk("circle",{cx:sx(s),cy:sy(h),r:12,fill:"var(--gelb)",stroke:"var(--acc)","stroke-width":3},g);}
+  document.getElementById("hanz").innerHTML=`Höhe <b>y = ${fmt(h)} m</b>`;
+  const ws=stellen.map(s=>`x = ${fmt(s)} m`);
+  document.getElementById("hmeld").innerHTML=stellen.length===2?`<b>Zwei Stellen:</b> ${ws.join(" und ")}`:stellen.length===1?`<b>Nur eine Stelle:</b> ${ws[0]} (ganz oben)`:`<b>Keine Stelle:</b> So hoch ist der Bogen nirgends.`;
+}
+const r=document.getElementById("r"),hr=document.getElementById("h");
+function setX(v){const m=M[mode];x=Math.max(0,Math.min(m.xmax,Math.round(v/m.step)*m.step));r.value=x;zeichne();}
+function setH(v){h=Math.max(0,Math.min(18,Math.round(v)));hr.value=h;zeichne();}
+r.oninput=()=>setX(+r.value);hr.oninput=()=>setH(+hr.value);
+document.getElementById("minus").onclick=()=>setX(x-1);document.getElementById("plus").onclick=()=>setX(x+1);
+document.getElementById("hminus").onclick=()=>setH(h-1);document.getElementById("hplus").onclick=()=>setH(h+1);
+document.getElementById("merk").onclick=()=>{tabellen[mode].set(x,Math.round(M[mode].f(x)*100)/100);tabelle();zeichne();};
+// Punkt bzw. Linie direkt im Bild ziehen
+let zieht=false;
+const pos=ev=>{const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());};
+const zug=ev=>{const p=pos(ev);if(mode==="rueck")setH((B-p.y)/(B-T)*M.bogen.ymax);else setX((p.x-L)/(R-L)*M[mode].xmax);};
+svg.addEventListener("pointerdown",ev=>{zieht=true;svg.setPointerCapture(ev.pointerId);zug(ev);});
+svg.addEventListener("pointermove",ev=>{if(zieht)zug(ev);});
+svg.addEventListener("pointerup",()=>zieht=false);svg.addEventListener("pointercancel",()=>zieht=false);
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+  mode=b.dataset.m;document.querySelectorAll("#tabs button").forEach(c=>c.setAttribute("aria-pressed",c===b));
+  document.getElementById("vor").hidden=mode==="rueck";document.getElementById("rueck").hidden=mode!=="rueck";
+  if(mode!=="rueck"){r.max=M[mode].xmax;setX(Math.min(x,M[mode].xmax));tabelle();}else zeichne();
+});
+// Aufruf mit ?modus=zufahrt oder ?modus=rueck öffnet direkt den Reiter
+const q=new URLSearchParams(location.search).get("modus");
+tabelle();zeichne();
+if(q&&document.querySelector(`#tabs button[data-m="${q}"]`))document.querySelector(`#tabs button[data-m="${q}"]`).click();
+</script>
+</body>
+</html>
