@@ -82,11 +82,11 @@ function zeichne(){
   const dreieck=(m,f)=>{mk("line",{x1:X(0),y1:Y(0),x2:X(1),y2:Y(0),stroke:f,"stroke-width":3,"stroke-dasharray":"6 4"},g);mk("line",{x1:X(1),y1:Y(0),x2:X(1),y2:Y(m),stroke:f,"stroke-width":4},g);};
   dreieck(m1,"var(--dr)");dreieck(mb,"var(--li)");
   const senk=Math.abs(m1*mb+1)<1e-9;
-  if(senk){ // rechter Winkel
-    const a=Math.atan(m1),b=Math.atan(mb),s=22,u=[Math.cos(a)*s,Math.sin(a)*s],v=[Math.cos(b)*s,Math.sin(b)*s];
-    const ux=(u[0]>0?1:-1),vx=(v[0]>0?1:-1); // beide nach rechts zeigen lassen
-    const U2=[u[0]*ux,u[1]*ux],V2=[v[0]*vx,v[1]*vx];
-    mk("polyline",{points:`${O+U2[0]},${O-U2[1]} ${O+U2[0]+V2[0]},${O-U2[1]-V2[1]} ${O+V2[0]},${O-V2[1]}`,fill:"none",stroke:"#333","stroke-width":2});}
+  if(senk){ // rechter Winkel wie im Unterricht: Bogen mit Punkt
+    let a1=Math.atan(m1),a2=Math.atan(mb);if(a1>a2)[a1,a2]=[a2,a1];   // beide Richtungen nach rechts, Winkel zwischen ihnen = 90°
+    const R=26;let d="";for(let i=0;i<=24;i++){const t=a1+(a2-a1)*i/24;d+=(i?"L":"M")+(O+R*Math.cos(t)).toFixed(1)+" "+(O-R*Math.sin(t)).toFixed(1);}
+    mk("path",{d,fill:"none",stroke:"#333","stroke-width":2});
+    const tm=(a1+a2)/2;mk("circle",{cx:O+13*Math.cos(tm),cy:O-13*Math.sin(tm),r:3,fill:"#333"});}
   document.getElementById("zahl").innerHTML=`<span class="a">m₁ = ${fmt(m1)}</span><br><span class="b">m₂ = ${mode==="drehen"?zeigM2(m1):fmt(mb)}</span>`+(mode==="treffer"?`<br>Winkel: ${winkel(m1,mb)}°`:"");
   if(mode==="treffer"){const e=document.getElementById("meld");e.classList.toggle("ok",senk);
     e.innerHTML=senk?"<b>Senkrecht!</b> Die beiden Geraden bilden einen rechten Winkel.":"Noch nicht senkrecht.";}
