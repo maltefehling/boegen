@@ -46,6 +46,10 @@
   .frage{font-size:18px;font-weight:700;color:var(--acc);margin:4px 0 2px}
   .teilkopf{font-size:22px;font-weight:800;color:var(--acc);margin:14px 0 8px}
   .teil[hidden]{display:none}
+  details.hilfe{margin-top:6px;font-size:18px}
+  details.hilfe summary{color:#a05a00;cursor:pointer;font-weight:700;min-height:30px}
+  details.hilfe div{background:var(--hilf);border:1px solid var(--hilfL);border-radius:8px;padding:8px 10px;margin-top:4px;line-height:1.45}
+  .tag.z{background:#d6efd0;color:#2f6f3f}
   .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.88em;margin:0 3px;line-height:1.15;white-space:nowrap}
   .frac>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
   .frac>span:last-child{padding:0 4px}
@@ -69,13 +73,15 @@ const D={"untertitel": ["Mit Tipps in den Aufgaben", "Ohne Tipps", "Mehr Nachden
 // Brüche im Text: [frac Zähler|Nenner] (Kap. V, Malte 11.10.2026: Steigung als Bruch statt mit Doppelpunkt)
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\[frac ([^|\]]+)\|([^\]]+)\]/g,'<span class="frac"><span>$1</span><span>$2</span></span>');
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
-const tagHtml=t=>t==="v"?'<span class="tag v">💡 Verständnis</span>':t==="w"?'<span class="tag w">↩ Wiederholung</span>':"";
+const tagHtml=t=>t==="z"?'<span class="tag z">⭐ Zusatz</span>':t==="v"?'<span class="tag v">💡 Verständnis</span>':t==="w"?'<span class="tag w">↩ Wiederholung</span>':"";
 function aufgabe(nr,a){
   let h=`<div class="kopf">Aufgabe ${nr}${tagHtml(a.tag)}</div><div class="txt">${esc(a.tag==="w"?a.t.replace(/^Wiederholung: /,""):a.t)}</div>`;
   // Wertetabelle: a.tab = [[x-Zeile], [y-Zeile]]; Teilaufgabe als Tabelle: sub-Eintrag ist eine Liste von Zeilen
   const wt=rows=>'<table class="wt">'+rows.map(r=>"<tr>"+r.map(c=>"<td>"+esc(String(c))+"</td>").join("")+"</tr>").join("")+"</table>";
   if(a.tab)h+=wt(a.tab);
   if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li><b>${"abcdefgh"[i]})</b>${Array.isArray(s)?wt(s):esc(s)}</li>`).join("")+"</ol>";
+  // gestufte Hilfen (V.6): nacheinander aufklappen
+  if(a.hilfen)h+=a.hilfen.map((x,i)=>`<details class="hilfe"><summary>Hilfe ${i+1}</summary><div>${esc(x)}</div></details>`).join("");
   if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
   return el("div","aufg",h);
 }
@@ -92,6 +98,9 @@ function teil(T){
   root.appendChild(el("details","erin",`<summary>Erinnerung: Das brauchst du</summary><ul>${T.erinnerung.map(e=>"<li>"+esc(e)+"</li>").join("")}</ul>`));
   root.appendChild(el("h2","","Aufgabe 1 · für alle"));
   root.append(aufgabe(1,T.a1),loesung(T.a1.mix));
+  if(T.alle){ // Modellieren (V.6): keine Niveaus, Prüfungsaufgaben für alle mit gestuften Hilfen
+    root.appendChild(el("h2","","Prüfungsaufgaben für alle"));
+    T.alle.aufg.forEach((a,i)=>root.appendChild(aufgabe(i+2,a)));root.appendChild(loesung(T.alle.mix));return root;}
   root.appendChild(el("h2","","Jetzt wählst du dein Niveau"));
   const wahl=el("div","wahl"),st=el("div");root.append(wahl,st);
   [["1","★"],["2","★★"],["3","★★★"]].forEach(([k,stern])=>{

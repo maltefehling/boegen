@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Bögen vermessen</title>
+<!-- V.6 Bögen vermessen. Reiter „Koordinatensystem legen“: Ursprung über dem Brückenbogen aus V.1 (80 m, 16 m) verschieben –
+     nur wenn die y-Achse durch den höchsten Punkt geht und die x-Achse auf dem Boden liegt, passt y = ax² + c (S (0 | 16), F (40 | 0) → y = −0,01x² + 16).
+     Reiter „Abstand ↔ Höhe“: Torbogen y = −0,25x² + 4. Abstand zur Mitte schieben → Höhe; oder Höhe schieben → zwei Abstände, Breite = 2 · x.
+     Maltes Fahrplan: x = Abstand zur Mitte, y = Höhe; die Gleichung beschreibt den Bogen. -->
+<style>
+  :root{--ink:#1b2a3a;--muted:#5b6b7c;--acc:#1f4e79;--bg:#f4f7fb;--card:#fff;--line:#c9d6e5;--gitter:#e1e7ee;--bogen:#b5432f;--or:#c0700f;--li:#7B4FA0;--rot:#c0392b;--gr:#2e8b3d;--ok:#3f8f3a;--okH:#d6efd0;--gelb:#fff3c4;--gelbL:#e0b400}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+  button,input{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff}
+  header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 20px;max-width:1150px;margin:0 auto}
+  .tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .tabs button{flex:1 1 220px;min-height:52px;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:12px;font-size:19px;font-weight:700}
+  .tabs button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .modes{display:flex;gap:8px;margin:0 0 10px}
+  .modes button{flex:1;min-height:48px;border:2px solid var(--li);background:#fff;color:var(--li);border-radius:12px;font-size:17px;font-weight:700}
+  .modes button[aria-pressed="true"]{background:var(--li);color:#fff}
+  .wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+  svg{flex:1 1 520px;width:100%;max-width:700px;height:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}
+  .side{flex:1 1 300px;min-width:0}
+  .lbl{font-size:16px;color:var(--muted);margin:2px 0 4px}
+  .ctl{display:flex;align-items:center;gap:10px;margin:2px 0 14px}
+  .ctl button{width:54px;height:54px;border-radius:12px;border:2px solid var(--acc);background:#fff;color:var(--acc);font-size:26px;font-weight:700;flex:none}
+  .ctl input{flex:1;min-width:0;height:44px;accent-color:var(--acc)}
+  .zahl{font-size:20px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;line-height:1.55;font-variant-numeric:tabular-nums}
+  .zahl b{color:var(--acc)} .s{color:var(--rot);font-weight:700} .f{color:var(--gr);font-weight:700} .o{color:var(--or);font-weight:700} .l{color:var(--li);font-weight:700}
+  .meld{font-size:19px;border-radius:12px;padding:10px 14px;background:var(--gelb);border:1px solid var(--gelbL);line-height:1.45}
+  .meld.ok{background:var(--okH);border-color:var(--ok)}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:10px 0 18px}
+  svg text{font-family:inherit}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>Bögen vermessen</h1></header>
+<main>
+  <div class="tabs" id="tabs">
+    <button data-m="ks" aria-pressed="true">Koordinatensystem legen</button>
+    <button data-m="ah" aria-pressed="false">Abstand ↔ Höhe</button>
+  </div>
+  <div class="wrap">
+    <svg id="s" viewBox="0 0 700 420" aria-label="Bogen"></svg>
+    <div class="side">
+      <div id="p1">
+        <div class="lbl">y-Achse verschieben (waagrecht)</div>
+        <div class="ctl"><button id="xm">−</button><input id="rx" type="range" min="-40" max="40" step="10" value="-40"><button id="xp">+</button></div>
+        <div class="lbl">x-Achse verschieben (senkrecht)</div>
+        <div class="ctl"><button id="ym">−</button><input id="ry" type="range" min="0" max="16" step="2" value="4"><button id="yp">+</button></div>
+        <div class="zahl" id="z1"></div>
+        <div class="meld" id="m1"></div>
+      </div>
+      <div id="p2" hidden>
+        <div class="modes" id="modes"><button data-a="abstand" aria-pressed="true">Abstand gegeben</button><button data-a="hoehe" aria-pressed="false">Höhe gegeben</button></div>
+        <div id="ca"><div class="lbl">Abstand zur Mitte x (in m)</div>
+          <div class="ctl"><button id="am">−</button><input id="ra" type="range" min="0" max="4" step="0.1" value="1.2"><button id="ap">+</button></div></div>
+        <div id="ch" hidden><div class="lbl">Höhe y (in m)</div>
+          <div class="ctl"><button id="hm">−</button><input id="rh" type="range" min="0" max="4" step="0.1" value="3"><button id="hp">+</button></div></div>
+        <div class="zahl" id="z2"></div>
+        <div class="meld ok" id="m2">Die Gleichung beschreibt den <b>Bogen</b>: x = Abstand zur Mitte, y = Höhe des Bogens.</div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>Fehling · Bögen vermessen</footer>
+<script>
+"use strict";
+const NS="http://www.w3.org/2000/svg",svg=document.getElementById("s");
+const mk=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+const fmt=v=>{const r=Math.round(v*100)/100;return (r<0?"−":"")+Math.abs(r).toString().replace(".",",");};
+let mode="ks",ox=-40,oy=4,am="abstand",xa=1.2,yh=3;
+// ---------- Reiter 1: Brückenbogen in „Weltkoordinaten“ (Scheitel bei 0, Boden bei 0) ----------
+const W1=x=>350+x*7.2, H1=y=>360-y*17;            // 1 m waagrecht = 7,2 px, senkrecht 17 px
+function ks(){
+  svg.replaceChildren();
+  for(let x=-45;x<=45;x+=5)mk("line",{x1:W1(x),x2:W1(x),y1:H1(19),y2:H1(-2),stroke:"var(--gitter)"});
+  for(let y=-2;y<=19;y++)mk("line",{x1:W1(-45),x2:W1(45),y1:H1(y),y2:H1(y),stroke:"var(--gitter)"});
+  mk("line",{x1:W1(-46),x2:W1(46),y1:H1(0),y2:H1(0),stroke:"#55687a","stroke-width":5});
+  let t=mk("text",{x:W1(45),y:H1(0)+20,"text-anchor":"end","font-size":14,fill:"#55687a"});t.textContent="Fahrbahn";
+  let d="";for(let i=0;i<=120;i++){const x=-40+80*i/120;d+=(i?"L":"M")+W1(x).toFixed(1)+" "+H1(16-x*x/100).toFixed(1);}
+  mk("path",{d,fill:"none",stroke:"var(--bogen)","stroke-width":5});
+  // gewählte Achsen
+  const X0=W1(ox),Y0=H1(oy);
+  mk("line",{x1:W1(-46),x2:W1(47),y1:Y0,y2:Y0,stroke:"#222","stroke-width":2.5});mk("line",{x1:X0,x2:X0,y1:H1(-2),y2:H1(19.5),stroke:"#222","stroke-width":2.5});
+  t=mk("text",{x:W1(47),y:Y0-6,"text-anchor":"end","font-size":16,fill:"var(--acc)"});t.textContent="x";
+  t=mk("text",{x:X0+6,y:H1(19.2),"font-size":16,fill:"var(--acc)"});t.textContent="y";
+  const S=[0-ox,16-oy],F=[40-ox,0-oy],Fl=[-40-ox,0-oy];
+  mk("circle",{cx:W1(0),cy:H1(16),r:8,fill:"var(--rot)"});mk("circle",{cx:W1(40),cy:H1(0),r:8,fill:"var(--gr)"});mk("circle",{cx:W1(-40),cy:H1(0),r:8,fill:"var(--gr)"});
+  t=mk("text",{x:W1(0)+12,y:H1(16)-10,"font-size":15,"font-weight":700,fill:"var(--rot)"});t.textContent=`S ( ${fmt(S[0])} | ${fmt(S[1])} )`;
+  t=mk("text",{x:W1(40)-6,y:H1(0)-12,"font-size":15,"font-weight":700,fill:"var(--gr)","text-anchor":"end"});t.textContent=`F ( ${fmt(F[0])} | ${fmt(F[1])} )`;
+  document.getElementById("z1").innerHTML=`Scheitel <span class="s">S ( ${fmt(S[0])} | ${fmt(S[1])} )</span><br>Fußpunkte <span class="f">( ${fmt(Fl[0])} | ${fmt(Fl[1])} )</span> und <span class="f">( ${fmt(F[0])} | ${fmt(F[1])} )</span>`;
+  const e=document.getElementById("m1"),gut=ox===0&&oy===0;e.classList.toggle("ok",gut);
+  e.innerHTML=gut?"<b>Jetzt passt y = a · x² + c:</b> S ( 0 | 16 ) liefert c = 16, der Fußpunkt ( 40 | 0 ) liefert a: 0 = a · 1600 + 16 → a = −0,01. <b>y = −0,01x² + 16</b>"
+    :(ox!==0?"Der Scheitel liegt <b>nicht auf der y-Achse</b> – dann passt y = a · x² + c nicht. ":"")+(oy!==0?"Die x-Achse liegt <b>nicht auf dem Boden</b> – dann sind die Fußpunkte nicht bei y = 0. ":"")+"Verschiebe weiter.";
+}
+// ---------- Reiter 2: Torbogen y = −0,25x² + 4 ----------
+const f=x=>-0.25*x*x+4, W2=x=>350+x*70, H2=y=>370-y*75;
+function ah(){
+  svg.replaceChildren();
+  for(let x=-5;x<=5;x+=0.5)mk("line",{x1:W2(x),x2:W2(x),y1:H2(4.6),y2:H2(0),stroke:"var(--gitter)"});
+  for(let y=0;y<=4.6;y+=0.5)mk("line",{x1:W2(-5),x2:W2(5),y1:H2(y),y2:H2(y),stroke:"var(--gitter)"});
+  mk("line",{x1:W2(-5.2),x2:W2(5.3),y1:H2(0),y2:H2(0),stroke:"#333","stroke-width":2});mk("line",{x1:W2(0),x2:W2(0),y1:H2(0),y2:H2(4.8),stroke:"#333","stroke-width":2});
+  for(let x=-4;x<=4;x++){if(!x)continue;const t=mk("text",{x:W2(x),y:H2(0)+20,"text-anchor":"middle","font-size":14});t.textContent=x<0?"−"+(-x):x;}
+  for(let y=1;y<=4;y++){const t=mk("text",{x:W2(0)-8,y:H2(y)+5,"text-anchor":"end","font-size":14});t.textContent=y;}
+  let d="";for(let i=0;i<=120;i++){const x=-4+8*i/120;d+=(i?"L":"M")+W2(x).toFixed(1)+" "+H2(f(x)).toFixed(1);}
+  mk("path",{d,fill:"#f3e6e2",stroke:"var(--bogen)","stroke-width":4});
+  const z=document.getElementById("z2");
+  if(am==="abstand"){const y=f(xa);
+    mk("line",{x1:W2(0),x2:W2(xa),y1:H2(y)-0,y2:H2(y),stroke:"var(--or)","stroke-width":3,"stroke-dasharray":"7 5"});
+    mk("line",{x1:W2(xa),x2:W2(xa),y1:H2(0),y2:H2(y),stroke:"var(--li)","stroke-width":4});
+    mk("circle",{cx:W2(xa),cy:H2(y),r:8,fill:"var(--rot)"});
+    z.innerHTML=`<span class="o">Abstand zur Mitte x = ${fmt(xa)} m</span><br>→ einsetzen: y = −0,25 · ${fmt(xa)}² + 4<br>→ <span class="l">Höhe des Bogens y = ${fmt(y)} m</span>`;
+  }else{
+    mk("line",{x1:W2(-4.6),x2:W2(4.6),y1:H2(yh),y2:H2(yh),stroke:"var(--li)","stroke-width":3,"stroke-dasharray":"7 5"});
+    if(yh<=4){const x=Math.sqrt((4-yh)/0.25);
+      mk("line",{x1:W2(-x),x2:W2(x),y1:H2(yh),y2:H2(yh),stroke:"var(--or)","stroke-width":5});
+      [x,-x].forEach(v=>mk("circle",{cx:W2(v),cy:H2(yh),r:8,fill:"var(--rot)"}));
+      z.innerHTML=`<span class="l">Höhe y = ${fmt(yh)} m</span><br>→ einsetzen: ${fmt(yh)} = −0,25 · x² + 4 → x² = ${fmt(x*x)}<br>→ <span class="o">x = ±${fmt(x)} m</span> (Abstand zur Mitte)<br>→ <b>Breite in dieser Höhe: ${fmt(2*x)} m</b>`;}
+  }
+}
+function zeichne(){mode==="ks"?ks():ah();}
+const rx=document.getElementById("rx"),ry=document.getElementById("ry"),ra=document.getElementById("ra"),rh=document.getElementById("rh");
+const setX=v=>{ox=Math.max(-40,Math.min(40,v));rx.value=ox;zeichne();},setY=v=>{oy=Math.max(0,Math.min(16,v));ry.value=oy;zeichne();};
+const setA=v=>{xa=Math.max(0,Math.min(4,Math.round(v*10)/10));ra.value=xa;zeichne();},setH=v=>{yh=Math.max(0,Math.min(4,Math.round(v*10)/10));rh.value=yh;zeichne();};
+rx.oninput=()=>setX(+rx.value);ry.oninput=()=>setY(+ry.value);ra.oninput=()=>setA(+ra.value);rh.oninput=()=>setH(+rh.value);
+document.getElementById("xm").onclick=()=>setX(ox-10);document.getElementById("xp").onclick=()=>setX(ox+10);
+document.getElementById("ym").onclick=()=>setY(oy-2);document.getElementById("yp").onclick=()=>setY(oy+2);
+document.getElementById("am").onclick=()=>setA(xa-0.1);document.getElementById("ap").onclick=()=>setA(xa+0.1);
+document.getElementById("hm").onclick=()=>setH(yh-0.1);document.getElementById("hp").onclick=()=>setH(yh+0.1);
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{mode=b.dataset.m;
+  document.querySelectorAll("#tabs button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  document.getElementById("p1").hidden=mode!=="ks";document.getElementById("p2").hidden=mode!=="ah";zeichne();});
+document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{am=b.dataset.a;
+  document.querySelectorAll("#modes button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  document.getElementById("ca").hidden=am!=="abstand";document.getElementById("ch").hidden=am!=="hoehe";zeichne();});
+const q=new URLSearchParams(location.search).get("modus");
+zeichne();if(q==="ah")document.querySelector('#tabs button[data-m="ah"]').click();
+</script>
+</body>
+</html>
