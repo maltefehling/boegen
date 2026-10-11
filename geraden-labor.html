@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Geraden-Labor</title>
-<!-- V.2 Gerade aus Steigung und Punkt: Regler für m und c, Steigungsdreieck (1 nach rechts, m nach oben) und y-Achsenabschnitt live.
+<!-- V.2 Gerade aus Steigung und Punkt: Regler für m und c, Steigungsdreieck mit ganzen Kästchen (m als Bruch: oben y-Änderung, unten x-Änderung) und y-Achsenabschnitt live.
      Reiter „Triff die Gerade“: eine Zielgerade (gestrichelt) mit den Reglern treffen. Die Regel steht NICHT auf der Seite – die schreiben die SuS selbst auf. -->
 <style>
   :root{--ink:#1b2a3a;--muted:#5b6b7c;--acc:#1f4e79;--bg:#f4f7fb;--card:#fff;--line:#c9d6e5;--gitter:#e1e7ee;--ger:#2f5f8f;--dr:#c0700f;--drH:#fde7c8;--gr:#2e8b3d;--ok:#3f8f3a;--okH:#d6efd0}
@@ -31,6 +31,8 @@
   .meld.ok{background:var(--okH);border-color:var(--ok)}
   .gross{min-height:54px;width:100%;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:12px;font-size:19px;font-weight:700;margin-top:10px}
   .hint{font-size:15px;color:var(--muted);margin-top:8px}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.9em;margin:0 3px;line-height:1.15}
+  .frac>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
   footer{color:var(--muted);font-size:13px;text-align:center;padding:10px 0 18px}
   svg text{font-family:inherit}
   [hidden]{display:none!important}
@@ -51,7 +53,8 @@
       <div class="ctl"><button id="mm" aria-label="m kleiner">−</button><input id="rm" type="range" min="-3" max="3" step="0.25" value="1"><button id="mp" aria-label="m größer">+</button></div>
       <div class="lbl">y-Achsenabschnitt <b style="color:var(--gr)">c</b></div>
       <div class="ctl"><button id="cm" aria-label="c kleiner">−</button><input id="rc" type="range" min="-5" max="5" step="0.5" value="1"><button id="cp" aria-label="c größer">+</button></div>
-      <div id="frei"><div class="hint">Orange: das Steigungsdreieck – 1 nach rechts, dann m nach oben (oder unten). Grün: hier schneidet die Gerade die y-Achse.</div>
+      <div class="zahl" id="dr" style="font-size:20px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:10px"></div>
+      <div id="frei"><div class="hint">Orange: das Steigungsdreieck mit ganzen Kästchen – oben steht die Änderung in y-Richtung, unten die in x-Richtung. Grün: hier schneidet die Gerade die y-Achse.</div>
         <button class="gross" id="reset">Zurück auf m = 1, c = 1</button></div>
       <div id="ziel" hidden><div class="meld" id="meld"></div><button class="gross" id="neu">Neue Gerade</button>
         <div class="hint">Stelle m und c so ein, dass deine Gerade auf der gestrichelten liegt.</div></div>
@@ -84,11 +87,13 @@ function zeichne(){
   const g=mk("g",{"clip-path":"url(#k)"});
   if(mode==="ziel")mk("line",{x1:X(-7),y1:Y(zm*-7+zc),x2:X(7),y2:Y(zm*7+zc),stroke:"#8a9bb0","stroke-width":5,"stroke-dasharray":"12 9"},g);
   mk("line",{x1:X(-7),y1:Y(m*-7+c),x2:X(7),y2:Y(m*7+c),stroke:"var(--ger)","stroke-width":4},g);
-  // Steigungsdreieck ab dem y-Achsenabschnitt: 1 nach rechts, m nach oben
-  mk("line",{x1:X(0),y1:Y(c),x2:X(1),y2:Y(c),stroke:"var(--dr)","stroke-width":4},g);
-  mk("line",{x1:X(1),y1:Y(c),x2:X(1),y2:Y(c+m),stroke:"var(--dr)","stroke-width":5},g);
-  t=mk("text",{x:X(0.5),y:Y(c)+(m>=0?20:-8),"text-anchor":"middle","font-size":16,"font-weight":700,fill:"var(--dr)"},g);t.textContent="1";
-  if(m!==0){t=mk("text",{x:X(1)+8,y:Y(c+m/2)+6,"font-size":17,"font-weight":700,fill:"var(--dr)"},g);t.textContent=(m<0?"−":"")+fmt(m);}
+  // Steigungsdreieck mit ganzen Kästchen (Malte: Änderung in y-Richtung oben, in x-Richtung unten – nicht „1 nach rechts, dann schauen“)
+  const dx=Number.isInteger(m)?1:(Number.isInteger(m*2)?2:4), dy=m*dx;
+  mk("line",{x1:X(0),y1:Y(c),x2:X(dx),y2:Y(c),stroke:"var(--dr)","stroke-width":4},g);
+  mk("line",{x1:X(dx),y1:Y(c),x2:X(dx),y2:Y(c+dy),stroke:"var(--dr)","stroke-width":5},g);
+  t=mk("text",{x:X(dx/2),y:Y(c)+(m>=0?20:-8),"text-anchor":"middle","font-size":16,"font-weight":700,fill:"var(--dr)"},g);t.textContent=dx;
+  if(m!==0){t=mk("text",{x:X(dx)+8,y:Y(c+dy/2)+6,"font-size":17,"font-weight":700,fill:"var(--dr)"},g);t.textContent=(dy<0?"−":"")+fmt(dy);}
+  document.getElementById("dr").innerHTML=m===0?"m = 0: waagrecht":`m = <span class="frac"><span>${(dy<0?"−":"")+fmt(dy)}</span><span>${dx}</span></span> → ${dx} nach rechts, ${fmt(dy)} nach ${dy<0?"unten":"oben"}`;
   mk("circle",{cx:X(0),cy:Y(c),r:8,fill:"var(--gr)",stroke:"#fff","stroke-width":2},g);
   document.getElementById("gl").innerHTML=gleichung(m,c);
   if(mode==="ziel"){const ok=m===zm&&c===zc,e=document.getElementById("meld");e.classList.toggle("ok",ok);
