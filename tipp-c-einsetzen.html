@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Tipp: Punkt einsetzen</title>
 <!-- V.2 (Umbau 15.10.2026, Malte): Animation, wie m, x und y farbig in y = m · x + c „hineinfliegen“.
-     Farben wie im Skript: m orange, x blau, y grün, c rot. ANDERES Beispiel (3 m auf 100 m, P ( 60 | 4 ))
+     Farben wie im Skript: m orange, x blau, y grün, c rot. ANDERES Beispiel (m = 0,03 vorgegeben wie im Skript seit 15.10., P ( 60 | 4 ))
      und nur bis „4 = 1,8 + c“ – das Umstellen nach c machen die SuS selbst. Quelle: werkzeug/tipps/tipp-c-einsetzen.html -->
 <style>
   :root{--tipp:#6d4a9e;--tippH:#f1eaf8;--tippL:#b79bd6;--m:#c0700f;--mH:#fde7c8;--x:#2e5d9f;--xH:#dce8f7;--y:#3f8f3a;--yH:#d9f0d6;--c:#b33c3c;--cH:#f7dcdc;
@@ -44,7 +44,7 @@
   <div class="knoepfe"><button class="haupt" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
   <div class="karte">
     <div class="titel">Gegeben (Beispiel mit anderen Zahlen)</div>
-    <div class="geg">Steigung: auf 100 m geht es 3 m nach oben &nbsp;→&nbsp; m = <span class="frac"><span>3</span><span>100</span></span> = <span class="chip m" id="gm">0,03</span><br>
+    <div class="geg">Steigung &nbsp;m = <span class="chip m" id="gm">0,03</span><br>
       Punkt &nbsp;P ( <span class="chip x" id="gx">60</span> | <span class="chip y" id="gy">4</span> ) &nbsp;→&nbsp; x = 60,&nbsp; y = 4</div>
   </div>
   <div class="karte">
@@ -71,7 +71,7 @@ function fliege(von,nach,text,fertig){
 const puls=id=>{const e=$(id);e.classList.remove("puls");void e.offsetWidth;e.classList.add("puls");};
 const S=[
   ()=>{erkl("Das ist die Funktionsgleichung einer Geraden. Gesucht ist <b style='color:var(--c)'>c</b>.");$("sc").classList.add("such");},
-  ()=>{erkl("Zuerst die <b style='color:var(--m)'>Steigung m</b>: 3 m auf 100 m, als Bruch 3/100 = 0,03.");puls("gm");},
+  ()=>{erkl("Zuerst die <b style='color:var(--m)'>Steigung m</b>: Sie ist gegeben, m = 0,03.");puls("gm");},
   ()=>{erkl("<b style='color:var(--m)'>m</b> kommt an die Stelle von m.");fliege("gm","sm","0,03");},
   ()=>{erkl("Der Punkt liefert <b style='color:var(--x)'>x</b> (vorne in der Klammer) …");puls("gx");fliege("gx","sx","60");},
   ()=>{erkl("… und <b style='color:var(--y)'>y</b> (hinten in der Klammer).");puls("gy");fliege("gy","sy","4");},
