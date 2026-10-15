@@ -23,9 +23,11 @@
   .aufg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
   .aufg .kopf{font-weight:700;color:var(--acc);font-size:18px;margin-bottom:4px}
   .aufg .txt{font-size:20px;line-height:1.45}
-  .aufg ol{margin:6px 0 0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:6px 18px}
-  .aufg li{font-size:21px;line-height:1.5;overflow-x:auto}
-  .aufg li b{color:var(--muted);font-weight:600;margin-right:6px}
+  /* Teilaufgaben als getrennte Kärtchen (15.10.2026, Malte): SuS hielten a), b), c) für eine zusammenhängende Aufgabe */
+  .aufg ol{margin:10px 0 0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+  .aufg li{font-size:21px;line-height:1.5;overflow-x:auto;border:2px solid #c9d6e5;border-radius:12px;background:#f7f9fc;padding:8px 12px}
+  .aufg li.breit{grid-column:1/-1}
+  .aufg li b.tb{display:inline-block;min-width:34px;text-align:center;background:#1f4e79;color:#fff;border-radius:8px;padding:0 8px;margin-right:10px;font-weight:700}
   .tag{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;padding:2px 8px;margin-left:8px;vertical-align:middle}
   .tag.v{background:#fff3c4;color:#7a5b00}.tag.w{background:#e2d6f0;color:#4f2f7a}
   details.idee{margin-top:8px;font-size:18px}
@@ -97,7 +99,7 @@ function aufgabe(nr,a){
   if(a.tab)h+=wt(a.tab);
   // Teilaufgabe mit Graph (15.10.2026): {txt:"…", gerade:[m, c]} → Koordinatensystem im Heftformat (1 Einheit = 2 Kästchen)
   const sub=s=>Array.isArray(s)?wt(s):(s&&typeof s==="object")?(s.txt?`<span>${esc(s.txt)}</span>`:"")+ks(s.gerade):esc(s);
-  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li><b>${"abcdefgh"[i]})</b>${sub(s)}</li>`).join("")+"</ol>";
+  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li${s&&typeof s==="object"&&!Array.isArray(s)?' class="breit"':""}><b class="tb">${"abcdefgh"[i]})</b>${sub(s)}</li>`).join("")+"</ol>";
   // gestufte Hilfen (V.6): nacheinander aufklappen
   if(a.hilfen)h+=a.hilfen.map((x,i)=>`<details class="hilfe"><summary>Hilfe ${i+1}</summary><div>${esc(x)}</div></details>`).join("");
   if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
