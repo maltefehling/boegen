@@ -74,12 +74,29 @@ const D={"untertitel": ["Mit Tipps in den Aufgaben", "Ohne Tipps", "Mehr Nachden
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\[frac ([^|\]]+)\|([^\]]+)\]/g,'<span class="frac"><span>$1</span><span>$2</span></span>');
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
 const tagHtml=t=>t==="z"?'<span class="tag z">⭐ Zusatz</span>':t==="v"?'<span class="tag v">💡 Verständnis</span>':t==="w"?'<span class="tag w">↩ Wiederholung</span>':"";
+function ks([m,c],X=5,Y=4){
+  const U=36,W=2*X*U+40,H=2*Y*U+40,ox=20+X*U,oy=20+Y*U,px=x=>ox+x*U,py=y=>oy-y*U;let g="";
+  for(let v=-X;v<=X+1e-9;v+=0.5)g+=`<line x1="${px(v)}" y1="${py(-Y)}" x2="${px(v)}" y2="${py(Y)}" stroke="#dde3ea"/>`;
+  for(let v=-Y;v<=Y+1e-9;v+=0.5)g+=`<line x1="${px(-X)}" y1="${py(v)}" x2="${px(X)}" y2="${py(v)}" stroke="#dde3ea"/>`;
+  g+=`<line x1="${px(-X)}" y1="${oy}" x2="${px(X)+8}" y2="${oy}" stroke="#333" stroke-width="1.6"/><line x1="${ox}" y1="${py(-Y)}" x2="${ox}" y2="${py(Y)-8}" stroke="#333" stroke-width="1.6"/>`;
+  g+=`<text x="${px(X)+6}" y="${oy+16}" font-size="13">x</text><text x="${ox+6}" y="${py(Y)-2}" font-size="13">y</text>`;
+  for(let v=-X;v<=X;v++)if(v)g+=`<text x="${px(v)}" y="${oy+15}" font-size="11" text-anchor="middle">${v<0?"−"+(-v):v}</text>`;
+  for(let v=-Y;v<=Y;v++)if(v)g+=`<text x="${ox-5}" y="${py(v)+4}" font-size="11" text-anchor="end">${v<0?"−"+(-v):v}</text>`;
+  // Gerade nur innerhalb des Gitters
+  const pts=[];for(const x of [-X,X]){const y=m*x+c;pts.push([x,y]);}
+  const clip=([x1,y1],[x2,y2])=>{const t=v=>(v-y1)/(y2-y1);let a=0,b=1;if(y2!==y1){const ta=t(Y),tb=t(-Y);a=Math.max(a,Math.min(ta,tb));b=Math.min(b,Math.max(ta,tb));}
+    return [[x1+(x2-x1)*a,y1+(y2-y1)*a],[x1+(x2-x1)*b,y1+(y2-y1)*b]];};
+  const [p,q]=clip(pts[0],pts[1]);g+=`<line x1="${px(p[0])}" y1="${py(p[1])}" x2="${px(q[0])}" y2="${py(q[1])}" stroke="#1f4e79" stroke-width="3"/>`;
+  return `<svg class="ks" viewBox="0 0 ${W} ${H}" style="display:block;width:100%;max-width:${W}px;margin-top:6px;background:#fff;border:1px solid #d6dde6;border-radius:8px">${g}</svg>`;
+}
 function aufgabe(nr,a){
   let h=`<div class="kopf">Aufgabe ${nr}${tagHtml(a.tag)}</div><div class="txt">${esc(a.tag==="w"?a.t.replace(/^Wiederholung: /,""):a.t)}</div>`;
   // Wertetabelle: a.tab = [[x-Zeile], [y-Zeile]]; Teilaufgabe als Tabelle: sub-Eintrag ist eine Liste von Zeilen
   const wt=rows=>'<table class="wt">'+rows.map(r=>"<tr>"+r.map(c=>"<td>"+esc(String(c))+"</td>").join("")+"</tr>").join("")+"</table>";
   if(a.tab)h+=wt(a.tab);
-  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li><b>${"abcdefgh"[i]})</b>${Array.isArray(s)?wt(s):esc(s)}</li>`).join("")+"</ol>";
+  // Teilaufgabe mit Graph (15.10.2026): {txt:"…", gerade:[m, c]} → Koordinatensystem im Heftformat (1 Einheit = 2 Kästchen)
+  const sub=s=>Array.isArray(s)?wt(s):(s&&typeof s==="object")?(s.txt?`<span>${esc(s.txt)}</span>`:"")+ks(s.gerade):esc(s);
+  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li><b>${"abcdefgh"[i]})</b>${sub(s)}</li>`).join("")+"</ol>";
   // gestufte Hilfen (V.6): nacheinander aufklappen
   if(a.hilfen)h+=a.hilfen.map((x,i)=>`<details class="hilfe"><summary>Hilfe ${i+1}</summary><div>${esc(x)}</div></details>`).join("");
   if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
