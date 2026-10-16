@@ -34,7 +34,7 @@
 <header><h1>Erklär-Tandem ★: Woher kommt das Minus?</h1></header>
 <main>
   <div class="knoepfe"><button class="haupt" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
-  <div class="wrap"><svg id="s" viewBox="0 0 520 500"></svg>
+  <div class="wrap"><svg id="s" viewBox="0 0 520 450"></svg>
     <div class="tafel"><div class="nr" id="nr"></div><div class="txt" id="txt"></div><div class="rech" id="rech"></div></div></div>
   <div class="du" id="du"><b>Jetzt ihr:</b> Erkläre deinem Partner mit eigenen Worten: Warum steht in der Formel oben „8 − 2“ und unten „5 − 1“? Dein Partner fragt nach, bis es klar ist.</div>
 </main>
@@ -75,8 +75,8 @@ const S=[
   ()=>{strich([Q[0],0,Q[0],Q[1]],"#f3c58f",6);leucht(E.Qy,"var(--or)");if(!D.zahlen)etikett(Q[0]+0.2,1.0,"y₂","var(--or)");},
   ()=>{strich([P[0],0,P[0],P[1]],"#f3c58f",6);strich([P[0],P[1],Q[0],P[1]],"var(--or)",2,"6 5");leucht(E.Py,"var(--or)");if(!D.zahlen)etikett(P[0]-0.2,P[1]/2,"y₁","var(--or)","end");},
   ()=>{strich([Q[0],P[1],Q[0],Q[1]],"var(--or)",7);etikett(Q[0]+0.2,(P[1]+Q[1])/2,D.hy,"var(--or)");E.rech.innerHTML=`<span class="o">Höhenunterschied: ${D.hy}</span>`;},
-  ()=>{strich([0,-0.8,Q[0],-0.8],"#a9c3e8",6);leucht(E.Qx,"var(--bl)");if(!D.zahlen)etikett(Q[0]+0.12,-0.68,"x₂","var(--bl)");},
-  ()=>{strich([0,-1.25,P[0],-1.25],"#a9c3e8",6);strich([P[0],P[1],P[0],-1.25],"var(--bl)",2,"6 5");strich([Q[0],Q[1],Q[0],-0.8],"var(--bl)",2,"6 5");leucht(E.Px,"var(--bl)");if(!D.zahlen)etikett(P[0]+0.12,-1.13,"x₁","var(--bl)");},
+  ()=>{strich([0,Q[1],Q[0],Q[1]],"#a9c3e8",6);leucht(E.Qx,"var(--bl)");if(!D.zahlen)etikett(Q[0]/2,Q[1]-0.5,"x₂","var(--bl)","middle");},
+  ()=>{strich([0,P[1],P[0],P[1]],"#a9c3e8",6);leucht(E.Px,"var(--bl)");if(!D.zahlen)etikett(P[0]/2,P[1]+0.25,"x₁","var(--bl)","middle");},
   ()=>{strich([P[0],P[1],Q[0],P[1]],"var(--bl)",7);etikett((P[0]+Q[0])/2+0.7,P[1]-0.55,D.lx,"var(--bl)","middle");E.rech.innerHTML+=`<br><span class="b">Längenunterschied: ${D.lx}</span>`;},
   ()=>{E.rech.innerHTML=frac(D.m);},
 ];
