@@ -72,9 +72,9 @@ const strich=(a,f,w,dash)=>mk("line",{x1:X(a[0]),y1:Y(a[1]),x2:X(a[2]),y2:Y(a[3]
 const etikett=(x,y,t,f,anch="start")=>{const e=mk("text",{x:X(x),y:Y(y),"font-size":18,"font-weight":700,fill:f,"text-anchor":anch},E.g);e.textContent=t;};
 const S=[
   ()=>{},
-  ()=>{strich([Q[0]+0.3,0,Q[0]+0.3,Q[1]],"#f3c58f",6);leucht(E.Qy,"var(--or)");if(!D.zahlen)etikett(Q[0]+0.45,1.0,"y₂","var(--or)");},
-  ()=>{strich([P[0]-0.3,0,P[0]-0.3,P[1]],"#f3c58f",6);strich([P[0],P[1],Q[0]+0.3,P[1]],"var(--or)",2,"6 5");leucht(E.Py,"var(--or)");if(!D.zahlen)etikett(P[0]-0.45,P[1]/2,"y₁","var(--or)","end");},
-  ()=>{strich([Q[0]+0.3,P[1],Q[0]+0.3,Q[1]],"var(--or)",7);etikett(Q[0]+0.5,(P[1]+Q[1])/2,D.hy,"var(--or)");E.rech.innerHTML=`<span class="o">Höhenunterschied: ${D.hy}</span>`;},
+  ()=>{strich([Q[0],0,Q[0],Q[1]],"#f3c58f",6);leucht(E.Qy,"var(--or)");if(!D.zahlen)etikett(Q[0]+0.2,1.0,"y₂","var(--or)");},
+  ()=>{strich([P[0],0,P[0],P[1]],"#f3c58f",6);strich([P[0],P[1],Q[0],P[1]],"var(--or)",2,"6 5");leucht(E.Py,"var(--or)");if(!D.zahlen)etikett(P[0]-0.2,P[1]/2,"y₁","var(--or)","end");},
+  ()=>{strich([Q[0],P[1],Q[0],Q[1]],"var(--or)",7);etikett(Q[0]+0.2,(P[1]+Q[1])/2,D.hy,"var(--or)");E.rech.innerHTML=`<span class="o">Höhenunterschied: ${D.hy}</span>`;},
   ()=>{strich([0,-0.8,Q[0],-0.8],"#a9c3e8",6);leucht(E.Qx,"var(--bl)");if(!D.zahlen)etikett(Q[0]+0.12,-0.68,"x₂","var(--bl)");},
   ()=>{strich([0,-1.25,P[0],-1.25],"#a9c3e8",6);strich([P[0],P[1],P[0],-1.25],"var(--bl)",2,"6 5");strich([Q[0],Q[1],Q[0],-0.8],"var(--bl)",2,"6 5");leucht(E.Px,"var(--bl)");if(!D.zahlen)etikett(P[0]+0.12,-1.13,"x₁","var(--bl)");},
   ()=>{strich([P[0],P[1],Q[0],P[1]],"var(--bl)",7);etikett((P[0]+Q[0])/2+0.7,P[1]-0.55,D.lx,"var(--bl)","middle");E.rech.innerHTML+=`<br><span class="b">Längenunterschied: ${D.lx}</span>`;},
