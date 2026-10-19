@@ -118,6 +118,7 @@ function animTipp(cfg){
   d.innerHTML=`<summary>💡 Tipp als Animation</summary><div class="warn">Achtung: Beispiel mit anderen Zahlen als in deiner Aufgabe!</div>
     <div class="geg"><b>Gegeben im Beispiel:</b> ${cfg.gegeben.map(([id,h,f])=>id?`<span class="chip ${f}" data-chip="${id}">${h}</span>`:h).join(" ")}</div>
     <div class="kn"><button class="h" data-k="p">▶ Abspielen</button><button data-k="n">Nächster Schritt</button><button data-k="r">Von vorn</button></div>
+    ${cfg.graph?'<svg class="ag" viewBox="0 0 420 300" style="display:block;width:100%;max-width:600px;background:#fff;border:1px solid #d8cce8;border-radius:10px;margin-bottom:8px"></svg>':""}
     <div class="brett"></div><div class="erk"></div><div class="du"><b>Jetzt du:</b> ${cfg.du}</div>`;
   const brett=d.querySelector(".brett"),erk=d.querySelector(".erk"),du=d.querySelector(".du"),nb=d.querySelector('[data-k="n"]');
   const chip=id=>d.querySelector(`[data-chip="${id}"]`),slot=id=>d.querySelector(`[data-slot="${id}"]`);
@@ -127,10 +128,33 @@ function animTipp(cfg){
     requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px) scale(1.15)`;}));
     setTimeout(()=>{f.remove();slot(s).innerHTML=wert;slot(s).classList.add("voll");},950);};
   const puls=id=>{const e=chip(id);e.classList.remove("puls");void e.offsetWidth;e.classList.add("puls");};
-  const reset=()=>{clearInterval(timer);n=0;brett.innerHTML="";erk.textContent="Tippe auf „Abspielen“ oder „Nächster Schritt“.";du.classList.remove("da");nb.disabled=false;};
+  // Koordinatensystem mit Gerade; ein Punkt kann die Gerade entlanglaufen und zeigt dabei seine Höhe (y-Wert)
+  const G=cfg.graph,svg=d.querySelector("svg.ag"),NS="http://www.w3.org/2000/svg";
+  const mk=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+  const X=x=>20+(x-G.x[0])*380/(G.x[1]-G.x[0]),Y=y=>280-(y-G.y[0])*260/(G.y[1]-G.y[0]);
+  const fmt=v=>{const r=Math.round(v*10)/10;return (r<0?"−":"")+String(Math.abs(r)).replace(".",",");};
+  let lauf=null;
+  const zeichne=()=>{if(!G)return;svg.replaceChildren();
+    for(let x=G.x[0];x<=G.x[1];x++)mk("line",{x1:X(x),x2:X(x),y1:Y(G.y[0]),y2:Y(G.y[1]),stroke:"#e6e0ef"});
+    for(let y=G.y[0];y<=G.y[1];y++)mk("line",{x1:X(G.x[0]),x2:X(G.x[1]),y1:Y(y),y2:Y(y),stroke:"#e6e0ef"});
+    mk("line",{x1:X(G.x[0]),x2:X(G.x[1]),y1:Y(0),y2:Y(0),stroke:"#333","stroke-width":2,id:"xa"});mk("line",{x1:X(0),x2:X(0),y1:Y(G.y[0]),y2:Y(G.y[1]),stroke:"#333","stroke-width":2});
+    for(let x=G.x[0]+1;x<G.x[1];x++)if(x){const t=mk("text",{x:X(x),y:Y(0)+15,"text-anchor":"middle","font-size":11});t.textContent=x<0?"−"+(-x):x;}
+    for(let y=G.y[0]+1;y<G.y[1];y++)if(y){const t=mk("text",{x:X(0)-5,y:Y(y)+4,"text-anchor":"end","font-size":11});t.textContent=y<0?"−"+(-y):y;}
+    mk("line",{x1:X(G.x[0]),y1:Y(G.m*G.x[0]+G.c),x2:X(G.x[1]),y2:Y(G.m*G.x[1]+G.c),stroke:"#1f4e79","stroke-width":3});};
+  const aktion=s=>{if(!G)return;
+    if(s.punkt){const [x,y,t,f]=s.punkt;mk("circle",{cx:X(x),cy:Y(y),r:6,fill:f||"#1f4e79"});const e=mk("text",{x:X(x)+8,y:Y(y)-8,"font-size":14,"font-weight":700,fill:f||"#1f4e79"});e.textContent=t;}
+    if(s.achse){const a=svg.querySelector("#xa");a.setAttribute("stroke","#3f8f3a");a.setAttribute("stroke-width",5);
+      s.achse.forEach(x=>{mk("circle",{cx:X(x),cy:Y(0),r:5,fill:"#3f8f3a"});const e=mk("text",{x:X(x),y:Y(0)-10,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"#3f8f3a"});e.textContent=`( ${fmt(x)} | 0 )`;});}
+    if(s.lauf){const [x0,x1]=s.lauf;const p=mk("circle",{r:8,fill:"#c0700f"}),h=mk("line",{stroke:"#c0700f","stroke-width":3,"stroke-dasharray":"5 4"}),t=mk("text",{"font-size":16,"font-weight":800,fill:"#c0700f"});
+      let x=x0;clearInterval(lauf);lauf=setInterval(()=>{x=Math.min(x1,x+0.05);const y=G.m*x+G.c;
+        p.setAttribute("cx",X(x));p.setAttribute("cy",Y(y));h.setAttribute("x1",X(x));h.setAttribute("x2",X(x));h.setAttribute("y1",Y(0));h.setAttribute("y2",Y(y));
+        t.setAttribute("x",X(x)+10);t.setAttribute("y",Y(y)-10);t.textContent="y = "+fmt(y);
+        if(Math.abs(y)<0.03){t.setAttribute("fill","#3f8f3a");p.setAttribute("fill","#3f8f3a");}
+        if(x>=x1)clearInterval(lauf);},45);}};
+  const reset=()=>{clearInterval(timer);clearInterval(lauf);n=0;zeichne();brett.innerHTML="";erk.textContent="Tippe auf „Abspielen“ oder „Nächster Schritt“.";du.classList.remove("da");nb.disabled=false;};
   const weiter=()=>{if(n>=cfg.schritte.length)return;const s=cfg.schritte[n++];
     if(s.zeile)brett.insertAdjacentHTML("beforeend",`<div class="z">${s.zeile}</div>`);
-    erk.innerHTML=s.txt;(s.puls||[]).forEach(puls);(s.fly||[]).forEach(([c,sl,w],i)=>setTimeout(()=>{puls(c);fliege(c,sl,w);},i*1100));
+    erk.innerHTML=s.txt;aktion(s);(s.puls||[]).forEach(puls);(s.fly||[]).forEach(([c,sl,w],i)=>setTimeout(()=>{puls(c);fliege(c,sl,w);},i*1100));
     if(n>=cfg.schritte.length){nb.disabled=true;setTimeout(()=>du.classList.add("da"),1200);}};
   nb.onclick=()=>{clearInterval(timer);weiter();};
   d.querySelector('[data-k="r"]').onclick=reset;
