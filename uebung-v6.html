@@ -30,6 +30,26 @@
   .aufg li b.tb{display:inline-block;min-width:34px;text-align:center;background:#1f4e79;color:#fff;border-radius:8px;padding:0 8px;margin-right:10px;font-weight:700}
   .tag{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;padding:2px 8px;margin-left:8px;vertical-align:middle}
   .tag.v{background:#fff3c4;color:#7a5b00}.tag.w{background:#e2d6f0;color:#4f2f7a}
+  /* Animierter Tipp (19.10.2026): Beispiel mit ANDEREN Zahlen, Werte fliegen farbig in die Gleichung */
+  details.atipp{margin-top:8px;font-size:18px;border:2px solid #b79bd6;border-radius:12px;background:#f7f2fc;padding:6px 12px}
+  details.atipp summary{color:#6d4a9e;font-weight:700;cursor:pointer;min-height:34px;line-height:34px}
+  .atipp .warn{background:#6d4a9e;color:#fff;border-radius:8px;padding:6px 10px;font-weight:700;margin:6px 0 10px;font-size:16px}
+  .atipp .geg{font-size:20px;line-height:2.1;margin-bottom:6px}
+  .atipp .chip{display:inline-block;border-radius:8px;padding:0 8px;font-weight:800;border:2px solid transparent;background:#fff}
+  .atipp .kn{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+  .atipp .kn button{flex:1 1 140px;min-height:46px;border-radius:10px;font-size:17px;font-weight:700;border:2px solid #6d4a9e;background:#fff;color:#6d4a9e}
+  .atipp .kn button.h{background:#6d4a9e;color:#fff} .atipp .kn button:disabled{opacity:.4}
+  .atipp .brett{background:#fff;border:1px solid #d8cce8;border-radius:10px;padding:8px 12px;min-height:60px}
+  .atipp .z{font-size:23px;font-weight:700;line-height:1.7;white-space:nowrap;overflow-x:auto;animation:ein .6s}
+  @keyframes ein{from{opacity:0;transform:translateY(8px)}}
+  .atipp .erk{font-size:18px;color:#6d4a9e;font-weight:600;margin-top:8px;min-height:26px}
+  .atipp .du{display:none;margin-top:8px;font-size:18px;background:#fff;border:1px dashed #6d4a9e;border-radius:10px;padding:8px 10px} .atipp .du.da{display:block}
+  .c-x{color:#2e5d9f} .c-y{color:#3f8f3a} .c-m{color:#c0700f} .c-c{color:#b33c3c}
+  .atipp .chip.c-x{background:#dce8f7} .atipp .chip.c-y{background:#d9f0d6} .atipp .chip.c-m{background:#fde7c8} .atipp .chip.c-c{background:#f7dcdc}
+  .atipp .slot{display:inline-block;min-width:1.2em;text-align:center;border-radius:8px;padding:0 4px;outline:2px dashed currentColor}
+  .atipp .slot.voll{outline:none} .atipp .slot.voll.c-x{background:#dce8f7} .atipp .slot.voll.c-y{background:#d9f0d6} .atipp .slot.voll.c-m{background:#fde7c8}
+  .atipp .puls{animation:puls 1s ease-in-out 2} @keyframes puls{50%{transform:scale(1.25);border-color:currentColor}}
+  .atipp .flieger{position:fixed;z-index:20;pointer-events:none;transition:transform .9s cubic-bezier(.5,0,.3,1);font-weight:800;border-radius:8px;padding:0 8px}
   details.idee{margin-top:8px;font-size:18px}
   details.idee summary{color:var(--acc);cursor:pointer;font-weight:600}
   details.idee div{background:var(--grau);border-radius:8px;padding:8px 10px;margin-top:6px;line-height:1.45}
@@ -92,6 +112,31 @@ function ks([m,c],X=5,Y=4){
   const [p,q]=clip(pts[0],pts[1]);g+=`<line x1="${px(p[0])}" y1="${py(p[1])}" x2="${px(q[0])}" y2="${py(q[1])}" stroke="#1f4e79" stroke-width="3"/>`;
   return `<svg class="ks" viewBox="0 0 ${W} ${H}" style="display:block;width:100%;max-width:${W}px;margin-top:6px;background:#fff;border:1px solid #d6dde6;border-radius:8px">${g}</svg>`;
 }
+// Animierter Tipp: cfg = {gegeben:[[id,html,farbklasse]], schritte:[{txt, zeile?, fly?:[[chip,slot,wert]], puls?:[chip]}], du}
+function animTipp(cfg){
+  const d=el("details","atipp");
+  d.innerHTML=`<summary>💡 Tipp als Animation</summary><div class="warn">Achtung: Beispiel mit anderen Zahlen als in deiner Aufgabe!</div>
+    <div class="geg"><b>Gegeben im Beispiel:</b> ${cfg.gegeben.map(([id,h,f])=>id?`<span class="chip ${f}" data-chip="${id}">${h}</span>`:h).join(" ")}</div>
+    <div class="kn"><button class="h" data-k="p">▶ Abspielen</button><button data-k="n">Nächster Schritt</button><button data-k="r">Von vorn</button></div>
+    <div class="brett"></div><div class="erk"></div><div class="du"><b>Jetzt du:</b> ${cfg.du}</div>`;
+  const brett=d.querySelector(".brett"),erk=d.querySelector(".erk"),du=d.querySelector(".du"),nb=d.querySelector('[data-k="n"]');
+  const chip=id=>d.querySelector(`[data-chip="${id}"]`),slot=id=>d.querySelector(`[data-slot="${id}"]`);
+  let n=0,timer=null;
+  const fliege=(c,s,wert)=>{const a=chip(c).getBoundingClientRect(),b=slot(s).getBoundingClientRect(),f=chip(c).cloneNode(true);
+    f.className="flieger "+chip(c).className.replace("puls","");f.style.left=a.left+"px";f.style.top=a.top+"px";f.style.fontSize="20px";document.body.appendChild(f);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px) scale(1.15)`;}));
+    setTimeout(()=>{f.remove();slot(s).innerHTML=wert;slot(s).classList.add("voll");},950);};
+  const puls=id=>{const e=chip(id);e.classList.remove("puls");void e.offsetWidth;e.classList.add("puls");};
+  const reset=()=>{clearInterval(timer);n=0;brett.innerHTML="";erk.textContent="Tippe auf „Abspielen“ oder „Nächster Schritt“.";du.classList.remove("da");nb.disabled=false;};
+  const weiter=()=>{if(n>=cfg.schritte.length)return;const s=cfg.schritte[n++];
+    if(s.zeile)brett.insertAdjacentHTML("beforeend",`<div class="z">${s.zeile}</div>`);
+    erk.innerHTML=s.txt;(s.puls||[]).forEach(puls);(s.fly||[]).forEach(([c,sl,w],i)=>setTimeout(()=>{puls(c);fliege(c,sl,w);},i*1100));
+    if(n>=cfg.schritte.length){nb.disabled=true;setTimeout(()=>du.classList.add("da"),1200);}};
+  nb.onclick=()=>{clearInterval(timer);weiter();};
+  d.querySelector('[data-k="r"]').onclick=reset;
+  d.querySelector('[data-k="p"]').onclick=()=>{reset();weiter();timer=setInterval(()=>{weiter();if(n>=cfg.schritte.length)clearInterval(timer);},4200);};
+  reset();return d;
+}
 function aufgabe(nr,a){
   let h=`<div class="kopf">Aufgabe ${nr}${tagHtml(a.tag)}</div><div class="txt">${esc(a.tag==="w"?a.t.replace(/^Wiederholung: /,""):a.t)}</div>`;
   // Wertetabelle: a.tab = [[x-Zeile], [y-Zeile]]; Teilaufgabe als Tabelle: sub-Eintrag ist eine Liste von Zeilen
@@ -103,7 +148,9 @@ function aufgabe(nr,a){
   // gestufte Hilfen (V.6): nacheinander aufklappen
   if(a.hilfen)h+=a.hilfen.map((x,i)=>`<details class="hilfe"><summary>Hilfe ${i+1}</summary><div>${esc(x)}</div></details>`).join("");
   if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
-  return el("div","aufg",h);
+  const e=el("div","aufg",h);
+  if(a.anim)e.insertBefore(animTipp(a.anim),e.querySelector("details.idee"));   // animierter Tipp vor der Lösungsidee
+  return e;
 }
 // Lösungen je Aufgabe (Malte 15.10.2026): erst „Lösungen anzeigen“, dann wählen, zu welcher Aufgabe – nie alle auf einmal.
 // liste = [[Beschriftung, Aufgabe]]; Aufgabe.mix = Lösungen (bei Aufgabe 1 nur richtige, sonst richtige + Fallen gemischt)
