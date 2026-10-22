@@ -98,7 +98,7 @@
 "use strict";
 // Versionsprüfung (wie Kap. I, 19.10.2026): Safari zeigt sonst bis zu 10 Minuten (oft länger) eine alte, gespeicherte Fassung.
 // Beim Öffnen wird die Seite ohne Zwischenspeicher abgefragt; ist sie neuer, lädt sie sich einmal neu.
-const STAND="20261019122403";
+const STAND="20261022112658";
 fetch(location.pathname+"?nocache="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{
   const m=t.match(/const STAND="(\d+)"/);
   if(m&&m[1]!==STAND&&!sessionStorage.getItem("neu"+m[1])){sessionStorage.setItem("neu"+m[1],"1");location.replace(location.pathname+"?v="+m[1]);}
@@ -109,7 +109,7 @@ const D={"untertitel": ["", "", ""], "mehrteilig": false, "teile": [{"name": "",
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\[frac ([^|\]]+)\|([^\]]+)\]/g,'<span class="frac"><span>$1</span><span>$2</span></span>');
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
 const tagHtml=t=>t==="z"?'<span class="tag z">⭐ Zusatz</span>':t==="v"?'<span class="tag v">💡 Verständnis</span>':t==="w"?'<span class="tag w">↩ Wiederholung</span>':"";
-function ks([m,c],X=5,Y=4){
+function ks([m,c],X=5,Y=4,parabel=false){   // parabel=true: y = m · x² + c (Kap. V.5, 22.10.2026)
   const U=36,W=2*X*U+40,H=2*Y*U+40,ox=20+X*U,oy=20+Y*U,px=x=>ox+x*U,py=y=>oy-y*U;let g="";
   for(let v=-X;v<=X+1e-9;v+=0.5)g+=`<line x1="${px(v)}" y1="${py(-Y)}" x2="${px(v)}" y2="${py(Y)}" stroke="#dde3ea"/>`;
   for(let v=-Y;v<=Y+1e-9;v+=0.5)g+=`<line x1="${px(-X)}" y1="${py(v)}" x2="${px(X)}" y2="${py(v)}" stroke="#dde3ea"/>`;
@@ -121,7 +121,9 @@ function ks([m,c],X=5,Y=4){
   const pts=[];for(const x of [-X,X]){const y=m*x+c;pts.push([x,y]);}
   const clip=([x1,y1],[x2,y2])=>{const t=v=>(v-y1)/(y2-y1);let a=0,b=1;if(y2!==y1){const ta=t(Y),tb=t(-Y);a=Math.max(a,Math.min(ta,tb));b=Math.min(b,Math.max(ta,tb));}
     return [[x1+(x2-x1)*a,y1+(y2-y1)*a],[x1+(x2-x1)*b,y1+(y2-y1)*b]];};
-  const [p,q]=clip(pts[0],pts[1]);g+=`<line x1="${px(p[0])}" y1="${py(p[1])}" x2="${px(q[0])}" y2="${py(q[1])}" stroke="#1f4e79" stroke-width="3"/>`;
+  if(parabel){let d="";for(let i=0;i<=200;i++){const x=-X+2*X*i/200,y=m*x*x+c;if(y<-Y-0.01||y>Y+0.01)continue;d+=(d?"L":"M")+px(x).toFixed(1)+" "+py(y).toFixed(1);}
+    g+=`<path d="${d}" fill="none" stroke="#b5432f" stroke-width="3"/>`;}
+  else{const [p,q]=clip(pts[0],pts[1]);g+=`<line x1="${px(p[0])}" y1="${py(p[1])}" x2="${px(q[0])}" y2="${py(q[1])}" stroke="#1f4e79" stroke-width="3"/>`;}
   return `<svg class="ks" viewBox="0 0 ${W} ${H}" style="display:block;width:100%;max-width:${W}px;margin-top:6px;background:#fff;border:1px solid #d6dde6;border-radius:8px">${g}</svg>`;
 }
 // Animierter Tipp: cfg = {gegeben:[[id,html,farbklasse]], schritte:[{txt, zeile?, fly?:[[chip,slot,wert]], puls?:[chip]}], du}
@@ -179,7 +181,7 @@ function aufgabe(nr,a){
   const wt=rows=>'<table class="wt">'+rows.map(r=>"<tr>"+r.map(c=>"<td>"+esc(String(c))+"</td>").join("")+"</tr>").join("")+"</table>";
   if(a.tab)h+=wt(a.tab);
   // Teilaufgabe mit Graph (15.10.2026): {txt:"…", gerade:[m, c]} → Koordinatensystem im Heftformat (1 Einheit = 2 Kästchen)
-  const sub=s=>Array.isArray(s)?wt(s):(s&&typeof s==="object")?(s.txt?`<span>${esc(s.txt)}</span>`:"")+ks(s.gerade):esc(s);
+  const sub=s=>Array.isArray(s)?wt(s):(s&&typeof s==="object")?(s.txt?`<span>${esc(s.txt)}</span>`:"")+(s.parabel?ks(s.parabel,5,5,true):s.gerade?ks(s.gerade):""):esc(s);
   if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li${s&&typeof s==="object"&&!Array.isArray(s)?' class="breit"':""}><b class="tb">${"abcdefgh"[i]})</b>${sub(s)}</li>`).join("")+"</ol>";
   // gestufte Hilfen (V.6): nacheinander aufklappen
   if(a.hilfen)h+=a.hilfen.map((x,i)=>`<details class="hilfe"><summary>Hilfe ${i+1}</summary><div>${esc(x)}</div></details>`).join("");
