@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Tipp: Grundgebühr und Preis pro km</title>
+<!-- V.9 Std 1 (26.10.2026, Malte): Grundgebühr = Startwert = y-Achsenabschnitt c; was pro km dazukommt = Steigung m.
+     Anderes Beispiel als im Skript: Taxi A 3 € + 2 € pro km → y = 2x + 3 · Taxi B 2,50 € pro km → y = 2,5x (c = 0).
+     Farben wie V.2/V.3: m orange, c rot. Treppe wächst Kilometer für Kilometer, Zahlen fliegen in die Gleichung. -->
+<style>
+  :root{--acc:#1f4e79;--m:#c0700f;--mH:#fbe6cc;--c:#b33c3c;--cH:#f6dada;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f4f7fb;--line:#c9d6e5;--lila:#6d4a9e;--b:#7b4fa0}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--lila);color:#fff} header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:960px;margin:0 auto}
+  .kn{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .kn button{flex:1 1 150px;min-height:52px;border-radius:12px;font-size:18px;font-weight:700;border:2px solid var(--acc);background:#fff;color:var(--acc)}
+  .kn button.h{background:var(--acc);color:#fff} .kn button:disabled{opacity:.4}
+  .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:12px;align-items:start}
+  @media (max-width:760px){.wrap{grid-template-columns:1fr}}
+  .karte{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:12px}
+  .tarif{font-size:21px;line-height:1.6;font-weight:600}
+  .chip{display:inline-block;border-radius:10px;padding:0 8px;transition:background .3s,transform .3s}
+  .chip.c{color:var(--c);background:var(--cH)} .chip.m{color:var(--m);background:var(--mH)} .chip.b{color:var(--b)}
+  .puls{animation:puls .9s 2} @keyframes puls{50%{transform:scale(1.15)}}
+  .gl{font-size:30px;font-weight:700;white-space:nowrap;line-height:1.7}
+  .slot{display:inline-block;min-width:1.3em;text-align:center;border-radius:10px;padding:0 6px;border:2px dashed transparent}
+  .slot.m{color:var(--m);border-color:var(--m)} .slot.c{color:var(--c);border-color:var(--c)}
+  .slot.voll.m{background:var(--mH);border-style:solid} .slot.voll.c{background:var(--cH);border-style:solid}
+  .erk{font-size:19px;line-height:1.45;color:var(--acc);font-weight:600;min-height:84px}
+  svg{width:100%;height:auto;display:block}
+  .flieger{position:fixed;z-index:20;pointer-events:none;transition:transform 1s cubic-bezier(.5,0,.3,1);font-weight:700;font-size:26px;border-radius:10px;padding:0 8px}
+  .merk{display:none;background:#dde8f5;border:1px solid #a9c1e0;border-radius:12px;padding:10px 14px;font-size:18px;line-height:1.55} .merk.da{display:block}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:12px 0}
+</style>
+</head>
+<body>
+<header><h1>Tipp: Grundgebühr und Preis pro km</h1></header>
+<main>
+  <div class="kn"><button class="h" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
+  <div class="wrap">
+    <div>
+      <div class="karte tarif">Beispiel mit anderen Zahlen:<br><b>Taxi A:</b> <span class="chip c" id="kc">3 € Grundgebühr</span> + <span class="chip m" id="km">2 € pro km</span><br>
+        <span id="tb" style="opacity:.25"><b>Taxi B:</b> keine Grundgebühr, <span class="chip b">2,50 € pro km</span></span></div>
+      <div class="karte"><div class="gl">A:&nbsp; y = <span class="slot m" id="sm">m</span> · x + <span class="slot c" id="sc">c</span></div>
+        <div class="gl" id="glb" style="opacity:0;transition:opacity .6s">B:&nbsp; y = <span style="color:var(--m)">2,5</span> · x + <span style="color:var(--c)">0</span> = 2,5x</div></div>
+      <div class="erk" id="erk"></div>
+    </div>
+    <div class="karte"><svg id="s" viewBox="0 0 460 430" aria-label="Koordinatensystem: x = gefahrene km, y = Preis in €"></svg></div>
+  </div>
+  <div class="merk" id="merk"><b>Merke:</b> <span style="color:var(--c);font-weight:700">Grundgebühr / Startwert</span> (das, was man bei x = 0 schon zahlt) → <b style="color:var(--c)">c</b>, steht hinten. &nbsp;
+    <span style="color:var(--m);font-weight:700">„pro km“, „pro Minute“, „pro Stück“</span> (das, was jedes Mal dazukommt) → <b style="color:var(--m)">m</b>, steht vor dem x.<br>
+    Keine Grundgebühr → c = 0, die Gerade startet im Ursprung. &nbsp;Wo sich die Geraden kreuzen, sind beide gleich teuer → <b>gleichsetzen</b>.</div>
+</main>
+<footer>Fehling · V.9 Gleichungssysteme · Tipp</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id), NS="http://www.w3.org/2000/svg", svg=$("s");
+const XMIN=0,XMAX=7,YMIN=0,YMAX=16,L=118,R=440,T=14,B=392;
+const X=x=>L+(R-L)*(x-XMIN)/(XMAX-XMIN), Y=y=>B-(B-T)*(y-YMIN)/(YMAX-YMIN);
+const mk=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+let lay;
+function gitter(){svg.innerHTML="";
+  for(let x=XMIN;x<=XMAX;x+=0.5)mk("line",{x1:X(x),x2:X(x),y1:Y(YMIN),y2:Y(YMAX),stroke:"#e3e9f1"});
+  for(let y=YMIN;y<=YMAX;y++)mk("line",{x1:X(XMIN),x2:X(XMAX),y1:Y(y),y2:Y(y),stroke:"#e3e9f1"});
+  mk("line",{x1:X(0),x2:X(XMAX),y1:Y(0),y2:Y(0),stroke:"#333","stroke-width":2});mk("line",{x1:X(0),x2:X(0),y1:Y(0),y2:Y(YMAX),stroke:"#333","stroke-width":2});
+  for(let x=1;x<=XMAX;x++){const t=mk("text",{x:X(x),y:Y(0)+18,"text-anchor":"middle","font-size":13});t.textContent=x;}
+  for(let y=2;y<=YMAX;y+=2){const t=mk("text",{x:X(0)-7,y:Y(y)+5,"text-anchor":"end","font-size":13});t.textContent=y;}
+  const tx=mk("text",{x:R,y:Y(0)+34,"text-anchor":"end","font-size":13,fill:"#5b6b7c"});tx.textContent="x = gefahrene km";
+  const ty=mk("text",{x:X(0)+6,y:T+12,"font-size":13,fill:"#5b6b7c"});ty.textContent="y = Preis in €";
+  lay=mk("g",{});}
+const punkt=(x,y,f,r=6)=>mk("circle",{cx:X(x),cy:Y(y),r,fill:f},lay);
+const text=(x,y,s,f,o={})=>{const t=mk("text",Object.assign({x:X(x),y:Y(y),"font-size":15,"font-weight":700,fill:f},o),lay);t.textContent=s;return t;};
+function linie(x1,y1,x2,y2,f,w=3,dash){const e=mk("line",{x1:X(x1),y1:Y(y1),x2:X(x1),y2:Y(y1),stroke:f,"stroke-width":w,"stroke-linecap":"round"},lay);
+  if(dash)e.setAttribute("stroke-dasharray",dash);
+  requestAnimationFrame(()=>{e.style.transition="all .7s";e.setAttribute("x2",X(x2));e.setAttribute("y2",Y(y2));});return e;}
+function fliege(von,nach,txt){const a=$(von).getBoundingClientRect(),b=$(nach).getBoundingClientRect(),f=document.createElement("div");
+  f.className="flieger";f.textContent=txt;f.style.color=getComputedStyle($(nach)).color;f.style.background=getComputedStyle($(von)).backgroundColor;
+  f.style.left=a.left+"px";f.style.top=a.top+"px";document.body.appendChild(f);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px)`;}));
+  setTimeout(()=>{f.remove();$(nach).textContent=txt;$(nach).classList.add("voll");},1050);}
+const puls=id=>{const e=$(id);e.classList.remove("puls");void e.offsetWidth;e.classList.add("puls");};
+const erk=h=>$("erk").innerHTML=h;
+function stufe(k){linie(k-1,3+2*(k-1),k,3+2*(k-1),"#c0700f",3,"6 4");setTimeout(()=>{linie(k,3+2*(k-1),k,3+2*k,"#c0700f",4);setTimeout(()=>{punkt(k,3+2*k,"#1f4e79",5);text(k+0.1,3+2*k-0.9,"+2","#c0700f",{"font-size":14});},700);},750);}
+const S=[
+ ()=>{puls("kc");erk("Noch <b>keinen</b> Kilometer gefahren (x = 0) – trotzdem zahlst du schon die <span style='color:var(--c)'>Grundgebühr: 3 €</span>.");
+      punkt(0,3,"#b33c3c",8);const tt=text(0,3,"Start: 3 €","#b33c3c");tt.setAttribute("x",X(0)-26);tt.setAttribute("y",Y(3)+5);tt.setAttribute("text-anchor","end");},
+ ()=>{erk("Der Startwert liegt auf der <b>y-Achse</b>. Dort schneidet die Gerade die y-Achse: Das ist der <span style='color:var(--c)'>y-Achsenabschnitt c = 3</span>.");
+      linie(0,0,0,3,"#b33c3c",6);fliege("kc","sc","3");},
+ ()=>{puls("km");erk("1 km gefahren: Es kommen <span style='color:var(--m)'>2 € dazu</span> → 5 €. Also 1 nach rechts, 2 nach oben.");stufe(1);},
+ ()=>{erk("Jeder weitere Kilometer: wieder <span style='color:var(--m)'>+ 2 €</span>. Immer 1 nach rechts, 2 nach oben – eine Treppe mit gleichen Stufen.");
+      stufe(2);setTimeout(()=>stufe(3),1500);setTimeout(()=>stufe(4),3000);},
+ ()=>{erk("Was <b>pro km dazukommt</b>, ist die <span style='color:var(--m)'>Steigung m = 2</span>. Sie steht vor dem x.");fliege("km","sm","2");},
+ ()=>{erk("Gleichung von Taxi A: <b>y = 2x + 3</b>. Alle Treppenpunkte liegen auf einer Geraden.");
+      linie(0,3,6.5,16,"#1f4e79",3);text(5.1,15.2,"A","#1f4e79",{"font-size":18});},
+ ()=>{$("tb").style.opacity=1;erk("Taxi B hat <b>keine Grundgebühr</b>: Bei x = 0 kostet es 0 € → <span style='color:var(--c)'>c = 0</span>. Die Gerade startet im Ursprung. Pro km 2,50 € → <span style='color:var(--m)'>m = 2,5</span>.");
+      punkt(0,0,"#7b4fa0",7);linie(0,0,6.4,16,"#7b4fa0",3);text(6.45,15.2,"B","#7b4fa0",{"font-size":18});$("glb").style.opacity=1;},
+ ()=>{erk("Am Anfang ist B billiger, aber B wird schneller teurer. Wo sich die Geraden <b>kreuzen</b>, kosten beide gleich viel – das berechnest du durch <b>Gleichsetzen</b>.");
+      mk("circle",{cx:X(6),cy:Y(15),r:13,fill:"none",stroke:"#c0392b","stroke-width":3},lay);$("merk").classList.add("da");},
+];
+let n=0,timer=null;
+function stop(){clearInterval(timer);timer=null;$("play").textContent="▶ Abspielen";}
+function weiter(){if(n>=S.length){stop();return;}S[n++]();$("next").disabled=n>=S.length;if(n>=S.length)stop();}
+function reset(){stop();n=0;gitter();["sm","sc"].forEach(i=>{$(i).textContent=i==="sm"?"m":"c";$(i).classList.remove("voll");});
+  $("tb").style.opacity=.25;$("glb").style.opacity=0;$("merk").classList.remove("da");$("next").disabled=false;erk("Tippe auf „Abspielen“ oder „Nächster Schritt“.");}
+$("next").onclick=()=>{stop();weiter();};
+$("reset").onclick=reset;
+$("play").onclick=()=>{if(timer){stop();return;}if(n>=S.length)reset();weiter();$("play").textContent="⏸ Pause";timer=setInterval(weiter,5500);};
+reset();
+</script>
+</body>
+</html>
