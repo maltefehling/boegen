@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Tipp: Wertetabelle ausfüllen</title>
+<!-- V.7 Std 2 (26.10.2026, Malte): Wie füllt man eine Wertetabelle aus? x-Wert blau hervorheben → in die Gleichung einsetzen
+     (negative Zahlen in Klammern) → y ausrechnen → Ergebnis fliegt grün in die Tabelle. Anderes Beispiel als im Skript:
+     y = x² − 4x + 1, x = −1 … 5 → 6 | 1 | −2 | −3 | −2 | 1 | 6. Die ersten drei Spalten ausführlich, dann zügiger. -->
+<style>
+  :root{--acc:#1f4e79;--x:#2e5d9f;--xH:#dbe7f6;--gr:#3f8f3a;--grH:#d9f0d6;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f4f7fb;--line:#c9d6e5;--k:#c0392b;--lila:#6d4a9e}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--lila);color:#fff} header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:900px;margin:0 auto}
+  .kn{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .kn button{flex:1 1 150px;min-height:52px;border-radius:12px;font-size:18px;font-weight:700;border:2px solid var(--acc);background:#fff;color:var(--acc)}
+  .kn button.h{background:var(--acc);color:#fff} .kn button:disabled{opacity:.4}
+  .karte{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:12px;overflow-x:auto}
+  .gl{font-size:30px;font-weight:700;line-height:1.8;white-space:nowrap}
+  .slot{display:inline-block;min-width:.8em;text-align:center;border-radius:8px;padding:0 3px;transition:background .4s,color .4s}
+  .slot.voll{background:var(--xH);color:var(--x)}
+  table{border-collapse:collapse;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+  td{border:2px solid var(--line);min-width:62px;height:52px;text-align:center;padding:0 6px;transition:background .4s}
+  td.kopf{background:#eef2f7;color:var(--acc);min-width:44px}
+  td.xh{background:var(--xH);color:var(--x);outline:3px solid var(--x);outline-offset:-3px}
+  td.yv{background:var(--grH);color:var(--gr)}
+  .rech{font-size:26px;font-weight:700;line-height:1.7;min-height:48px;white-space:nowrap}
+  .rech .x{color:var(--x)} .rech .e{color:var(--gr);background:var(--grH);border-radius:8px;padding:0 6px}
+  .erk{font-size:20px;line-height:1.45;color:var(--acc);font-weight:600;min-height:58px}
+  .warn{color:var(--k);font-weight:800}
+  .flieger{position:fixed;z-index:20;pointer-events:none;transition:transform 1s cubic-bezier(.5,0,.3,1);font-weight:700;font-size:26px;color:var(--gr);background:var(--grH);border-radius:10px;padding:0 8px}
+  .du{display:none;margin-top:6px;background:#fff;border:2px dashed var(--acc);border-radius:12px;padding:10px 14px;font-size:19px;line-height:1.45} .du.da{display:block}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:12px 0}
+</style>
+</head>
+<body>
+<header><h1>Tipp: Wertetabelle ausfüllen</h1></header>
+<main>
+  <div class="kn"><button class="h" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
+  <div class="karte"><div class="gl">y = <span class="slot" id="s1">x</span>² − 4 · <span class="slot" id="s2">x</span> + 1</div></div>
+  <div class="karte"><table><tr id="rx"><td class="kopf">x</td></tr><tr id="ry"><td class="kopf">y</td></tr></table></div>
+  <div class="karte"><div class="rech" id="rech">&nbsp;</div></div>
+  <div class="erk" id="erk"></div>
+  <div class="du" id="du"><b>Jetzt du:</b> Fülle deine Wertetabelle genauso aus – Spalte für Spalte: x nehmen, einsetzen (negative Zahlen in Klammern), ausrechnen, unten eintragen.</div>
+</main>
+<footer>Fehling · V.7 Scheitelform · Tipp</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const XS=[-1,0,1,2,3,4,5], f=x=>x*x-4*x+1;
+const m=v=>String(v).replace("-","−");
+const ein=x=>x<0?"( "+m(x)+" )":m(x);                       // negative Zahlen in Klammern
+XS.forEach(x=>{const a=document.createElement("td");a.textContent=m(x);$("rx").appendChild(a);const b=document.createElement("td");$("ry").appendChild(b);});
+const xc=i=>$("rx").children[i+1], yc=i=>$("ry").children[i+1];
+const rechnung=x=>{const q=x*x,p=-4*x,X=`<span class="x">${ein(x)}</span>`;
+  return `y = ${X}² − 4 · ${X} + 1 = ${m(q)} ${p<0?"− "+m(-p):"+ "+m(p)} + 1 = <span class="e">${m(f(x))}</span>`;};
+function markiere(i){for(let k=0;k<XS.length;k++)xc(k).classList.toggle("xh",k===i);}
+function setze(x){[$("s1"),$("s2")].forEach(s=>{s.textContent=x===null?"x":ein(x);s.classList.toggle("voll",x!==null);});}
+function fliege(i){const q=document.querySelector("#rech .e"),z=yc(i);if(!q){z.textContent=m(f(XS[i]));z.classList.add("yv");return;}
+  const a=q.getBoundingClientRect(),b=z.getBoundingClientRect(),fl=document.createElement("div");fl.className="flieger";fl.textContent=m(f(XS[i]));
+  fl.style.left=a.left+"px";fl.style.top=a.top+"px";document.body.appendChild(fl);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{fl.style.transform=`translate(${b.left+b.width/2-a.left-a.width/2}px,${b.top+b.height/2-a.top-a.height/2}px)`;}));
+  setTimeout(()=>{fl.remove();z.textContent=m(f(XS[i]));z.classList.add("yv");},1050);}
+// Schritte: die ersten drei Spalten ausführlich (markieren / einsetzen / ausrechnen / eintragen), danach je ein Schritt
+const S=[];
+XS.forEach((x,i)=>{
+  if(i<3){
+    S.push(()=>{markiere(i);setze(null);$("rech").innerHTML="&nbsp;";$("erk").innerHTML=`<b>Spalte ${i+1}:</b> Nimm den x-Wert <span style="color:var(--x)">x = ${m(x)}</span>.`;});
+    S.push(()=>{setze(x);$("erk").innerHTML=x<0?`Setze ${m(x)} für <b>jedes</b> x ein. <span class="warn">Negative Zahl → Klammern!</span> Sonst wird aus ( −1 )² falsch −1.`:`Setze ${m(x)} für <b>jedes</b> x in die Gleichung ein.`;});
+    S.push(()=>{$("rech").innerHTML=rechnung(x);$("erk").innerHTML=`Ausrechnen: erst hoch 2, dann mal, dann plus und minus.${x<0?" ( −1 )² = 1 und −4 · ( −1 ) = +4.":""}`;});
+    S.push(()=>{fliege(i);$("erk").innerHTML=`Das Ergebnis y = ${m(f(x))} kommt unten in die Tabelle – unter x = ${m(x)}.`;});
+  }else S.push(()=>{markiere(i);setze(x);$("rech").innerHTML=rechnung(x);setTimeout(()=>fliege(i),900);
+    $("erk").innerHTML=`x = ${m(x)}: einsetzen, ausrechnen, eintragen.${i===3?" Jetzt geht es schneller – immer gleich.":""}`;});
+});
+S.push(()=>{markiere(-1);setze(null);$("rech").innerHTML="Fertig: 6 | 1 | −2 | −3 | −2 | 1 | 6";
+  $("erk").innerHTML="Fällt dir etwas auf? Links und rechts von x = 2 stehen <b>dieselben</b> y-Werte – die Tabelle ist symmetrisch. Bei x = 2 liegt der Scheitel ( 2 | −3 ).";$("du").classList.add("da");});
+let n=0,timer=null;
+function stop(){clearInterval(timer);timer=null;$("play").textContent="▶ Abspielen";}
+function weiter(){if(n>=S.length){stop();return;}S[n++]();$("next").disabled=n>=S.length;if(n>=S.length)stop();}
+function reset(){stop();n=0;markiere(-1);setze(null);for(let i=0;i<XS.length;i++){yc(i).textContent="";yc(i).classList.remove("yv");}
+  $("rech").innerHTML="&nbsp;";$("erk").innerHTML="Tippe auf „Abspielen“ oder „Nächster Schritt“.";$("du").classList.remove("da");$("next").disabled=false;}
+$("next").onclick=()=>{stop();weiter();};
+$("reset").onclick=reset;
+$("play").onclick=()=>{if(timer){stop();return;}if(n>=S.length)reset();weiter();$("play").textContent="⏸ Pause";timer=setInterval(weiter,3800);};
+reset();
+</script>
+</body>
+</html>
