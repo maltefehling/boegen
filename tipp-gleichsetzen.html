@@ -37,15 +37,16 @@
 <footer>Fehling · V.8 Schnittpunkte · Tipp</footer>
 <script>
 "use strict";
-const D={"ymin": -4, "ymax": 7, "basis": [["k", "quad", 1, -3, "#b5432f"], ["k", "lin", -2, 0, "#2e5d9f"]], "schritte": [["① Gleichsetzen", "An gemeinsamen Punkten haben beide dasselbe y. Darum: Parabel-Term = Geraden-Term:  x² − 3 = −2x.", []], ["② Alles auf eine Seite, zusammenfassen", "x² − 3 + 2x = 0  →  x² + 2x − 3 = 0.", []], ["③ Nach x auflösen (abc-Formel)", "a = 1, b = 2, c = −3:  D = 4 + 12 = 16 → x = ( −2 ± 4 ) : 2 → x₁ = 1, x₂ = −3.", [["l", 1, -4, 1, 7, "#7b4fa0", 1], ["l", -3, -4, -3, 7, "#7b4fa0", 1]]], ["④ y ausrechnen – in die einfachere Gleichung", "Gerade: y = −2 · 1 = −2 und y = −2 · ( −3 ) = 6.  Gemeinsame Punkte ( 1 | −2 ) und ( −3 | 6 ).", [["p", 1, -2, "#3f8f3a"], ["p", -3, 6, "#3f8f3a"], ["t", 1.3, -2.6, "( 1 | −2 )", "#3f8f3a"], ["t", -2.7, 6.3, "( −3 | 6 )", "#3f8f3a"]]]]};
+const D={"ymin": -4, "ymax": 7, "xmin": -5, "xmax": 7, "basis": [["k", "quad", 1, -3, "#b5432f"], ["k", "lin", -2, 0, "#2e5d9f"]], "schritte": [["① Gleichsetzen", "An gemeinsamen Punkten haben beide dasselbe y. Darum: Parabel-Term = Geraden-Term:  x² − 3 = −2x.", []], ["② Alles auf eine Seite, zusammenfassen", "x² − 3 + 2x = 0  →  x² + 2x − 3 = 0.", []], ["③ Nach x auflösen (abc-Formel)", "a = 1, b = 2, c = −3:  D = 4 + 12 = 16 → x = ( −2 ± 4 ) : 2 → x₁ = 1, x₂ = −3.", [["l", 1, -4, 1, 7, "#7b4fa0", 1], ["l", -3, -4, -3, 7, "#7b4fa0", 1]]], ["④ y ausrechnen – in die einfachere Gleichung", "Gerade: y = −2 · 1 = −2 und y = −2 · ( −3 ) = 6.  Gemeinsame Punkte ( 1 | −2 ) und ( −3 | 6 ).", [["p", 1, -2, "#3f8f3a"], ["p", -3, 6, "#3f8f3a"], ["t", 1.3, -2.6, "( 1 | −2 )", "#3f8f3a"], ["t", -2.7, 6.3, "( −3 | 6 )", "#3f8f3a"]]]]};
 const NS="http://www.w3.org/2000/svg",svg=document.getElementById("s");
 const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
-const XMIN=-5,XMAX=7,YMIN=D.ymin,YMAX=D.ymax,L=30,R=420,T=20,B=410;
+const XMIN=D.xmin??-5,XMAX=D.xmax??7,YMIN=D.ymin,YMAX=D.ymax,L=30,R=420,T=20,B=410;
 const X=x=>L+(R-L)*(x-XMIN)/(XMAX-XMIN),Y=y=>B-(B-T)*(y-YMIN)/(YMAX-YMIN);
 function el(e){
   if(e[0]==="p")mk("circle",{cx:X(e[1]),cy:Y(e[2]),r:7,fill:e[3],stroke:"#fff","stroke-width":2});
   if(e[0]==="l")mk("line",{x1:X(e[1]),y1:Y(e[2]),x2:X(e[3]),y2:Y(e[4]),stroke:e[5],"stroke-width":4,"stroke-dasharray":e[6]?"7 5":"none"});
-  if(e[0]==="t"){const t=mk("text",{x:X(e[1]),y:Y(e[2]),"font-size":18,"font-weight":700,fill:e[4]});t.textContent=e[3];}
+  if(e[0]==="t"){const t=mk("text",{x:X(e[1]),y:Y(e[2]),"font-size":e[5]||18,"font-weight":700,fill:e[4]});t.textContent=e[3];}
+  if(e[0]==="w"){const r=0.35;mk("polyline",{points:[[e[1]+r*e[3],e[2]+r*e[4]],[e[1]+r*(e[3]+e[5]),e[2]+r*(e[4]+e[6])],[e[1]+r*e[5],e[2]+r*e[6]]].map(([x,y])=>X(x)+","+Y(y)).join(" "),fill:"none",stroke:e[7],"stroke-width":2.5});}
   if(e[0]==="k"){let d="";for(let i=0;i<=200;i++){const x=XMIN+(XMAX-XMIN)*i/200,y=e[1]==="lin"?e[2]*x+e[3]:e[2]*(x-(e[5]||0))**2+e[3];if(y<YMIN-0.5||y>YMAX+0.5)continue;d+=(d?"L":"M")+X(x).toFixed(1)+" "+Y(y).toFixed(1);}
     mk("path",{d,fill:"none",stroke:e[4],"stroke-width":3.5});}
 }

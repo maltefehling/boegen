@@ -37,15 +37,16 @@
 <footer>Fehling · V.7 Scheitelform · Tipp</footer>
 <script>
 "use strict";
-const D={"ymin": -4, "ymax": 4, "basis": [["k", "quad", 1, -2, "#b5432f", -2]], "schritte": [["Wo ist der Scheitel?", "Hier der tiefste Punkt: S ( −2 | −2 ).", [["p", -2, -2, "#c0392b"], ["t", -1.7, -2.7, "S ( −2 | −2 )", "#c0392b"]]], ["d ist der x-Wert des Scheitels", "d = −2 (blau). Er steht in der Klammer: ( x − d )² = ( x − ( −2 ) )².", [["l", -2, 0, -2, -2, "#2e5d9f", 1], ["t", -2.4, 0.4, "d = −2", "#2e5d9f"]]], ["Minus minus gibt plus", "( x − ( −2 ) )² = ( x + 2 )². Darum steht bei einem Scheitel LINKS ein Plus in der Klammer.", []], ["e ist der y-Wert des Scheitels", "e = −2 (grün) – er steht hinten mit seinem Vorzeichen: … − 2.  y = ( x + 2 )² − 2.", [["l", 0, -2, -2, -2, "#3f8f3a", 1], ["t", 0.2, -2.1, "e = −2", "#3f8f3a"]]], ["Probe mit 1-4-9", "1 zur Seite geht es 1 nach oben: ( −1 | −1 ) liegt auf der Parabel. ( −1 + 2 )² − 2 = −1 ✓", [["l", -2, -2, -1, -2, "#c0700f", 1], ["l", -1, -2, -1, -1, "#c0700f", 0], ["p", -1, -1, "#c0700f"]]]]};
+const D={"ymin": -4, "ymax": 4, "xmin": -5, "xmax": 7, "basis": [["k", "quad", 1, -2, "#b5432f", -2]], "schritte": [["Wo ist der Scheitel?", "Hier der tiefste Punkt: S ( −2 | −2 ).", [["p", -2, -2, "#c0392b"], ["t", -1.7, -2.7, "S ( −2 | −2 )", "#c0392b"]]], ["d ist der x-Wert des Scheitels", "d = −2 (blau). Er steht in der Klammer: ( x − d )² = ( x − ( −2 ) )².", [["l", -2, 0, -2, -2, "#2e5d9f", 1], ["t", -2.4, 0.4, "d = −2", "#2e5d9f"]]], ["Minus minus gibt plus", "( x − ( −2 ) )² = ( x + 2 )². Darum steht bei einem Scheitel LINKS ein Plus in der Klammer.", []], ["e ist der y-Wert des Scheitels", "e = −2 (grün) – er steht hinten mit seinem Vorzeichen: … − 2.  y = ( x + 2 )² − 2.", [["l", 0, -2, -2, -2, "#3f8f3a", 1], ["t", 0.2, -2.1, "e = −2", "#3f8f3a"]]], ["Probe mit 1-4-9", "1 zur Seite geht es 1 nach oben: ( −1 | −1 ) liegt auf der Parabel. ( −1 + 2 )² − 2 = −1 ✓", [["l", -2, -2, -1, -2, "#c0700f", 1], ["l", -1, -2, -1, -1, "#c0700f", 0], ["p", -1, -1, "#c0700f"]]]]};
 const NS="http://www.w3.org/2000/svg",svg=document.getElementById("s");
 const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
-const XMIN=-5,XMAX=7,YMIN=D.ymin,YMAX=D.ymax,L=30,R=420,T=20,B=410;
+const XMIN=D.xmin??-5,XMAX=D.xmax??7,YMIN=D.ymin,YMAX=D.ymax,L=30,R=420,T=20,B=410;
 const X=x=>L+(R-L)*(x-XMIN)/(XMAX-XMIN),Y=y=>B-(B-T)*(y-YMIN)/(YMAX-YMIN);
 function el(e){
   if(e[0]==="p")mk("circle",{cx:X(e[1]),cy:Y(e[2]),r:7,fill:e[3],stroke:"#fff","stroke-width":2});
   if(e[0]==="l")mk("line",{x1:X(e[1]),y1:Y(e[2]),x2:X(e[3]),y2:Y(e[4]),stroke:e[5],"stroke-width":4,"stroke-dasharray":e[6]?"7 5":"none"});
-  if(e[0]==="t"){const t=mk("text",{x:X(e[1]),y:Y(e[2]),"font-size":18,"font-weight":700,fill:e[4]});t.textContent=e[3];}
+  if(e[0]==="t"){const t=mk("text",{x:X(e[1]),y:Y(e[2]),"font-size":e[5]||18,"font-weight":700,fill:e[4]});t.textContent=e[3];}
+  if(e[0]==="w"){const r=0.35;mk("polyline",{points:[[e[1]+r*e[3],e[2]+r*e[4]],[e[1]+r*(e[3]+e[5]),e[2]+r*(e[4]+e[6])],[e[1]+r*e[5],e[2]+r*e[6]]].map(([x,y])=>X(x)+","+Y(y)).join(" "),fill:"none",stroke:e[7],"stroke-width":2.5});}
   if(e[0]==="k"){let d="";for(let i=0;i<=200;i++){const x=XMIN+(XMAX-XMIN)*i/200,y=e[1]==="lin"?e[2]*x+e[3]:e[2]*(x-(e[5]||0))**2+e[3];if(y<YMIN-0.5||y>YMAX+0.5)continue;d+=(d?"L":"M")+X(x).toFixed(1)+" "+Y(y).toFixed(1);}
     mk("path",{d,fill:"none",stroke:e[4],"stroke-width":3.5});}
 }

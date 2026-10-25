@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Tipp: Scheitelform ausmultiplizieren</title>
+<!-- V.7 Std 2 (26.10.2026, Malte: mehr Visualisierung): Rechentabelle wie bei den binomischen Formeln in Kl. 8.
+     Anderes Beispiel als im Skript: y = ( x − 2 )² + 1 → x² − 4x + 4 + 1 = x² − 4x + 5. Felder füllen sich nacheinander. -->
+<style>
+  :root{--acc:#1f4e79;--b:#2e5d9f;--bH:#dbe7f6;--g:#3f8f3a;--gH:#d9f0d6;--o:#c0700f;--oH:#fbe6cc;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f4f7fb;--line:#c9d6e5;--lila:#6d4a9e}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--lila);color:#fff} header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:900px;margin:0 auto}
+  .kn{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .kn button{flex:1 1 150px;min-height:52px;border-radius:12px;font-size:18px;font-weight:700;border:2px solid var(--acc);background:#fff;color:var(--acc)}
+  .kn button.h{background:var(--acc);color:#fff} .kn button:disabled{opacity:.4}
+  .karte{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:12px}
+  .start{font-size:22px;font-weight:700}
+  .wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+  @media (max-width:640px){.wrap{grid-template-columns:1fr}}
+  table{border-collapse:collapse;font-size:26px;font-weight:700}
+  td{width:120px;height:86px;text-align:center;border:3px solid #fff;border-radius:8px}
+  td.k{background:#eef2f7;color:var(--acc);width:70px;height:56px}
+  td.f{background:#f6f8fb;color:transparent;transition:background .5s,color .5s}
+  td.f.da{color:inherit} td.b.da{background:var(--bH);color:var(--b)} td.g.da{background:var(--gH);color:var(--g)} td.o.da{background:var(--oH);color:var(--o)}
+  td.h{outline:3px solid var(--acc);outline-offset:-3px}
+  .rech{font-size:24px;font-weight:700;line-height:1.7;min-height:90px}
+  .rech span{opacity:0;transition:opacity .5s} .rech span.da{opacity:1}
+  .erk{font-size:19px;line-height:1.45;color:var(--acc);font-weight:600;min-height:58px;margin-top:8px}
+  .du{display:none;margin-top:6px;background:#fff;border:2px dashed var(--acc);border-radius:12px;padding:10px 14px;font-size:19px;line-height:1.45} .du.da{display:block}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:12px 0}
+</style>
+</head>
+<body>
+<header><h1>Tipp: Scheitelform ausmultiplizieren</h1></header>
+<main>
+  <div class="karte start">Beispiel mit anderen Zahlen:&nbsp; y = ( x − 2 )² + 1</div>
+  <div class="kn"><button class="h" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
+  <div class="karte wrap">
+    <table>
+      <tr><td class="k">·</td><td class="k">x</td><td class="k">− 2</td></tr>
+      <tr><td class="k">x</td><td class="f b" id="f1">x²</td><td class="f g" id="f2">− 2x</td></tr>
+      <tr><td class="k">− 2</td><td class="f g" id="f3">− 2x</td><td class="f o" id="f4">+ 4</td></tr>
+    </table>
+    <div class="rech" id="rech">
+      <span id="r1">( x − 2 )² = ( x − 2 ) · ( x − 2 )</span><br>
+      <span id="r2">= <b style="color:var(--b)">x²</b> <b style="color:var(--g)">− 2x − 2x</b> <b style="color:var(--o)">+ 4</b></span><br>
+      <span id="r3">= x² − 4x + 4</span><br>
+      <span id="r4">y = x² − 4x + 4 <b>+ 1</b> = <b>x² − 4x + 5</b></span>
+    </div>
+  </div>
+  <div class="erk" id="erk"></div>
+  <div class="du" id="du"><b>Jetzt du:</b> Schreib deine Klammer genauso als Rechentabelle: oben und links stehen x und die Zahl <b>mit Vorzeichen</b>. Vier Felder ausrechnen, zusammenfassen – und die Zahl hinter der Klammer nicht vergessen.</div>
+</main>
+<footer>Fehling · V.7 Scheitelform · Tipp</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const hl=id=>{["f1","f2","f3","f4"].forEach(f=>$(f).classList.toggle("h",f===id));};
+const S=[
+ ()=>{$("r1").classList.add("da");$("erk").innerHTML="Hoch 2 heißt: die Klammer mal sich selbst. Oben und links stehen x und <b>− 2</b> – das Minus gehört zur 2.";},
+ ()=>{hl("f1");$("f1").classList.add("da");$("erk").innerHTML="x · x = <b style='color:var(--b)'>x²</b>";},
+ ()=>{hl("f2");$("f2").classList.add("da");$("f3").classList.add("da");$("erk").innerHTML="x · ( − 2 ) = <b style='color:var(--g)'>− 2x</b> – und das gleiche Feld gibt es zweimal.";},
+ ()=>{hl("f4");$("f4").classList.add("da");$("erk").innerHTML="( − 2 ) · ( − 2 ) = <b style='color:var(--o)'>+ 4</b> – minus mal minus ist plus.";},
+ ()=>{hl(null);$("r2").classList.add("da");$("r3").classList.add("da");$("erk").innerHTML="Alle vier Felder zusammen, die zwei grünen zusammenfassen: − 2x − 2x = − 4x.";},
+ ()=>{$("r4").classList.add("da");$("erk").innerHTML="Zum Schluss die Zahl <b>hinter</b> der Klammer: + 1. Fertig ist die Normalform.";},
+];
+let n=0,timer=null;
+function stop(){clearInterval(timer);timer=null;$("play").textContent="▶ Abspielen";}
+function weiter(){if(n>=S.length){stop();return;}S[n++]();$("next").disabled=n>=S.length;if(n>=S.length){stop();$("du").classList.add("da");}}
+function reset(){stop();n=0;["f1","f2","f3","f4"].forEach(f=>$(f).classList.remove("da","h"));["r1","r2","r3","r4"].forEach(r=>$(r).classList.remove("da"));
+  $("du").classList.remove("da");$("next").disabled=false;$("erk").innerHTML="Tippe auf „Abspielen“ oder „Nächster Schritt“.";}
+$("next").onclick=()=>{stop();weiter();};
+$("reset").onclick=reset;
+$("play").onclick=()=>{if(timer){stop();return;}if(n>=S.length)reset();weiter();$("play").textContent="⏸ Pause";timer=setInterval(weiter,4000);};
+reset();
+</script>
+</body>
+</html>

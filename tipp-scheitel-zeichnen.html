@@ -37,15 +37,16 @@
 <footer>Fehling · V.7 Scheitelform · Tipp</footer>
 <script>
 "use strict";
-const D={"ymin": -4, "ymax": 7, "basis": [], "schritte": [["Scheitel aus der Gleichung lesen", "( x + 1 )² = ( x − ( −1 ) )² → d = −1. Hinten − 3 → e = −3.  S ( −1 | −3 ).", [["p", -1, -3, "#c0392b"]]], ["1 nach rechts → 1 nach oben", "Punkt ( 0 | −2 ). Links genauso: ( −2 | −2 ).", [["l", -1, -3, 0, -3, "#c0700f", 1], ["l", 0, -3, 0, -2, "#c0700f", 0], ["p", 0, -2, "#c0700f"], ["p", -2, -2, "#c0700f"]]], ["2 nach rechts → 4 nach oben", "Punkt ( 1 | 1 ). Links: ( −3 | 1 ).", [["l", 0, -3, 1, -3, "#c0700f", 1], ["l", 1, -3, 1, 1, "#c0700f", 0], ["p", 1, 1, "#c0700f"], ["p", -3, 1, "#c0700f"]]], ["3 nach rechts → 9 nach oben", "Punkt ( 2 | 6 ). Links: ( −4 | 6 ).", [["l", 1, -3, 2, -3, "#c0700f", 1], ["l", 2, -3, 2, 6, "#c0700f", 0], ["p", 2, 6, "#c0700f"], ["p", -4, 6, "#c0700f"]]], ["Frei Hand verbinden", "Rund verbinden – die Spiegelachse geht senkrecht durch den Scheitel (x = −1).", [["k", "quad", 1, -3, "#b5432f", -1]]]]};
+const D={"ymin": -4, "ymax": 7, "xmin": -5, "xmax": 7, "basis": [], "schritte": [["Scheitel aus der Gleichung lesen", "( x + 1 )² = ( x − ( −1 ) )² → d = −1. Hinten − 3 → e = −3.  S ( −1 | −3 ).", [["p", -1, -3, "#c0392b"]]], ["1 nach rechts → 1 nach oben", "Punkt ( 0 | −2 ). Links genauso: ( −2 | −2 ).", [["l", -1, -3, 0, -3, "#c0700f", 1], ["l", 0, -3, 0, -2, "#c0700f", 0], ["p", 0, -2, "#c0700f"], ["p", -2, -2, "#c0700f"]]], ["2 nach rechts → 4 nach oben", "Punkt ( 1 | 1 ). Links: ( −3 | 1 ).", [["l", 0, -3, 1, -3, "#c0700f", 1], ["l", 1, -3, 1, 1, "#c0700f", 0], ["p", 1, 1, "#c0700f"], ["p", -3, 1, "#c0700f"]]], ["3 nach rechts → 9 nach oben", "Punkt ( 2 | 6 ). Links: ( −4 | 6 ).", [["l", 1, -3, 2, -3, "#c0700f", 1], ["l", 2, -3, 2, 6, "#c0700f", 0], ["p", 2, 6, "#c0700f"], ["p", -4, 6, "#c0700f"]]], ["Frei Hand verbinden", "Rund verbinden – die Spiegelachse geht senkrecht durch den Scheitel (x = −1).", [["k", "quad", 1, -3, "#b5432f", -1]]]]};
 const NS="http://www.w3.org/2000/svg",svg=document.getElementById("s");
 const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
-const XMIN=-5,XMAX=7,YMIN=D.ymin,YMAX=D.ymax,L=30,R=420,T=20,B=410;
+const XMIN=D.xmin??-5,XMAX=D.xmax??7,YMIN=D.ymin,YMAX=D.ymax,L=30,R=420,T=20,B=410;
 const X=x=>L+(R-L)*(x-XMIN)/(XMAX-XMIN),Y=y=>B-(B-T)*(y-YMIN)/(YMAX-YMIN);
 function el(e){
   if(e[0]==="p")mk("circle",{cx:X(e[1]),cy:Y(e[2]),r:7,fill:e[3],stroke:"#fff","stroke-width":2});
   if(e[0]==="l")mk("line",{x1:X(e[1]),y1:Y(e[2]),x2:X(e[3]),y2:Y(e[4]),stroke:e[5],"stroke-width":4,"stroke-dasharray":e[6]?"7 5":"none"});
-  if(e[0]==="t"){const t=mk("text",{x:X(e[1]),y:Y(e[2]),"font-size":18,"font-weight":700,fill:e[4]});t.textContent=e[3];}
+  if(e[0]==="t"){const t=mk("text",{x:X(e[1]),y:Y(e[2]),"font-size":e[5]||18,"font-weight":700,fill:e[4]});t.textContent=e[3];}
+  if(e[0]==="w"){const r=0.35;mk("polyline",{points:[[e[1]+r*e[3],e[2]+r*e[4]],[e[1]+r*(e[3]+e[5]),e[2]+r*(e[4]+e[6])],[e[1]+r*e[5],e[2]+r*e[6]]].map(([x,y])=>X(x)+","+Y(y)).join(" "),fill:"none",stroke:e[7],"stroke-width":2.5});}
   if(e[0]==="k"){let d="";for(let i=0;i<=200;i++){const x=XMIN+(XMAX-XMIN)*i/200,y=e[1]==="lin"?e[2]*x+e[3]:e[2]*(x-(e[5]||0))**2+e[3];if(y<YMIN-0.5||y>YMAX+0.5)continue;d+=(d?"L":"M")+X(x).toFixed(1)+" "+Y(y).toFixed(1);}
     mk("path",{d,fill:"none",stroke:e[4],"stroke-width":3.5});}
 }
