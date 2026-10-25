@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fahrplan V.5 Parabeln y = ax² + c</title>
+<style>
+  :root{
+    --blue:#bcd3f2; --green:#c6e8c0; --green-d:#3f8f3a; --orange:#fbd9a8; --orange-bg:#fdf6ea; --pro:#eef0f3;
+    --ink:#1b2a3a; --muted:#5b6b7c; --acc:#1f4e79; --bg:#f4f7fb; --card:#ffffff; --line:#c9d6e5;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+  button{font:inherit;touch-action:manipulation}
+  header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 16px;background:var(--acc);color:#fff}
+  header h1{font-size:20px;margin:0 12px 0 0}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tab{border:0;border-radius:10px;padding:10px 16px;background:rgba(255,255,255,.15);color:#fff;font-weight:600;font-size:16px;min-height:44px}
+  .tab[aria-selected="true"]{background:#fff;color:var(--acc)}
+  main{padding:14px 16px 28px;max-width:860px;margin:0 auto}
+  .hint{background:var(--orange-bg);border:1px solid var(--orange);border-radius:12px;padding:10px 14px;font-size:17px;line-height:1.4;margin-bottom:14px}
+  .task{font-size:19px;line-height:1.4;margin:0 0 12px}
+  .task b{color:var(--acc)}
+  .nb{white-space:nowrap}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px 14px 60px;position:relative;margin-bottom:10px}
+  .step::before{content:attr(data-n);position:absolute;left:14px;top:14px;width:32px;height:32px;border-radius:50%;background:var(--acc);color:#fff;font-size:17px;font-weight:700;display:grid;place-items:center}
+  .step.pro{background:var(--pro)}
+  .step.pro::before{content:"★";}
+  .step.done{border-color:var(--green-d);background:#f1f9ef}
+  .zeige{font-size:20px;font-weight:700;margin-bottom:8px}
+  .zeige span{color:var(--acc)}
+  .words{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .words b{background:var(--blue);border-radius:8px;padding:4px 10px;font-size:18px;font-weight:600;white-space:nowrap}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .joker,.ok{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:8px 14px;font-size:16px;font-weight:600;min-height:44px}
+  .ok[aria-pressed="true"]{background:var(--green);border-color:var(--green-d);color:var(--green-d)}
+  .satz{display:none;font-size:19px;font-style:italic;background:var(--orange-bg);border:1px dashed var(--orange);border-radius:8px;padding:6px 10px;margin-top:8px}
+  .satz.show{display:block}
+  .msg{min-height:30px;font-size:20px;font-weight:700;color:var(--green-d);margin:12px 0 4px}
+  .btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:10px 18px;font-size:17px;font-weight:600;min-height:44px}
+  .foot{color:var(--muted);font-size:14px;margin-top:18px}
+  .task svg{display:block;width:100%;max-width:240px;margin:10px auto 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>★★ Fahrplan · a und c erklären</h1>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-p="A">Partner A · y = 2x² − 3</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="B">Partner B · y = −0,5x² + 2</button>
+  </div>
+</header>
+<main>
+  <div class="hint">Erkläre Schritt für Schritt in <b>eigenen Sätzen</b>. Zeig dabei auf die Gleichung und aufs Bild. Die blauen Wörter helfen dir. Wenn du hängst, tippe auf <b>Joker</b>. Hake jeden Schritt ab, den du erklärt hast.</div>
+  <div id="plan"></div>
+  <div class="msg" id="msg"></div>
+  <button class="btn" id="reset">Von vorn</button>
+  <p class="foot">Mathematik Klasse 10 · V.5 Parabeln y = ax² + c · Hilfe zum Erklär-Tandem</p>
+</main>
+<script>
+(function(){
+  // Pro Set: Aufgabe und vier Schritte (Zeige … / Stichwörter / Joker-Satzanfang), dazu der Profi-Schritt
+  var sets={"A": {"task": "Erkläre deinem Partner an <b class=\"nb\">y = 2x² − 3</b>, was a und c mit der Parabel machen und wie man a am Bild abliest.<br><svg viewBox=\"0 0 180 180\" aria-label=\"Parabel\"><line x1=\"10\" y1=\"170\" x2=\"10\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"26\" y1=\"170\" x2=\"26\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"42\" y1=\"170\" x2=\"42\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"58\" y1=\"170\" x2=\"58\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"74\" y1=\"170\" x2=\"74\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"90\" y1=\"170\" x2=\"90\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"106\" y1=\"170\" x2=\"106\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"122\" y1=\"170\" x2=\"122\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"138\" y1=\"170\" x2=\"138\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"154\" y1=\"170\" x2=\"154\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"170\" y1=\"170\" x2=\"170\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"170\" x2=\"170\" y2=\"170\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"154\" x2=\"170\" y2=\"154\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"138\" x2=\"170\" y2=\"138\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"122\" x2=\"170\" y2=\"122\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"106\" x2=\"170\" y2=\"106\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"90\" x2=\"170\" y2=\"90\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"74\" x2=\"170\" y2=\"74\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"58\" x2=\"170\" y2=\"58\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"42\" x2=\"170\" y2=\"42\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"26\" x2=\"170\" y2=\"26\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"10\" x2=\"170\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"106\" x2=\"170\" y2=\"106\" stroke=\"#333\" stroke-width=\"1.5\"/><line x1=\"90\" y1=\"170\" x2=\"90\" y2=\"10\" stroke=\"#333\" stroke-width=\"1.5\"/><polyline points=\"56.4,12.9 56.9,17.3 57.5,21.7 58.0,26.0 58.5,30.2 59.1,34.4 59.6,38.5 60.1,42.5 60.7,46.4 61.2,50.3 61.7,54.1 62.3,57.9 62.8,61.5 63.3,65.1 63.9,68.6 64.4,72.1 64.9,75.5 65.5,78.8 66.0,82.0 66.5,85.2 67.1,88.3 67.6,91.3 68.1,94.2 68.7,97.1 69.2,99.9 69.7,102.7 70.3,105.3 70.8,107.9 71.3,110.4 71.9,112.9 72.4,115.3 72.9,117.6 73.5,119.8 74.0,122.0 74.5,124.1 75.1,126.1 75.6,128.1 76.1,130.0 76.7,131.8 77.2,133.5 77.7,135.2 78.3,136.8 78.8,138.3 79.3,139.8 79.9,141.2 80.4,142.5 80.9,143.7 81.5,144.9 82.0,146.0 82.5,147.0 83.1,148.0 83.6,148.9 84.1,149.7 84.7,150.4 85.2,151.1 85.7,151.7 86.3,152.3 86.8,152.7 87.3,153.1 87.9,153.4 88.4,153.7 88.9,153.9 89.5,154.0 90.0,154.0 90.5,154.0 91.1,153.9 91.6,153.7 92.1,153.4 92.7,153.1 93.2,152.7 93.7,152.3 94.3,151.7 94.8,151.1 95.3,150.4 95.9,149.7 96.4,148.9 96.9,148.0 97.5,147.0 98.0,146.0 98.5,144.9 99.1,143.7 99.6,142.5 100.1,141.2 100.7,139.8 101.2,138.3 101.7,136.8 102.3,135.2 102.8,133.5 103.3,131.8 103.9,130.0 104.4,128.1 104.9,126.1 105.5,124.1 106.0,122.0 106.5,119.8 107.1,117.6 107.6,115.3 108.1,112.9 108.7,110.4 109.2,107.9 109.7,105.3 110.3,102.7 110.8,99.9 111.3,97.1 111.9,94.2 112.4,91.3 112.9,88.3 113.5,85.2 114.0,82.0 114.5,78.8 115.1,75.5 115.6,72.1 116.1,68.6 116.7,65.1 117.2,61.5 117.7,57.9 118.3,54.1 118.8,50.3 119.3,46.4 119.9,42.5 120.4,38.5 120.9,34.4 121.5,30.2 122.0,26.0 122.5,21.7 123.1,17.3 123.6,12.9\" fill=\"none\" stroke=\"#b5432f\" stroke-width=\"3\"/><line x1=\"90\" y1=\"154\" x2=\"106\" y2=\"154\" stroke=\"#2e5d9f\" stroke-width=\"2.5\" stroke-dasharray=\"5 3\"/><line x1=\"106\" y1=\"154\" x2=\"106\" y2=\"122\" stroke=\"#3f8f3a\" stroke-width=\"2.5\" stroke-dasharray=\"5 3\"/><circle cx=\"90\" cy=\"154\" r=\"5\" fill=\"#c0392b\"/><text x=\"166\" y=\"101\" font-size=\"12\" text-anchor=\"end\" fill=\"#333\">x</text><text x=\"95\" y=\"21\" font-size=\"12\" fill=\"#333\">y</text></svg>", "steps": [["auf die Zahl ohne x", ["c = −3", "S ( 0 | −3 )", "auf der y-Achse"], "Der Scheitel ist …"], ["auf die Zahl vor x²", ["a = 2", "positiv", "nach oben geöffnet"], "Vor x² steht …"], ["auf die Breite der Parabel", ["2 größer als 1", "schmaler"], "Die Parabel ist …"], ["aufs Bild: 1 zur Seite", ["2 nach oben", "das ist a", "2 zur Seite → 4 · a = 8"], "Vom Scheitel aus …"]]}, "B": {"task": "Erkläre deinem Partner an <b class=\"nb\">y = −0,5x² + 2</b>, was a und c mit der Parabel machen und wie man a am Bild abliest.<br><svg viewBox=\"0 0 180 180\" aria-label=\"Parabel\"><line x1=\"10\" y1=\"170\" x2=\"10\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"26\" y1=\"170\" x2=\"26\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"42\" y1=\"170\" x2=\"42\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"58\" y1=\"170\" x2=\"58\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"74\" y1=\"170\" x2=\"74\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"90\" y1=\"170\" x2=\"90\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"106\" y1=\"170\" x2=\"106\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"122\" y1=\"170\" x2=\"122\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"138\" y1=\"170\" x2=\"138\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"154\" y1=\"170\" x2=\"154\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"170\" y1=\"170\" x2=\"170\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"170\" x2=\"170\" y2=\"170\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"154\" x2=\"170\" y2=\"154\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"138\" x2=\"170\" y2=\"138\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"122\" x2=\"170\" y2=\"122\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"106\" x2=\"170\" y2=\"106\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"90\" x2=\"170\" y2=\"90\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"74\" x2=\"170\" y2=\"74\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"58\" x2=\"170\" y2=\"58\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"42\" x2=\"170\" y2=\"42\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"26\" x2=\"170\" y2=\"26\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"10\" x2=\"170\" y2=\"10\" stroke=\"#dde3ea\"/><line x1=\"10\" y1=\"106\" x2=\"170\" y2=\"106\" stroke=\"#333\" stroke-width=\"1.5\"/><line x1=\"90\" y1=\"170\" x2=\"90\" y2=\"10\" stroke=\"#333\" stroke-width=\"1.5\"/><polyline points=\"35.1,168.3 35.6,166.5 36.1,164.7 36.7,162.9 37.2,161.1 37.7,159.4 38.3,157.6 38.8,155.9 39.3,154.2 39.9,152.5 40.4,150.9 40.9,149.2 41.5,147.6 42.0,146.0 42.5,144.4 43.1,142.8 43.6,141.3 44.1,139.7 44.7,138.2 45.2,136.7 45.7,135.2 46.3,133.8 46.8,132.3 47.3,130.9 47.9,129.5 48.4,128.1 48.9,126.7 49.5,125.3 50.0,124.0 50.5,122.7 51.1,121.4 51.6,120.1 52.1,118.8 52.7,117.6 53.2,116.3 53.7,115.1 54.3,113.9 54.8,112.7 55.3,111.6 55.9,110.4 56.4,109.3 56.9,108.2 57.5,107.1 58.0,106.0 58.5,104.9 59.1,103.9 59.6,102.9 60.1,101.9 60.7,100.9 61.2,99.9 61.7,99.0 62.3,98.0 62.8,97.1 63.3,96.2 63.9,95.3 64.4,94.5 64.9,93.6 65.5,92.8 66.0,92.0 66.5,91.2 67.1,90.4 67.6,89.7 68.1,88.9 68.7,88.2 69.2,87.5 69.7,86.8 70.3,86.2 70.8,85.5 71.3,84.9 71.9,84.3 72.4,83.7 72.9,83.1 73.5,82.5 74.0,82.0 74.5,81.5 75.1,81.0 75.6,80.5 76.1,80.0 76.7,79.6 77.2,79.1 77.7,78.7 78.3,78.3 78.8,77.9 79.3,77.6 79.9,77.2 80.4,76.9 80.9,76.6 81.5,76.3 82.0,76.0 82.5,75.7 83.1,75.5 83.6,75.3 84.1,75.1 84.7,74.9 85.2,74.7 85.7,74.6 86.3,74.4 86.8,74.3 87.3,74.2 87.9,74.1 88.4,74.1 88.9,74.0 89.5,74.0 90.0,74.0 90.5,74.0 91.1,74.0 91.6,74.1 92.1,74.1 92.7,74.2 93.2,74.3 93.7,74.4 94.3,74.6 94.8,74.7 95.3,74.9 95.9,75.1 96.4,75.3 96.9,75.5 97.5,75.7 98.0,76.0 98.5,76.3 99.1,76.6 99.6,76.9 100.1,77.2 100.7,77.6 101.2,77.9 101.7,78.3 102.3,78.7 102.8,79.1 103.3,79.6 103.9,80.0 104.4,80.5 104.9,81.0 105.5,81.5 106.0,82.0 106.5,82.5 107.1,83.1 107.6,83.7 108.1,84.3 108.7,84.9 109.2,85.5 109.7,86.2 110.3,86.8 110.8,87.5 111.3,88.2 111.9,88.9 112.4,89.7 112.9,90.4 113.5,91.2 114.0,92.0 114.5,92.8 115.1,93.6 115.6,94.5 116.1,95.3 116.7,96.2 117.2,97.1 117.7,98.0 118.3,99.0 118.8,99.9 119.3,100.9 119.9,101.9 120.4,102.9 120.9,103.9 121.5,104.9 122.0,106.0 122.5,107.1 123.1,108.2 123.6,109.3 124.1,110.4 124.7,111.6 125.2,112.7 125.7,113.9 126.3,115.1 126.8,116.3 127.3,117.6 127.9,118.8 128.4,120.1 128.9,121.4 129.5,122.7 130.0,124.0 130.5,125.3 131.1,126.7 131.6,128.1 132.1,129.5 132.7,130.9 133.2,132.3 133.7,133.8 134.3,135.2 134.8,136.7 135.3,138.2 135.9,139.7 136.4,141.3 136.9,142.8 137.5,144.4 138.0,146.0 138.5,147.6 139.1,149.2 139.6,150.9 140.1,152.5 140.7,154.2 141.2,155.9 141.7,157.6 142.3,159.4 142.8,161.1 143.3,162.9 143.9,164.7 144.4,166.5 144.9,168.3\" fill=\"none\" stroke=\"#b5432f\" stroke-width=\"3\"/><line x1=\"90\" y1=\"74\" x2=\"106\" y2=\"74\" stroke=\"#2e5d9f\" stroke-width=\"2.5\" stroke-dasharray=\"5 3\"/><line x1=\"106\" y1=\"74\" x2=\"106\" y2=\"82.0\" stroke=\"#3f8f3a\" stroke-width=\"2.5\" stroke-dasharray=\"5 3\"/><circle cx=\"90\" cy=\"74\" r=\"5\" fill=\"#c0392b\"/><text x=\"166\" y=\"101\" font-size=\"12\" text-anchor=\"end\" fill=\"#333\">x</text><text x=\"95\" y=\"21\" font-size=\"12\" fill=\"#333\">y</text></svg>", "steps": [["auf die Zahl ohne x", ["c = 2", "S ( 0 | 2 )", "auf der y-Achse"], "Der Scheitel ist …"], ["auf die Zahl vor x²", ["a = −0,5", "negativ", "nach unten geöffnet"], "Vor x² steht …"], ["auf die Breite der Parabel", ["0,5 kleiner als 1", "breiter"], "Die Parabel ist …"], ["aufs Bild: 1 zur Seite", ["0,5 nach unten", "a = −0,5", "2 zur Seite → 4 · 0,5 = 2 nach unten"], "Vom Scheitel aus …"]]}};
+  var pro=["nach, warum der Scheitel immer auf der y-Achse liegt", ["x = 0", "a · 0² = 0", "y = c", "spiegelbildlich"], "Bei x = 0 …"];
+  var cur="A", plan=document.getElementById("plan"), msg=document.getElementById("msg");
+
+  function card(n,s,isPro){
+    var d=document.createElement("div"); d.className="step"+(isPro?" pro":""); d.setAttribute("data-n",n);
+    d.innerHTML='<div class="zeige">'+(isPro?'★★★ Profi · Denk ':'👉 Zeige ')+'<span>'+s[0]+'</span></div>'+
+      '<div class="words">'+s[1].map(function(w){return "<b>"+w+"</b>";}).join("")+'</div>'+
+      '<div class="row"><button class="ok" aria-pressed="false">✓ erklärt</button><button class="joker">Joker: Satzanfang zeigen</button></div>'+
+      '<div class="satz">'+s[2]+'</div>';
+    d.querySelector(".joker").onclick=function(){d.querySelector(".satz").classList.add("show");this.disabled=true;};
+    var ok=d.querySelector(".ok");
+    ok.onclick=function(){var on=ok.getAttribute("aria-pressed")!=="true";ok.setAttribute("aria-pressed",on);d.classList.toggle("done",on);update();};
+    return d;
+  }
+  function render(){
+    plan.innerHTML='<p class="task">'+sets[cur].task+'</p>';
+    sets[cur].steps.forEach(function(s,i){plan.appendChild(card(i+1,s,false));});
+    plan.appendChild(card("★",pro,true));
+    update();
+  }
+  function update(){
+    var base=plan.querySelectorAll(".step:not(.pro)"), n=0;
+    base.forEach(function(s){if(s.classList.contains("done"))n++;});
+    msg.textContent=n===base.length?"Stark! Alles drin.":"";
+  }
+  document.querySelectorAll(".tab").forEach(function(t){t.onclick=function(){
+    document.querySelectorAll(".tab").forEach(function(x){x.setAttribute("aria-selected",x===t);});
+    cur=t.getAttribute("data-p"); render();
+  };});
+  document.getElementById("reset").onclick=render;
+  render();
+})();
+</script>
+</body>
+</html>
