@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Tipp: Quadratische Ergänzung</title>
+<!-- V.7 (25.10.2026): Flächenbild zur quadratischen Ergänzung. ANDERES Beispiel als Skript/Übung: y = x² + 6x + 4 → ( x + 3 )² − 5.
+     x² blau, Streifen 6x grün (halbiert: 2 · 3x), fehlende Ecke 3 · 3 = 9 orange. Quelle: werkzeug/tipps/tipp-ergaenzung.html -->
+<style>
+  :root{--tipp:#6d4a9e;--tippH:#f1eaf8;--tippL:#b79bd6;--q:#2e5d9f;--qH:#dce8f7;--s:#3f8f3a;--sH:#d9f0d6;--e:#c0700f;--eH:#fde7c8;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f7f4fb;--line:#d8cce8}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--tipp);color:#fff} header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:980px;margin:0 auto}
+  .start{font-size:18px;color:var(--tipp);font-weight:700;margin:4px 0 10px}
+  .knoepfe{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .knoepfe button{flex:1 1 170px;min-height:52px;border-radius:12px;font-size:18px;font-weight:700;border:2px solid var(--tipp);background:#fff;color:var(--tipp)}
+  .knoepfe button.haupt{background:var(--tipp);color:#fff} .knoepfe button:disabled{opacity:.4}
+  .wrap{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+  svg{flex:1 1 340px;width:100%;max-width:420px;height:auto;background:#fff;border:1px solid var(--line);border-radius:14px}
+  .tafel{flex:1 1 320px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;min-height:200px}
+  .nr{font-size:14px;color:var(--muted)} .txt{font-size:20px;line-height:1.45;margin-top:4px;color:var(--tipp);font-weight:600}
+  .gl{font-size:26px;font-weight:700;margin-top:12px;line-height:1.7;white-space:nowrap;overflow-x:auto}
+  .q{color:var(--q)} .s{color:var(--s)} .e{color:var(--e)}
+  .du{display:none;margin-top:14px;background:var(--tippH);border:1px solid var(--tippL);border-radius:12px;padding:10px 14px;font-size:19px;line-height:1.45} .du.da{display:block}
+  rect,text{transition:transform 1s ease,opacity .8s ease}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:14px 0}
+</style>
+</head>
+<body>
+<header><h1>Tipp: Quadratische Ergänzung</h1></header>
+<main>
+  <div class="start">Beispiel mit anderen Zahlen: y = x² + 6x + 4 – wo liegt der Scheitel?</div>
+  <div class="knoepfe"><button class="haupt" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
+  <div class="wrap">
+    <svg viewBox="0 0 360 360" id="s">
+      <!-- x² : Quadrat 180 × 180, Streifen: Breite 3 → 60 px -->
+      <rect id="qu" x="40" y="40" width="180" height="180" fill="var(--qH)" stroke="var(--q)" stroke-width="3"/>
+      <text id="qut" x="130" y="138" text-anchor="middle" font-size="30" font-weight="700" fill="var(--q)">x²</text>
+      <rect id="s1" x="225" y="40" width="60" height="180" fill="var(--sH)" stroke="var(--s)" stroke-width="3" opacity="0"/>
+      <rect id="s2" x="290" y="40" width="60" height="180" fill="var(--sH)" stroke="var(--s)" stroke-width="3" opacity="0"/>
+      <text id="s1t" x="255" y="138" text-anchor="middle" font-size="20" font-weight="700" fill="var(--s)" opacity="0">3x</text>
+      <text id="s2t" x="320" y="138" text-anchor="middle" font-size="20" font-weight="700" fill="var(--s)" opacity="0">3x</text>
+      <rect id="s2b" x="40" y="225" width="180" height="60" fill="var(--sH)" stroke="var(--s)" stroke-width="3" opacity="0"/>
+      <text id="s2bt" x="130" y="262" text-anchor="middle" font-size="20" font-weight="700" fill="var(--s)" opacity="0">3x</text>
+      <rect id="ecke" x="225" y="225" width="60" height="60" fill="var(--eH)" stroke="var(--e)" stroke-width="3" stroke-dasharray="7 5" opacity="0"/>
+      <text id="eckt" x="255" y="262" text-anchor="middle" font-size="20" font-weight="700" fill="var(--e)" opacity="0">9</text>
+      <text id="lx" x="130" y="30" text-anchor="middle" font-size="18" fill="#333">x</text>
+      <text id="l3" x="255" y="30" text-anchor="middle" font-size="18" fill="#333" opacity="0">3</text>
+      <text id="l3b" x="30" y="262" text-anchor="end" font-size="18" fill="#333" opacity="0">3</text>
+    </svg>
+    <div class="tafel"><div class="nr" id="nr"></div><div class="txt" id="txt"></div><div class="gl" id="gl"></div></div>
+  </div>
+  <div class="du" id="du"><b>Jetzt du:</b> Mach es mit deiner Gleichung genauso: halbe Zahl vor x → quadrieren → ergänzen und wieder abziehen → binomische Formel rückwärts → zusammenfassen.</div>
+</main>
+<footer>Fehling · V.7 Scheitelform · Tipp</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const zeig=(ids,o=1)=>ids.forEach(i=>$(i).setAttribute("opacity",o));
+const S=[
+ {t:"x² + 6x als Fläche: ein Quadrat x · x und ein Streifen 6 · x.",g:'y = <span class="q">x²</span> + <span class="s">6x</span> + 4',f(){zeig(["s1","s2","s1t","s2t"]);}},
+ {t:"Halbe Zahl vor x: 6 : 2 = 3. Den Streifen teilen – eine Hälfte rechts, eine unten an das Quadrat.",g:'y = <span class="q">x²</span> + <span class="s">3x + 3x</span> + 4',
+  f(){zeig(["s2","s2t"],0);zeig(["s2b","s2bt","l3"]);}},
+ {t:"Zum vollen Quadrat fehlt die Ecke: 3 · 3 = 9 (halbe Zahl im Quadrat).",g:'Ecke: <span class="e">3² = 9</span>',f(){zeig(["ecke","eckt","l3b"]);}},
+ {t:"Ergänzen: + 9. Damit sich der Wert nicht ändert, gleich wieder − 9.",g:'y = <span class="q">x²</span> + <span class="s">6x</span> <span class="e">+ 9 − 9</span> + 4',f(){$("ecke").setAttribute("stroke-dasharray","none");}},
+ {t:"Jetzt ist es ein volles Quadrat mit Seite x + 3 – die binomische Formel rückwärts.",g:'y = <span class="q">( x + 3 )²</span> <span class="e">− 9</span> + 4',f(){}},
+ {t:"Zusammenfassen: − 9 + 4 = − 5. In der Scheitelform liest du S ab: d = −3, e = −5.",g:'y = ( x + 3 )² − 5 &nbsp;→&nbsp; S ( −3 | −5 )',f(){}},
+];
+let n=0,timer=null;
+function reset(){clearInterval(timer);n=0;["s1","s2","s1t","s2t","s2b","s2bt","ecke","eckt","l3","l3b"].forEach(i=>{$(i).setAttribute("opacity",0);$(i).removeAttribute("transform");});
+  $("ecke").setAttribute("stroke-dasharray","7 5");$("nr").textContent="";$("txt").textContent="Tippe auf „Abspielen“ oder „Nächster Schritt“.";$("gl").innerHTML='y = x² + 6x + 4';$("du").classList.remove("da");$("next").disabled=false;}
+function weiter(){if(n>=S.length)return;const s=S[n++];s.f();$("nr").textContent=`Schritt ${n} von ${S.length}`;$("txt").textContent=s.t;$("gl").innerHTML=s.g;
+  if(n>=S.length){$("next").disabled=true;$("du").classList.add("da");}}
+$("next").onclick=()=>{clearInterval(timer);weiter();};$("reset").onclick=reset;
+$("play").onclick=()=>{reset();weiter();timer=setInterval(()=>{weiter();if(n>=S.length)clearInterval(timer);},4500);};
+reset();
+</script>
+</body>
+</html>
