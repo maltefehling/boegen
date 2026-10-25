@@ -98,7 +98,7 @@
 "use strict";
 // Versionsprüfung (wie Kap. I, 19.10.2026): Safari zeigt sonst bis zu 10 Minuten (oft länger) eine alte, gespeicherte Fassung.
 // Beim Öffnen wird die Seite ohne Zwischenspeicher abgefragt; ist sie neuer, lädt sie sich einmal neu.
-const STAND="20261025152143";
+const STAND="20261025152646";
 fetch(location.pathname+"?nocache="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{
   const m=t.match(/const STAND="(\d+)"/);
   if(m&&m[1]!==STAND&&!sessionStorage.getItem("neu"+m[1])){sessionStorage.setItem("neu"+m[1],"1");location.replace(location.pathname+"?v="+m[1]);}
@@ -183,7 +183,7 @@ function aufgabe(nr,a){
   if(a.tab)h+=wt(a.tab);
   // Teilaufgabe mit Graph (15.10.2026): {txt:"…", gerade:[m, c]} → Koordinatensystem im Heftformat (1 Einheit = 2 Kästchen)
   const sub=s=>Array.isArray(s)?wt(s):(s&&typeof s==="object")?(s.txt?`<span>${esc(s.txt)}</span>`:"")+(s.parabel?ks(s.parabel,5,5,s.parabel.length>2?s.parabel[2]:true):s.gerade?ks(s.gerade):""):esc(s);
-  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li${s&&typeof s==="object"&&!Array.isArray(s)?' class="breit"':""}><b class="tb">${"abcdefgh"[i]})</b>${sub(s)}</li>`).join("")+"</ol>";
+  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li${s&&typeof s==="object"&&!Array.isArray(s)&&s.txt?' class="breit"':""}><b class="tb">${"abcdefgh"[i]})</b>${sub(s)}</li>`).join("")+"</ol>";
   // gestufte Hilfen (V.6): nacheinander aufklappen
   if(a.hilfen)h+=a.hilfen.map((x,i)=>`<details class="hilfe"><summary>Hilfe ${i+1}</summary><div>${esc(x)}</div></details>`).join("");
   if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
