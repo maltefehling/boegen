@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Zusatz: Additionsverfahren</title>
+<!-- V.9 (26.10.2026): freiwilliger Lernpfad „Für alle, die nach der 10 weitermachen“ (berufliches Gymnasium: Gauß-Verfahren beruht darauf).
+     Teil 1: Animation, zwei Beispiele (direkt addieren / erst malnehmen). Teil 2: drei Übungen mit aufklappbarer Lösung. -->
+<style>
+  :root{--acc:#1f4e79;--x:#2e5d9f;--y:#c0700f;--weg:#c0392b;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f4f7fb;--line:#c9d6e5;--gr:#3f8f3a;--grH:#d9f0d6}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff} header h1{font-size:20px;margin:0} header p{margin:4px 0 0;font-size:15px;opacity:.9}
+  main{padding:12px 16px 24px;max-width:900px;margin:0 auto}
+  h2{font-size:20px;color:var(--acc);border-bottom:2px solid var(--acc);padding-bottom:4px;margin:18px 0 10px}
+  .tabs{display:flex;gap:8px;margin-bottom:10px} .tabs button{flex:1;min-height:48px;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:10px;font-weight:700;font-size:17px}
+  .tabs button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .kn{display:flex;gap:10px;margin-bottom:10px} .kn button{flex:1;min-height:50px;border-radius:12px;font-size:18px;font-weight:700;border:2px solid var(--acc);background:#fff;color:var(--acc)} .kn button.h{background:var(--acc);color:#fff}
+  .karte{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+  .z{font-size:26px;font-weight:700;line-height:1.9;white-space:nowrap;opacity:0;transform:translateY(8px);transition:opacity .6s,transform .6s;font-variant-numeric:tabular-nums}
+  .z.da{opacity:1;transform:none} .z.fest{opacity:1;transform:none}
+  .strich{border-top:3px solid var(--ink);margin-top:2px;padding-top:2px}
+  .x{color:var(--x)} .y{color:var(--y)} .weg{color:var(--weg);text-decoration:line-through}
+  .erk{font-size:19px;color:var(--acc);font-weight:600;margin-top:10px;min-height:50px;line-height:1.45}
+  .auf{background:#fff;border:2px solid #c9d6e5;border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:21px}
+  details{margin-top:6px;font-size:18px} summary{color:var(--acc);font-weight:700;cursor:pointer;min-height:32px}
+  details div{background:var(--grH);border-radius:8px;padding:8px 10px;margin-top:4px;line-height:1.6}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:12px 0}
+</style>
+</head>
+<body>
+<header><h1>Zusatz: Das Additionsverfahren</h1><p>Für alle, die nach der 10 weitermachen – im beruflichen Gymnasium baut das Gauß-Verfahren darauf auf.</p></header>
+<main>
+  <h2>1. So funktioniert es</h2>
+  <div class="tabs"><button data-b="0" aria-pressed="true">Beispiel 1: direkt addieren</button><button data-b="1" aria-pressed="false">Beispiel 2: erst malnehmen</button></div>
+  <div class="kn"><button class="h" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
+  <div class="karte" id="brett"></div>
+  <div class="erk" id="erk"></div>
+  <h2>2. Jetzt du</h2>
+  <div class="auf"><b>a)</b>  x + y = 10   und   x − y = 2
+    <details><summary>Lösung anzeigen</summary><div>Addieren: 2x = 12 → x = 6. In die erste: 6 + y = 10 → y = 4. Lösung ( 6 | 4 ).</div></details></div>
+  <div class="auf"><b>b)</b>  2x + y = 7   und   3x − y = 8
+    <details><summary>Lösung anzeigen</summary><div>Addieren: 5x = 15 → x = 3. In die erste: 6 + y = 7 → y = 1. Lösung ( 3 | 1 ).</div></details></div>
+  <div class="auf"><b>c)</b>  x + 3y = 11   und   2x − y = 1
+    <details><summary>Lösung anzeigen</summary><div>Zweite Gleichung · 3: 6x − 3y = 3. Addieren: 7x = 14 → x = 2. In die erste: 2 + 3y = 11 → y = 3. Lösung ( 2 | 3 ).</div></details></div>
+</main>
+<footer>Fehling · V.9 Gleichungssysteme · Zusatz</footer>
+<script>
+"use strict";
+const B=[
+ {zeilen:['(1) &nbsp;2<span class="x">x</span> + 3<span class="y">y</span> = 12','(2) &nbsp;4<span class="x">x</span> − 3<span class="y">y</span> = 6',
+   '<div class="strich">(1) + (2): &nbsp;6<span class="x">x</span> <span class="weg">+ 3y − 3y</span> = 18</div>','6<span class="x">x</span> = 18 &nbsp;→&nbsp; x = 3',
+   'in (1): &nbsp;2 · 3 + 3<span class="y">y</span> = 12 → 3<span class="y">y</span> = 6 → y = 2','Lösung ( 3 | 2 )'],
+  erk:["Zwei Gleichungen. Schau auf y: +3y und −3y.","…","Linke Seiten addieren, rechte Seiten addieren: +3y und −3y heben sich weg – y verschwindet!","Nur noch x – auflösen.","x in eine der Gleichungen einsetzen, y ausrechnen.","Fertig. (Probe in (2): 12 − 6 = 6 ✓)"]},
+ {zeilen:['(1) &nbsp;<span class="x">x</span> + 2<span class="y">y</span> = 7','(2) &nbsp;3<span class="x">x</span> − <span class="y">y</span> = 7',
+   '(2) · 2: &nbsp;6<span class="x">x</span> − 2<span class="y">y</span> = 14','<div class="strich">(1) + neue (2): &nbsp;7<span class="x">x</span> <span class="weg">+ 2y − 2y</span> = 21</div>',
+   '7<span class="x">x</span> = 21 &nbsp;→&nbsp; x = 3','in (1): &nbsp;3 + 2<span class="y">y</span> = 7 → y = 2 &nbsp;·&nbsp; Lösung ( 3 | 2 )'],
+  erk:["Hier heben sich weder x noch y direkt weg: +2y und −y.","…","Trick: Gleichung (2) mit 2 malnehmen – jedes Glied! Jetzt steht dort −2y.","Addieren: +2y und −2y verschwinden.","Nur noch x – auflösen.","x einsetzen, y ausrechnen. Fertig."]}];
+let b=0,n=0,timer=null;const brett=document.getElementById("brett"),erk=document.getElementById("erk");
+function bau(){brett.innerHTML=B[b].zeilen.map((z,i)=>`<div class="z${i<2?" fest":""}" id="z${i}">${z}</div>`).join("");n=1;erk.textContent=B[b].erk[0];}
+function weiter(){if(n>=B[b].zeilen.length-1)return;n++;document.getElementById("z"+n).classList.add("da");erk.textContent=B[b].erk[n];}
+document.getElementById("next").onclick=()=>{clearInterval(timer);weiter();};
+document.getElementById("reset").onclick=()=>{clearInterval(timer);bau();};
+document.getElementById("play").onclick=()=>{clearInterval(timer);bau();timer=setInterval(()=>{weiter();if(n>=B[b].zeilen.length-1)clearInterval(timer);},3500);};
+document.querySelectorAll(".tabs button").forEach(x=>x.onclick=()=>{b=+x.dataset.b;document.querySelectorAll(".tabs button").forEach(y=>y.setAttribute("aria-pressed",y===x));clearInterval(timer);bau();});
+bau();
+</script>
+</body>
+</html>

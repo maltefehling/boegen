@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Animation: Einsetzungsverfahren</title>
+<!-- V.9 (26.10.2026, Malte): Term in Gleichung (1) wird eingekreist, fliegt in (2) an die Stelle von x; weil er eine Differenz ist,
+     erscheinen Klammern (blinken). Danach ausmultiplizieren, y, x, Probe. Anderes Beispiel als im Skript: x = 3y − 1, 2x + y = 12 → ( 5 | 2 ). -->
+<style>
+  :root{--acc:#1f4e79;--t:#7b4fa0;--tH:#eadff5;--k:#c0392b;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f4f7fb;--line:#c9d6e5;--gr:#3f8f3a;--grH:#d9f0d6}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff} header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:900px;margin:0 auto}
+  .kn{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .kn button{flex:1 1 170px;min-height:52px;border-radius:12px;font-size:18px;font-weight:700;border:2px solid var(--acc);background:#fff;color:var(--acc)}
+  .kn button.h{background:var(--acc);color:#fff} .kn button:disabled{opacity:.4}
+  .karte{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:12px}
+  .gl{font-size:32px;font-weight:700;line-height:2;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .nr{display:inline-block;width:56px;color:var(--muted);font-size:22px}
+  .term{display:inline-block;padding:0 8px;border-radius:40px;border:3px solid transparent;transition:border-color .5s,background .5s}
+  .term.kreis{border-color:var(--t);background:var(--tH)}
+  .slot{display:inline-block;min-width:1em;text-align:center;border-radius:8px;padding:0 4px;transition:background .4s}
+  .slot.voll{background:var(--tH);color:var(--t)}
+  .kl{color:var(--k);font-weight:900;opacity:0;transition:opacity .4s} .kl.da{opacity:1;animation:blink .5s 4}
+  @keyframes blink{50%{opacity:.15}}
+  .rech .z{font-size:28px;font-weight:700;line-height:1.8;opacity:0;transform:translateY(8px);transition:opacity .6s,transform .6s;white-space:nowrap}
+  .rech .z.da{opacity:1;transform:none}
+  .falsch{color:#999;text-decoration:line-through;text-decoration-color:var(--k);text-decoration-thickness:3px}
+  .erk{font-size:20px;line-height:1.45;color:var(--acc);font-weight:600;min-height:58px}
+  .warn{color:var(--k);font-weight:800}
+  .ok{background:var(--grH);border:1px solid var(--gr);border-radius:10px;padding:4px 10px;display:inline-block}
+  .flieger{position:fixed;z-index:20;pointer-events:none;transition:transform 1s cubic-bezier(.5,0,.3,1);font-weight:700;font-size:32px;color:var(--t);background:var(--tH);border-radius:40px;padding:0 8px}
+  .du{display:none;margin-top:6px;background:#fff;border:2px dashed var(--acc);border-radius:12px;padding:10px 14px;font-size:19px;line-height:1.45} .du.da{display:block}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:12px 0}
+</style>
+</head>
+<body>
+<header><h1>Animation: Einsetzungsverfahren</h1></header>
+<main>
+  <div class="kn"><button class="h" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
+  <div class="karte">
+    <div class="gl"><span class="nr">(1)</span> x = <span class="term" id="term">3y − 1</span></div>
+    <div class="gl"><span class="nr">(2)</span> 2 · <span class="kl" id="k1">(</span><span class="slot" id="slot">x</span><span class="kl" id="k2">)</span> + y = 12</div>
+  </div>
+  <div class="karte rech" id="rech">
+    <div class="z" id="z0" style="font-size:22px"><span class="falsch">2 · 3y − 1 + y = 12</span> &nbsp;<span class="warn">← ohne Klammer falsch: nur 3y wird verdoppelt, die 1 nicht!</span></div>
+    <div class="z" id="z1">6y − 2 + y = 12</div>
+    <div class="z" id="z2">7y − 2 = 12 &nbsp;|&nbsp; + 2 &nbsp;→&nbsp; 7y = 14 &nbsp;|&nbsp; : 7 &nbsp;→&nbsp; y = 2</div>
+    <div class="z" id="z3">y in (1): &nbsp;x = 3 · 2 − 1 = 5</div>
+    <div class="z" id="z4"><span class="ok">Lösung ( 5 | 2 ) &nbsp;·&nbsp; Probe in (2): 2 · 5 + 2 = 12 ✓</span></div>
+  </div>
+  <div class="erk" id="erk"></div>
+  <div class="du" id="du"><b>Jetzt du:</b> Suche in deinem Gleichungssystem die Variable ohne Vorfaktor, löse nach ihr auf und setze den Term <b>in Klammern</b> in die andere Gleichung ein.</div>
+</main>
+<footer>Fehling · V.9 Gleichungssysteme · Animation</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+function fliege(){const a=$("term").getBoundingClientRect(),b=$("slot").getBoundingClientRect(),f=document.createElement("span");
+  f.className="flieger";f.textContent="3y − 1";f.style.left=a.left+"px";f.style.top=a.top+"px";document.body.appendChild(f);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px)`;}));
+  setTimeout(()=>{f.remove();$("slot").textContent="3y − 1";$("slot").classList.add("voll");},1050);}
+const erk=h=>$("erk").innerHTML=h,zeig=id=>$(id).classList.add("da");
+const S=[
+ ()=>erk("Gleichung (1) ist schon nach <b>x</b> aufgelöst: x steht allein, ohne Vorfaktor."),
+ ()=>{$("term").classList.add("kreis");erk("Für x steht in (1) der Term <b style='color:var(--t)'>3y − 1</b>. Den kreisen wir ein.");},
+ ()=>{fliege();erk("Der Term wird in (2) für x eingesetzt …");},
+ ()=>{zeig("k1");zeig("k2");erk("<span class='warn'>Achtung: 3y − 1 ist eine Differenz → beim Einsetzen kommt eine Klammer drum!</span>");},
+ ()=>{zeig("z0");erk("Ohne Klammer würde die 2 nur mit 3y malgenommen – das wäre falsch.");},
+ ()=>{zeig("z1");erk("Klammer ausmultiplizieren: 2 · 3y = 6y und 2 · ( −1 ) = −2.");},
+ ()=>{zeig("z2");erk("Jetzt gibt es nur noch eine Variable: nach y auflösen.");},
+ ()=>{zeig("z3");erk("y = 2 in die nach x aufgelöste Gleichung (1) einsetzen.");},
+ ()=>{zeig("z4");erk("Probe in der <b>anderen</b> Gleichung – stimmt.");},
+];
+let n=0,timer=null;
+function reset(){clearInterval(timer);n=0;$("term").classList.remove("kreis");$("slot").textContent="x";$("slot").classList.remove("voll");
+  ["k1","k2","z0","z1","z2","z3","z4"].forEach(i=>$(i).classList.remove("da"));$("du").classList.remove("da");$("next").disabled=false;erk("Tippe auf „Abspielen“ oder „Nächster Schritt“.");}
+function weiter(){if(n>=S.length)return;S[n++]();if(n>=S.length){$("next").disabled=true;setTimeout(()=>$("du").classList.add("da"),900);}}
+$("next").onclick=()=>{clearInterval(timer);weiter();};$("reset").onclick=reset;
+$("play").onclick=()=>{reset();weiter();timer=setInterval(()=>{weiter();if(n>=S.length)clearInterval(timer);},3800);};
+reset();
+</script>
+</body>
+</html>

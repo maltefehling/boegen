@@ -98,7 +98,7 @@
 "use strict";
 // Versionsprüfung (wie Kap. I, 19.10.2026): Safari zeigt sonst bis zu 10 Minuten (oft länger) eine alte, gespeicherte Fassung.
 // Beim Öffnen wird die Seite ohne Zwischenspeicher abgefragt; ist sie neuer, lädt sie sich einmal neu.
-const STAND="20261025154218";
+const STAND="20261025163918";
 fetch(location.pathname+"?nocache="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{
   const m=t.match(/const STAND="(\d+)"/);
   if(m&&m[1]!==STAND&&!sessionStorage.getItem("neu"+m[1])){sessionStorage.setItem("neu"+m[1],"1");location.replace(location.pathname+"?v="+m[1]);}
@@ -177,16 +177,16 @@ function animTipp(cfg){
   reset();return d;
 }
 // Parabel UND Gerade in einem Schaubild (V.8, 25.10.2026): Gerade in dieselbe SVG einfügen (gleiche Skala wie ks mit X = Y = 5)
-function mitGerade(svgHtml,[m,c]){const U=36,X=5,Y=5,ox=20+X*U,oy=20+Y*U,px=x=>ox+x*U,py=y=>oy-y*U;
+function mitGerade(svgHtml,[m,c],farbe="#2e5d9f"){const U=36,X=5,Y=5,ox=20+X*U,oy=20+Y*U,px=x=>ox+x*U,py=y=>oy-y*U;
   const t=v=>(v-c)/m;let x1=-X,x2=X;if(m){const a=t(Y),b=t(-Y);x1=Math.max(-X,Math.min(a,b));x2=Math.min(X,Math.max(a,b));}
-  return svgHtml.replace("</svg>",`<line x1="${px(x1)}" y1="${py(m*x1+c)}" x2="${px(x2)}" y2="${py(m*x2+c)}" stroke="#2e5d9f" stroke-width="3"/></svg>`);}
+  return svgHtml.replace("</svg>",`<line x1="${px(x1)}" y1="${py(m*x1+c)}" x2="${px(x2)}" y2="${py(m*x2+c)}" stroke="${farbe}" stroke-width="3"/></svg>`);}
 function aufgabe(nr,a){
   let h=`<div class="kopf">Aufgabe ${nr}${tagHtml(a.tag)}</div><div class="txt">${esc(a.tag==="w"?a.t.replace(/^Wiederholung: /,""):a.t)}</div>`;
   // Wertetabelle: a.tab = [[x-Zeile], [y-Zeile]]; Teilaufgabe als Tabelle: sub-Eintrag ist eine Liste von Zeilen
   const wt=rows=>'<table class="wt">'+rows.map(r=>"<tr>"+r.map(c=>"<td>"+esc(String(c))+"</td>").join("")+"</tr>").join("")+"</table>";
   if(a.tab)h+=wt(a.tab);
   // Teilaufgabe mit Graph (15.10.2026): {txt:"…", gerade:[m, c]} → Koordinatensystem im Heftformat (1 Einheit = 2 Kästchen)
-  const sub=s=>Array.isArray(s)?wt(s):(s&&typeof s==="object")?(s.txt?`<span>${esc(s.txt)}</span>`:"")+(s.parabel&&s.gerade?mitGerade(ks(s.parabel,5,5,s.parabel.length>2?s.parabel[2]:true),s.gerade):s.parabel?ks(s.parabel,5,5,s.parabel.length>2?s.parabel[2]:true):s.gerade?ks(s.gerade):""):esc(s);
+  const sub=s=>Array.isArray(s)?wt(s):(s&&typeof s==="object")?(s.txt?`<span>${esc(s.txt)}</span>`:"")+(s.parabel&&s.gerade?mitGerade(ks(s.parabel,5,5,s.parabel.length>2?s.parabel[2]:true),s.gerade):s.parabel?ks(s.parabel,5,5,s.parabel.length>2?s.parabel[2]:true):s.gerade&&s.gerade2?mitGerade(ks(s.gerade),s.gerade2,"#c0700f"):s.gerade?ks(s.gerade):""):esc(s);
   if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li${s&&typeof s==="object"&&!Array.isArray(s)&&s.txt?' class="breit"':""}><b class="tb">${"abcdefgh"[i]})</b>${sub(s)}</li>`).join("")+"</ol>";
   // gestufte Hilfen (V.6): nacheinander aufklappen
   if(a.hilfen)h+=a.hilfen.map((x,i)=>`<details class="hilfe"><summary>Hilfe ${i+1}</summary><div>${esc(x)}</div></details>`).join("");
