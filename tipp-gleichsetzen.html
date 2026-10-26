@@ -46,6 +46,9 @@ function el(e){
   if(e[0]==="p")mk("circle",{cx:X(e[1]),cy:Y(e[2]),r:7,fill:e[3],stroke:"#fff","stroke-width":2});
   if(e[0]==="l")mk("line",{x1:X(e[1]),y1:Y(e[2]),x2:X(e[3]),y2:Y(e[4]),stroke:e[5],"stroke-width":4,"stroke-dasharray":e[6]?"7 5":"none"});
   if(e[0]==="t"){const t=mk("text",{x:X(e[1]),y:Y(e[2]),"font-size":e[5]||18,"font-weight":700,fill:e[4]});t.textContent=e[3];}
+  if(e[0]==="r"){mk("rect",{x:X(e[1]),y:Y(e[4]),width:X(e[3])-X(e[1]),height:Y(e[2])-Y(e[4]),fill:e[5],opacity:1});
+    mk("line",{x1:X(e[1]),x2:X(e[3]),y1:Y(e[4]),y2:Y(e[4]),stroke:"#7a8796","stroke-width":2,"stroke-dasharray":"6 4"});
+    if(e[6]){const t=mk("text",{x:X(e[3])-8,y:Y(e[2])-10,"text-anchor":"end","font-size":14,"font-weight":700,fill:"#5b6b7c"});t.textContent=e[6];}}
   if(e[0]==="w"){const r=0.35;mk("polyline",{points:[[e[1]+r*e[3],e[2]+r*e[4]],[e[1]+r*(e[3]+e[5]),e[2]+r*(e[4]+e[6])],[e[1]+r*e[5],e[2]+r*e[6]]].map(([x,y])=>X(x)+","+Y(y)).join(" "),fill:"none",stroke:e[7],"stroke-width":2.5});}
   if(e[0]==="k"){let d="";for(let i=0;i<=200;i++){const x=XMIN+(XMAX-XMIN)*i/200,y=e[1]==="lin"?e[2]*x+e[3]:e[2]*(x-(e[5]||0))**2+e[3];if(y<YMIN-0.5||y>YMAX+0.5)continue;d+=(d?"L":"M")+X(x).toFixed(1)+" "+Y(y).toFixed(1);}
     mk("path",{d,fill:"none",stroke:e[4],"stroke-width":3.5});}
