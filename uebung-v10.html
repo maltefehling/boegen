@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Übung V.10 · Scheitel nicht sichtbar</title>
+<!-- Kapitel V Funktionen: Online-Übung nach dem Buchkapitel (QR-Code im Skript). Nur Aufgaben – gerechnet wird im Heft.
+     Aufbau wie „I.3a Vermischte Übungen“: Aufgabe 1 für alle, dann ★ / ★★ / ★★★. Lösungen gemischt mit typischen Fehlern. -->
+<style>
+  :root{--ink:#1b2a3a;--muted:#5b6b7c;--acc:#1f4e79;--bg:#f4f7fb;--card:#fff;--line:#c9d6e5;
+    --merk:#dde8f5;--merkL:#a9c1e0;--auf:#e8f4e6;--aufL:#c6e8c0;--hilf:#fdf6ea;--hilfL:#fbd9a8;--grau:#f2f2f2;--rot:#b03a2e;--gruen:#3f8f3a}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff}
+  header h1{font-size:20px;margin:0}
+  main{max-width:880px;margin:0 auto;padding:14px 16px 32px}
+  .hinweis{background:#fff;border:1px solid #bfbfbf;border-radius:12px;padding:10px 14px;font-size:18px;line-height:1.45;margin-bottom:12px}
+  details.erin{background:var(--merk);border:1px solid var(--merkL);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:18px;line-height:1.5}
+  details.erin summary{font-weight:700;color:var(--acc);cursor:pointer;min-height:30px}
+  details.erin ul{margin:6px 0 0;padding-left:22px}
+  h2{font-size:21px;color:var(--acc);margin:18px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--acc)}
+  .aufg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+  .aufg .kopf{font-weight:700;color:var(--acc);font-size:18px;margin-bottom:4px}
+  .aufg .txt{font-size:20px;line-height:1.45}
+  /* Teilaufgaben als getrennte Kärtchen (15.10.2026, Malte): SuS hielten a), b), c) für eine zusammenhängende Aufgabe */
+  .aufg ol{margin:10px 0 0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+  .aufg li{font-size:21px;line-height:1.5;overflow-x:auto;border:2px solid #c9d6e5;border-radius:12px;background:#f7f9fc;padding:8px 12px}
+  .aufg li.breit{grid-column:1/-1}
+  .aufg li b.tb{display:inline-block;min-width:34px;text-align:center;background:#1f4e79;color:#fff;border-radius:8px;padding:0 8px;margin-right:10px;font-weight:700}
+  .tag{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+  .tag.v{background:#fff3c4;color:#7a5b00}.tag.w{background:#e2d6f0;color:#4f2f7a}
+  /* Animierter Tipp (19.10.2026): Beispiel mit ANDEREN Zahlen, Werte fliegen farbig in die Gleichung */
+  details.atipp{margin-top:8px;font-size:18px;border:2px solid #b79bd6;border-radius:12px;background:#f7f2fc;padding:6px 12px}
+  details.atipp summary{color:#6d4a9e;font-weight:700;cursor:pointer;min-height:34px;line-height:34px}
+  .atipp .warn{background:#6d4a9e;color:#fff;border-radius:8px;padding:6px 10px;font-weight:700;margin:6px 0 10px;font-size:16px}
+  .atipp .geg{font-size:20px;line-height:2.1;margin-bottom:6px}
+  .atipp .chip{display:inline-block;border-radius:8px;padding:0 8px;font-weight:800;border:2px solid transparent;background:#fff}
+  .atipp .kn{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+  .atipp .kn button{flex:1 1 140px;min-height:46px;border-radius:10px;font-size:17px;font-weight:700;border:2px solid #6d4a9e;background:#fff;color:#6d4a9e}
+  .atipp .kn button.h{background:#6d4a9e;color:#fff} .atipp .kn button:disabled{opacity:.4}
+  .atipp .brett{background:#fff;border:1px solid #d8cce8;border-radius:10px;padding:8px 12px;min-height:60px}
+  .atipp .z{font-size:23px;font-weight:700;line-height:1.7;white-space:nowrap;overflow-x:auto;animation:ein .6s}
+  @keyframes ein{from{opacity:0;transform:translateY(8px)}}
+  .atipp .erk{font-size:18px;color:#6d4a9e;font-weight:600;margin-top:8px;min-height:26px}
+  .atipp .du{display:none;margin-top:8px;font-size:18px;background:#fff;border:1px dashed #6d4a9e;border-radius:10px;padding:8px 10px} .atipp .du.da{display:block}
+  .c-x{color:#2e5d9f} .c-y{color:#3f8f3a} .c-m{color:#c0700f} .c-c{color:#b33c3c}
+  .atipp .chip.c-x{background:#dce8f7} .atipp .chip.c-y{background:#d9f0d6} .atipp .chip.c-m{background:#fde7c8} .atipp .chip.c-c{background:#f7dcdc}
+  .atipp .slot{display:inline-block;min-width:1.2em;text-align:center;border-radius:8px;padding:0 4px;outline:2px dashed currentColor}
+  .atipp .slot.voll{outline:none} .atipp .slot.voll.c-x{background:#dce8f7} .atipp .slot.voll.c-y{background:#d9f0d6} .atipp .slot.voll.c-m{background:#fde7c8}
+  .atipp .puls{animation:puls 1s ease-in-out 2} @keyframes puls{50%{transform:scale(1.25);border-color:currentColor}}
+  .atipp .flieger{position:fixed;z-index:20;pointer-events:none;transition:transform .9s cubic-bezier(.5,0,.3,1);font-weight:800;border-radius:8px;padding:0 8px}
+  details.idee{margin-top:8px;font-size:18px}
+  details.idee summary{color:var(--acc);cursor:pointer;font-weight:600}
+  details.idee div{background:var(--grau);border-radius:8px;padding:8px 10px;margin-top:6px;line-height:1.45}
+  .wahl{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+  .wahl button{flex:1 1 200px;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:12px;padding:12px 14px;font-size:19px;font-weight:700;min-height:56px;text-align:left}
+  .wahl button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .wahl small{display:block;font-weight:500;font-size:15px;opacity:.85}
+  .stufe[hidden]{display:none}
+  .loesbtn{border:1px solid var(--hilfL);background:var(--hilf);color:var(--ink);border-radius:10px;padding:10px 16px;font-size:18px;font-weight:700;min-height:48px;margin-top:4px}
+  .loes{background:var(--hilf);border:1px solid var(--hilfL);border-radius:12px;padding:10px 14px;margin-top:8px}
+  .loes p{margin:0 0 8px;font-size:16px;color:var(--rot);font-weight:700} .loes p.ok{color:var(--ink)}
+  .loes .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+  .loes .grid span{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 8px;text-align:center;font-size:19px}
+  .loes[hidden]{display:none}
+  /* Ergebnis + daneben „Lösungsweg anzeigen“ (19.10.2026) */
+  .loeswrap{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start} .loeswrap .grid{flex:1 1 260px}
+  .wegbtn{flex:0 0 auto;min-height:46px;padding:6px 14px;border-radius:10px;border:2px solid var(--acc);background:#fff;color:var(--acc);font-size:17px;font-weight:700}
+  .weg{flex:1 1 100%;background:#fff;border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:8px;padding:8px 12px;font-size:18px;line-height:1.6}
+  .weg[hidden]{display:none}
+  .lwahl{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px} .lwahl button{min-height:44px;padding:6px 14px;border-radius:10px;border:2px solid var(--line);background:#fff;font-size:17px;font-weight:700} .lwahl button[aria-pressed="true"]{border-color:var(--ink);background:var(--hilf)}
+  footer{color:var(--muted);font-size:13px;text-align:center;margin-top:24px}
+  .frage{font-size:18px;font-weight:700;color:var(--acc);margin:4px 0 2px}
+  .teilkopf{font-size:22px;font-weight:800;color:var(--acc);margin:14px 0 8px}
+  .teil[hidden]{display:none}
+  details.hilfe{margin-top:6px;font-size:18px}
+  details.hilfe summary{color:#a05a00;cursor:pointer;font-weight:700;min-height:30px}
+  details.hilfe div{background:var(--hilf);border:1px solid var(--hilfL);border-radius:8px;padding:8px 10px;margin-top:4px;line-height:1.45}
+  .tag.z{background:#d6efd0;color:#2f6f3f}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.88em;margin:0 3px;line-height:1.15;white-space:nowrap}
+  .frac>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
+  .frac>span:last-child{padding:0 4px}
+  table.wt{border-collapse:collapse;margin:6px 0;font-size:20px;font-variant-numeric:tabular-nums}
+  table.wt td{border:1px solid var(--line);padding:4px 12px;text-align:center;background:#fff}
+  table.wt td:first-child{font-weight:700;color:var(--acc);background:var(--merk)}
+</style>
+</head>
+<body>
+<header><h1>Übung V.10 · Scheitel nicht sichtbar</h1></header>
+<main>
+  <div class="hinweis">✎ <b>Rechne alle Aufgaben in deinem Heft.</b> Schreibe die Nummer der Aufgabe dazu. Kontrolliere erst am Ende mit den Lösungen.<br>⏱ <b>In der Stunde: Aufgabe 1. Zu Hause: eine Stufe (ca. 15 Minuten).</b></div>
+  <div id="teilwahl" hidden><div class="frage">Welche Stunde hattet ihr zuletzt?</div><div class="wahl" id="tw"></div></div>
+  <div id="teile"></div>
+  <footer>Fehling · V Lineare und quadratische Funktionen</footer>
+</main>
+<script>
+"use strict";
+// Versionsprüfung (wie Kap. I, 19.10.2026): Safari zeigt sonst bis zu 10 Minuten (oft länger) eine alte, gespeicherte Fassung.
+// Beim Öffnen wird die Seite ohne Zwischenspeicher abgefragt; ist sie neuer, lädt sie sich einmal neu.
+const STAND="20261026090755";
+fetch(location.pathname+"?nocache="+Date.now(),{cache:"no-store"}).then(r=>r.text()).then(t=>{
+  const m=t.match(/const STAND="(\d+)"/);
+  if(m&&m[1]!==STAND&&!sessionStorage.getItem("neu"+m[1])){sessionStorage.setItem("neu"+m[1],"1");location.replace(location.pathname+"?v="+m[1]);}
+}).catch(()=>{});
+// D.teile: ein Teil pro Stunde eines aufgeteilten Buchkapitels (z. B. II.2a/b/c); Stundenauswahl nur bei aufgeteilten Kapiteln (D.mehrteilig).
+const D={"untertitel": ["Mit Tipps in den Aufgaben", "Ohne Tipps", "Mehr Nachdenken"], "mehrteilig": false, "teile": [{"name": "", "stunde": "", "kurz": "", "erinnerung": ["Zwei Punkte auf gleicher Höhe: Spiegelachse genau in die Mitte. Abstand k eines Punktes zur Achse → k² nach unten (1-4-9 rückwärts) → Scheitel S ( d | e ) → y = ( x − d )² + e.", "Gleiche Höhe erkennst du an zwei Nullstellen oder an zwei gleichen y-Werten in der Wertetabelle.", "Fehlt in der Gleichung nur eine Zahl: einen Punkt einsetzen (x und y) und nach der Zahl auflösen.", "Fehlen zwei Zahlen und es gibt keine Abkürzung: Gleichungssystem (V.11)."], "a1": {"t": "Den Scheitel finden, obwohl man ihn nicht sieht. In e) nur entscheiden, nicht rechnen: Spiegelachse, Punkt einsetzen oder Gleichungssystem?", "sub": [{"txt": "Die Parabel ist eine verschobene Normalparabel, ihr Scheitel ist abgeschnitten. Zeichne im Kopf die Spiegelachse und bestimme mit 1-4-9 rückwärts den Scheitel und die Gleichung.", "parabel": [1, -7, 1]}, "Zu einer Normalparabel gehört diese Wertetabelle:  x: 0 | 1 | 5 | 6   ·   y: 4 | −1 | −1 | 4.  Bestimme die Gleichung in Scheitelform.", "Eine Normalparabel hat die Nullstellen −3 und 5. Bestimme den Scheitel und die Gleichung.", "Die Parabel  y = x² + b · x − 4  geht durch  P ( 1 | 3 ). Bestimme b.", [["(1)", "Normalparabel durch ( −2 | 5 ) und ( 4 | 5 )"], ["(2)", "y = x² + b · x + 1 geht durch ( 2 | 3 )"], ["(3)", "Normalparabel durch ( 1 | 2 ) und ( 3 | 10 )"]]], "loes": ["a) Achse x = 1, Abstand 3 → 9 nach unten: S ( 1 | −7 ),  y = ( x − 1 )² − 7", "b) y = ( x − 3 )² − 5", "c) S ( 1 | −16 ),  y = ( x − 1 )² − 16", "d) b = 6:  y = x² + 6x − 4", "e) (1) Spiegelachse · (2) Punkt einsetzen · (3) Gleichungssystem (V.11)"], "mix": ["a) Achse x = 1, Abstand 3 → 9 nach unten: S ( 1 | −7 ),  y = ( x − 1 )² − 7", "b) y = ( x − 3 )² − 5", "c) S ( 1 | −16 ),  y = ( x − 1 )² − 16", "d) b = 6:  y = x² + 6x − 4", "e) (1) Spiegelachse · (2) Punkt einsetzen · (3) Gleichungssystem (V.11)"], "weg": ["a) Zwei Punkte gleicher Höhe, z. B. ( −2 | 2 ) und ( 4 | 2 ): Achse in der Mitte x = 1. Abstand 3 → 3² = 9 nach unten: 2 − 9 = −7 → S ( 1 | −7 ) → y = ( x − 1 )² − 7", "b) Gleiche y-Werte bei x = 1 und x = 5 (y = −1): Achse x = 3. Abstand 2 → 4 nach unten: −1 − 4 = −5 → S ( 3 | −5 ) → y = ( x − 3 )² − 5", "c) Achse in der Mitte von −3 und 5: x = 1. Abstand 4 → 16 nach unten (von 0) → S ( 1 | −16 ) → y = ( x − 1 )² − 16", "d) P einsetzen: 3 = 1² + b · 1 − 4  →  3 = b − 3  →  b = 6", "e) (1) gleiche Höhe 5 → Spiegelachse · (2) nur b fehlt → einsetzen · (3) verschiedene Höhen, kein Punkt auf der y-Achse → Gleichungssystem"]}, "stufen": {"1": {"name": "Mit Hilfe", "aufg": [{"t": "Eine Normalparabel geht durch ( 0 | 5 ) und ( 4 | 5 ). Bestimme Scheitel und Gleichung. Tipp: Die Spiegelachse liegt in der Mitte bei x = 2. Abstand 2 → 2² = 4 nach unten.", "mix": ["S ( 2 | 1 ),  y = ( x − 2 )² + 1"], "weg": ["Achse x = 2. Abstand 2 → 2² = 4 nach unten: 5 − 4 = 1 → S ( 2 | 1 )", "y = ( x − 2 )² + 1. Probe ( 0 | 5 ): 4 + 1 = 5 ✓"]}, {"t": "Bestimme b:  y = x² + b · x + 2  geht durch  P ( 1 | 6 ).  Tipp: 6 = 1² + b · 1 + 2.", "mix": ["b = 3:  y = x² + 3x + 2"], "weg": ["6 = 1² + b · 1 + 2  →  6 = b + 3  →  b = 3", "y = x² + 3x + 2"]}, {"t": "Jemand behauptet: „Die Parabel geht durch ( −1 | 4 ) und ( 5 | 4 ). Dann liegt der Scheitel bei x = 3.“ Überprüfe.", "tag": "v", "idee": "Stimmt nicht. Die Spiegelachse liegt genau in der Mitte: ( −1 + 5 ) : 2 = 2. Der Scheitel liegt bei x = 2.", "mix": ["stimmt nicht: Mitte bei x = 2"], "weg": ["Mitte von −1 und 5: ( −1 + 5 ) : 2 = 4 : 2 = 2", "Die Achse liegt bei x = 2 – die Behauptung stimmt nicht."]}, {"t": "Wiederholung V.9: Löse  (1) x = y + 2  und  (2) 2x + y = 7.", "tag": "w", "mix": ["( 3 | 1 )"], "weg": ["( y + 2 ) in (2):  2 · ( y + 2 ) + y = 7  →  3y + 4 = 7  →  y = 1", "x = 1 + 2 = 3  →  ( 3 | 1 )"]}]}, "2": {"name": "Sicher rechnen", "aufg": [{"t": "Eine Normalparabel hat die Nullstellen −5 und 1. Bestimme den Scheitel und die Gleichung in Normalform.", "mix": ["S ( −2 | −9 ):  y = ( x + 2 )² − 9 = x² + 4x − 5"], "weg": ["Achse in der Mitte von −5 und 1: x = −2. Abstand 3 → 9 nach unten → S ( −2 | −9 )", "y = ( x + 2 )² − 9 = x² + 4x + 4 − 9 = x² + 4x − 5"]}, {"t": "Die Parabel  y = x² + b · x − 3  geht durch  P ( −2 | 5 ). Bestimme b und den Scheitel.", "mix": ["b = −2:  y = x² − 2x − 3 = ( x − 1 )² − 4,  S ( 1 | −4 )"], "weg": ["5 = ( −2 )² + b · ( −2 ) − 3  →  5 = 4 − 2b − 3  →  5 = 1 − 2b  →  −2b = 4  →  b = −2", "y = x² − 2x − 3:  2 : 2 = 1,  x² − 2x + 1 − 1 − 3 = ( x − 1 )² − 4  →  S ( 1 | −4 )"]}, {"t": "Eine Normalparabel geht durch ( 1 | 4 ) und ( 7 | 4 ). Jemand rechnet: „Abstand 3 → 3 nach unten → S ( 4 | 1 ).“ Finde den Fehler.", "tag": "v", "idee": "Der Fehler: Man geht nicht 3 nach unten, sondern 3² = 9 (1-4-9 rückwärts). Richtig: S ( 4 | 4 − 9 ) = ( 4 | −5 ).", "mix": ["Fehler: 3² = 9 statt 3; richtig S ( 4 | −5 )"], "weg": ["Achse in der Mitte von 1 und 7: x = 4. Abstand 3.", "1-4-9 rückwärts: 3² = 9 nach unten, nicht 3!  4 − 9 = −5  →  S ( 4 | −5 )"]}, {"t": "Wiederholung V.8: Berechne die Nullstellen von  y = ( x − 4 )² − 1.", "tag": "w", "mix": ["x = 5 und x = 3"], "weg": ["0 = ( x − 4 )² − 1  →  ( x − 4 )² = 1  →  x − 4 = ±1  →  x = 5 oder x = 3"]}]}, "3": {"name": "Knifflig", "aufg": [{"t": "Eine Normalparabel geht durch A ( −3 | 12 ) und B ( 5 | 12 ). Bestimme ihre Nullstellen.", "mix": ["S ( 1 | −4 ),  Nullstellen x = 3 und x = −1"], "weg": ["Achse in der Mitte von −3 und 5: x = 1. Abstand 4 → 16 nach unten: 12 − 16 = −4 → S ( 1 | −4 )", "0 = ( x − 1 )² − 4  →  x − 1 = ±2  →  x = 3 oder x = −1"]}, {"t": "Die Parabel  y = 0,25 · x² + c  geht durch  C ( 6 | 5 ). Bestimme c und die Nullstellen.", "mix": ["c = −4;  Nullstellen x = 4 und x = −4"], "weg": ["5 = 0,25 · 6² + c  →  5 = 9 + c  →  c = −4", "0 = 0,25x² − 4  →  x² = 16  →  x = 4 oder x = −4"]}, {"t": "Jemand behauptet: „Bei  y = x² + b · x + 5  durch  P ( 0 | 5 )  kann man b ausrechnen.“ Stimmt das?", "tag": "v", "idee": "Stimmt nicht. Bei x = 0 fällt b · x weg: 5 = 0 + 0 + 5 – das gilt für jedes b. Ein Punkt auf der y-Achse verrät nur die Zahl ohne x.", "mix": ["stimmt nicht: bei x = 0 fällt b weg"], "weg": ["P ( 0 | 5 ) einsetzen: 5 = 0² + b · 0 + 5 = 5 – b fällt weg.", "Jedes b passt. Man braucht einen Punkt mit x ≠ 0."]}, {"t": "Wiederholung V.7: Bestimme den Scheitel von  y = x² + 10x + 21.", "tag": "w", "mix": ["S ( −5 | −4 )"], "weg": ["10 : 2 = 5,  5² = 25:  x² + 10x + 25 − 25 + 21 = ( x + 5 )² − 4  →  S ( −5 | −4 )"]}]}}}]};
+// Brüche im Text: [frac Zähler|Nenner] (Kap. V, Malte 11.10.2026: Steigung als Bruch statt mit Doppelpunkt)
+// Gleichungen nicht umbrechen (25.10.2026): Leerzeichen um + − = · und in Klammern werden geschützt
+const esc=s=>s.replace(/ ([+−=·]) /g,"\u00a0$1\u00a0").replace(/\( /g,"(\u00a0").replace(/ \)/g,"\u00a0)").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\[frac ([^|\]]+)\|([^\]]+)\]/g,'<span class="frac"><span>$1</span><span>$2</span></span>');
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const tagHtml=t=>t==="z"?'<span class="tag z">⭐ Zusatz</span>':t==="v"?'<span class="tag v">💡 Verständnis</span>':t==="w"?'<span class="tag w">↩ Wiederholung</span>':"";
+function ks([m,c],X=5,Y=4,parabel=false){   // parabel=true: y = m · x² + c (Kap. V.5, 22.10.2026)
+  const U=36,W=2*X*U+40,H=2*Y*U+40,ox=20+X*U,oy=20+Y*U,px=x=>ox+x*U,py=y=>oy-y*U;let g="";
+  for(let v=-X;v<=X+1e-9;v+=0.5)g+=`<line x1="${px(v)}" y1="${py(-Y)}" x2="${px(v)}" y2="${py(Y)}" stroke="#dde3ea"/>`;
+  for(let v=-Y;v<=Y+1e-9;v+=0.5)g+=`<line x1="${px(-X)}" y1="${py(v)}" x2="${px(X)}" y2="${py(v)}" stroke="#dde3ea"/>`;
+  g+=`<line x1="${px(-X)}" y1="${oy}" x2="${px(X)+8}" y2="${oy}" stroke="#333" stroke-width="1.6"/><line x1="${ox}" y1="${py(-Y)}" x2="${ox}" y2="${py(Y)-8}" stroke="#333" stroke-width="1.6"/>`;
+  g+=`<text x="${px(X)+6}" y="${oy+16}" font-size="13">x</text><text x="${ox+6}" y="${py(Y)-2}" font-size="13">y</text>`;
+  for(let v=-X;v<=X;v++)if(v)g+=`<text x="${px(v)}" y="${oy+15}" font-size="11" text-anchor="middle">${v<0?"−"+(-v):v}</text>`;
+  for(let v=-Y;v<=Y;v++)if(v)g+=`<text x="${ox-5}" y="${py(v)+4}" font-size="11" text-anchor="end">${v<0?"−"+(-v):v}</text>`;
+  // Gerade nur innerhalb des Gitters
+  const pts=[];for(const x of [-X,X]){const y=m*x+c;pts.push([x,y]);}
+  const clip=([x1,y1],[x2,y2])=>{const t=v=>(v-y1)/(y2-y1);let a=0,b=1;if(y2!==y1){const ta=t(Y),tb=t(-Y);a=Math.max(a,Math.min(ta,tb));b=Math.min(b,Math.max(ta,tb));}
+    return [[x1+(x2-x1)*a,y1+(y2-y1)*a],[x1+(x2-x1)*b,y1+(y2-y1)*b]];};
+  if(parabel!==false){const dd=parabel===true?0:parabel;let d="";for(let i=0;i<=200;i++){const x=-X+2*X*i/200,y=m*(x-dd)**2+c;if(y<-Y-0.01||y>Y+0.01)continue;d+=(d?"L":"M")+px(x).toFixed(1)+" "+py(y).toFixed(1);}
+    g+=`<path d="${d}" fill="none" stroke="#b5432f" stroke-width="3"/>`;}
+  else{const [p,q]=clip(pts[0],pts[1]);g+=`<line x1="${px(p[0])}" y1="${py(p[1])}" x2="${px(q[0])}" y2="${py(q[1])}" stroke="#1f4e79" stroke-width="3"/>`;}
+  return `<svg class="ks" viewBox="0 0 ${W} ${H}" style="display:block;width:100%;max-width:${W}px;margin-top:6px;background:#fff;border:1px solid #d6dde6;border-radius:8px">${g}</svg>`;
+}
+// Animierter Tipp: cfg = {gegeben:[[id,html,farbklasse]], schritte:[{txt, zeile?, fly?:[[chip,slot,wert]], puls?:[chip]}], du}
+function animTipp(cfg){
+  const d=el("details","atipp");
+  d.innerHTML=`<summary>💡 Tipp als Animation</summary><div class="warn">Achtung: Beispiel mit anderen Zahlen als in deiner Aufgabe!</div>
+    <div class="geg"><b>Gegeben im Beispiel:</b> ${cfg.gegeben.map(([id,h,f])=>id?`<span class="chip ${f}" data-chip="${id}">${h}</span>`:h).join(" ")}</div>
+    <div class="kn"><button class="h" data-k="p">▶ Abspielen</button><button data-k="n">Nächster Schritt</button><button data-k="r">Von vorn</button></div>
+    ${cfg.graph?'<svg class="ag" viewBox="0 0 420 300" style="display:block;width:100%;max-width:600px;background:#fff;border:1px solid #d8cce8;border-radius:10px;margin-bottom:8px"></svg>':""}
+    <div class="brett"></div><div class="erk"></div><div class="du"><b>Jetzt du:</b> ${cfg.du}</div>`;
+  const brett=d.querySelector(".brett"),erk=d.querySelector(".erk"),du=d.querySelector(".du"),nb=d.querySelector('[data-k="n"]');
+  const chip=id=>d.querySelector(`[data-chip="${id}"]`),slot=id=>d.querySelector(`[data-slot="${id}"]`);
+  let n=0,timer=null;
+  const fliege=(c,s,wert)=>{const a=chip(c).getBoundingClientRect(),b=slot(s).getBoundingClientRect(),f=chip(c).cloneNode(true);
+    f.className="flieger "+chip(c).className.replace("puls","");f.style.left=a.left+"px";f.style.top=a.top+"px";f.style.fontSize="20px";document.body.appendChild(f);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transform=`translate(${b.left-a.left}px,${b.top-a.top}px) scale(1.15)`;}));
+    setTimeout(()=>{f.remove();slot(s).innerHTML=wert;slot(s).classList.add("voll");},950);};
+  const puls=id=>{const e=chip(id);e.classList.remove("puls");void e.offsetWidth;e.classList.add("puls");};
+  // Koordinatensystem mit Gerade; ein Punkt kann die Gerade entlanglaufen und zeigt dabei seine Höhe (y-Wert)
+  const G=cfg.graph,svg=d.querySelector("svg.ag"),NS="http://www.w3.org/2000/svg";
+  const mk=(t,a,p=svg)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+  const X=x=>20+(x-G.x[0])*380/(G.x[1]-G.x[0]),Y=y=>280-(y-G.y[0])*260/(G.y[1]-G.y[0]);
+  const fmt=v=>{const r=Math.round(v*10)/10;return (r<0?"−":"")+String(Math.abs(r)).replace(".",",");};
+  let lauf=null;
+  const zeichne=()=>{if(!G)return;svg.replaceChildren();
+    for(let x=G.x[0];x<=G.x[1];x++)mk("line",{x1:X(x),x2:X(x),y1:Y(G.y[0]),y2:Y(G.y[1]),stroke:"#e6e0ef"});
+    for(let y=G.y[0];y<=G.y[1];y++)mk("line",{x1:X(G.x[0]),x2:X(G.x[1]),y1:Y(y),y2:Y(y),stroke:"#e6e0ef"});
+    mk("line",{x1:X(G.x[0]),x2:X(G.x[1]),y1:Y(0),y2:Y(0),stroke:"#333","stroke-width":2,id:"xa"});mk("line",{x1:X(0),x2:X(0),y1:Y(G.y[0]),y2:Y(G.y[1]),stroke:"#333","stroke-width":2});
+    for(let x=G.x[0]+1;x<G.x[1];x++)if(x){const t=mk("text",{x:X(x),y:Y(0)+15,"text-anchor":"middle","font-size":11});t.textContent=x<0?"−"+(-x):x;}
+    for(let y=G.y[0]+1;y<G.y[1];y++)if(y){const t=mk("text",{x:X(0)-5,y:Y(y)+4,"text-anchor":"end","font-size":11});t.textContent=y<0?"−"+(-y):y;}
+    mk("line",{x1:X(G.x[0]),y1:Y(G.m*G.x[0]+G.c),x2:X(G.x[1]),y2:Y(G.m*G.x[1]+G.c),stroke:"#1f4e79","stroke-width":3});};
+  const aktion=s=>{if(!G)return;
+    if(s.punkt){const [x,y,t,f]=s.punkt;mk("circle",{cx:X(x),cy:Y(y),r:6,fill:f||"#1f4e79"});const e=mk("text",{x:X(x)+8,y:Y(y)-8,"font-size":14,"font-weight":700,fill:f||"#1f4e79"});e.textContent=t;}
+    if(s.achse){const a=svg.querySelector("#xa");a.setAttribute("stroke","#3f8f3a");a.setAttribute("stroke-width",5);
+      s.achse.forEach(x=>{mk("circle",{cx:X(x),cy:Y(0),r:5,fill:"#3f8f3a"});const e=mk("text",{x:X(x),y:Y(0)-10,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"#3f8f3a"});e.textContent=`( ${fmt(x)} | 0 )`;});}
+    if(s.lauf){const [x0,x1]=s.lauf;const p=mk("circle",{r:8,fill:"#c0700f"}),h=mk("line",{stroke:"#c0700f","stroke-width":3,"stroke-dasharray":"5 4"}),t=mk("text",{"font-size":16,"font-weight":800,fill:"#c0700f"});
+      let x=x0;clearInterval(lauf);lauf=setInterval(()=>{x=Math.min(x1,x+0.05);const y=G.m*x+G.c;
+        p.setAttribute("cx",X(x));p.setAttribute("cy",Y(y));h.setAttribute("x1",X(x));h.setAttribute("x2",X(x));h.setAttribute("y1",Y(0));h.setAttribute("y2",Y(y));
+        t.setAttribute("x",X(x)+10);t.setAttribute("y",Y(y)-10);t.textContent="y = "+fmt(y);
+        if(Math.abs(y)<0.03){t.setAttribute("fill","#3f8f3a");p.setAttribute("fill","#3f8f3a");}
+        if(x>=x1)clearInterval(lauf);},45);}};
+  const reset=()=>{clearInterval(timer);clearInterval(lauf);n=0;zeichne();brett.innerHTML="";erk.textContent="Tippe auf „Abspielen“ oder „Nächster Schritt“.";du.classList.remove("da");nb.disabled=false;};
+  const weiter=()=>{if(n>=cfg.schritte.length)return;const s=cfg.schritte[n++];
+    if(s.zeile)brett.insertAdjacentHTML("beforeend",`<div class="z">${s.zeile}</div>`);
+    erk.innerHTML=s.txt;aktion(s);(s.puls||[]).forEach(puls);(s.fly||[]).forEach(([c,sl,w],i)=>setTimeout(()=>{puls(c);fliege(c,sl,w);},i*1100));
+    if(n>=cfg.schritte.length){nb.disabled=true;setTimeout(()=>du.classList.add("da"),1200);}};
+  nb.onclick=()=>{clearInterval(timer);weiter();};
+  d.querySelector('[data-k="r"]').onclick=reset;
+  d.querySelector('[data-k="p"]').onclick=()=>{reset();weiter();timer=setInterval(()=>{weiter();if(n>=cfg.schritte.length)clearInterval(timer);},4200);};
+  reset();return d;
+}
+// Parabel UND Gerade in einem Schaubild (V.8, 25.10.2026): Gerade in dieselbe SVG einfügen (gleiche Skala wie ks mit X = Y = 5)
+function mitGerade(svgHtml,[m,c],farbe="#2e5d9f"){const U=36,X=5,Y=5,ox=20+X*U,oy=20+Y*U,px=x=>ox+x*U,py=y=>oy-y*U;
+  const t=v=>(v-c)/m;let x1=-X,x2=X;if(m){const a=t(Y),b=t(-Y);x1=Math.max(-X,Math.min(a,b));x2=Math.min(X,Math.max(a,b));}
+  return svgHtml.replace("</svg>",`<line x1="${px(x1)}" y1="${py(m*x1+c)}" x2="${px(x2)}" y2="${py(m*x2+c)}" stroke="${farbe}" stroke-width="3"/></svg>`);}
+function aufgabe(nr,a){
+  let h=`<div class="kopf">Aufgabe ${nr}${tagHtml(a.tag)}</div><div class="txt">${esc(a.tag==="w"?a.t.replace(/^Wiederholung: /,""):a.t)}</div>`;
+  // Wertetabelle: a.tab = [[x-Zeile], [y-Zeile]]; Teilaufgabe als Tabelle: sub-Eintrag ist eine Liste von Zeilen
+  const wt=rows=>'<table class="wt">'+rows.map(r=>"<tr>"+r.map(c=>"<td>"+esc(String(c))+"</td>").join("")+"</tr>").join("")+"</table>";
+  if(a.tab)h+=wt(a.tab);
+  // Teilaufgabe mit Graph (15.10.2026): {txt:"…", gerade:[m, c]} → Koordinatensystem im Heftformat (1 Einheit = 2 Kästchen)
+  const sub=s=>Array.isArray(s)?wt(s):(s&&typeof s==="object")?(s.txt?`<span>${esc(s.txt)}</span>`:"")+(s.parabel&&s.gerade?mitGerade(ks(s.parabel,5,5,s.parabel.length>2?s.parabel[2]:true),s.gerade):s.parabel?ks(s.parabel,5,5,s.parabel.length>2?s.parabel[2]:true):s.gerade&&s.gerade2?mitGerade(ks(s.gerade),s.gerade2,"#c0700f"):s.gerade?ks(s.gerade):""):esc(s);
+  if(a.sub)h+="<ol>"+a.sub.map((s,i)=>`<li${s&&typeof s==="object"&&!Array.isArray(s)&&s.txt?' class="breit"':""}><b class="tb">${"abcdefgh"[i]})</b>${sub(s)}</li>`).join("")+"</ol>";
+  // gestufte Hilfen (V.6): nacheinander aufklappen
+  if(a.hilfen)h+=a.hilfen.map((x,i)=>`<details class="hilfe"><summary>Hilfe ${i+1}</summary><div>${esc(x)}</div></details>`).join("");
+  if(a.idee)h+=`<details class="idee"><summary>Lösungsidee anzeigen</summary><div>${esc(a.idee)}</div></details>`;
+  const e=el("div","aufg",h);
+  if(a.anim)e.insertBefore(animTipp(a.anim),e.querySelector("details.idee"));   // animierter Tipp vor der Lösungsidee
+  return e;
+}
+// Lösungen je Aufgabe (Malte 15.10.2026): erst „Lösungen anzeigen“, dann wählen, zu welcher Aufgabe – nie alle auf einmal.
+// liste = [[Beschriftung, Aufgabe]]; Aufgabe.mix = Lösungen (bei Aufgabe 1 nur richtige, sonst richtige + Fallen gemischt)
+// Seit 15.10.2026 (Malte): keine Fallen mehr – die Auswahl der Aufgabe ist Hürde genug. Immer nur richtige Lösungen.
+function loesung(liste,nurRichtig=true){
+  const box=el("div");
+  const b=el("button","loesbtn");b.textContent="Lösungen anzeigen";
+  const w=el("div","loes");w.hidden=true;
+  const frage=el("p","ok","Zu welcher Aufgabe möchtest du die Lösung sehen?");
+  const knoepfe=el("div","lwahl"),anz=el("div");
+  w.append(frage,knoepfe,anz);
+
+  const zeig=(i)=>{const [nr,a]=liste[i];knoepfe.querySelectorAll("button").forEach((x,j)=>x.setAttribute("aria-pressed",j===i));
+    if(!a.mix||!a.mix.length){anz.innerHTML=a.idee?`<p class="ok">Aufgabe ${esc(String(nr))}: Hier gibt es kein Zahlenergebnis. Öffne „Lösungsidee anzeigen“ direkt unter der Aufgabe.</p>`:`<p class="ok">Zu Aufgabe ${esc(String(nr))} gibt es keine Ergebnisliste.</p>`;return;}
+    const hinweis=nurRichtig?'<p class="ok">Vergleiche mit deinem Ergebnis. Stimmt es nicht, suche den Fehler in deiner Rechnung.</p>':'<p>Achtung: Nicht alle Ergebnisse stimmen! Findest du dein Ergebnis nicht, suche den Fehler in deiner Rechnung.</p>';
+    const weg=a.weg?`<button class="wegbtn">Lösungsweg anzeigen</button><div class="weg" hidden>${a.weg.map(z=>"<div>"+esc(z)+"</div>").join("")}</div>`:"";
+    anz.innerHTML=`<p class="ok"><b>Aufgabe ${esc(String(nr))}</b></p>`+hinweis+'<div class="loeswrap"><div class="grid">'+a.mix.map((x,i)=>`<span>${esc(a.sub&&a.mix.length===a.sub.length&&!/^[a-h]\)/.test(x)?"abcdefgh"[i]+") "+x:x)}</span>`).join("")+"</div>"+weg+"</div>";
+    const wb=anz.querySelector(".wegbtn");if(wb)wb.onclick=()=>{const w=anz.querySelector(".weg");w.hidden=!w.hidden;wb.textContent=w.hidden?"Lösungsweg anzeigen":"Lösungsweg ausblenden";};};
+  liste.forEach(([nr],i)=>{const k=el("button","",`Aufgabe ${esc(String(nr))}`);k.setAttribute("aria-pressed","false");k.onclick=()=>zeig(i);knoepfe.appendChild(k);});
+  b.onclick=()=>{w.hidden=!w.hidden;b.textContent=w.hidden?"Lösungen anzeigen":"Lösungen ausblenden";
+    if(!w.hidden){anz.innerHTML="";knoepfe.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));}};
+  box.append(b,w);return box;
+}
+function teil(T){
+  const root=el("section","teil");
+  if(D.mehrteilig)root.appendChild(el("div","teilkopf",esc(T.name)));
+  root.appendChild(el("details","erin",`<summary>Erinnerung: Das brauchst du</summary><ul>${T.erinnerung.map(e=>"<li>"+esc(e)+"</li>").join("")}</ul>`));
+  root.appendChild(el("h2","","Aufgabe 1 · für alle"));
+  root.append(aufgabe(1,T.a1),loesung([[1,T.a1]],true));
+  if(T.alle){ // Modellieren (V.6): keine Niveaus, Prüfungsaufgaben für alle mit gestuften Hilfen
+    root.appendChild(el("h2","","Prüfungsaufgaben für alle"));
+    T.alle.aufg.forEach((a,i)=>root.appendChild(aufgabe(i+2,a)));root.appendChild(loesung(T.alle.aufg.map((a,i)=>[i+2,a])));return root;}
+  root.appendChild(el("h2","","Jetzt wählst du dein Niveau"));
+  const wahl=el("div","wahl"),st=el("div");root.append(wahl,st);
+  [["1","★"],["2","★★"],["3","★★★"]].forEach(([k,stern])=>{
+    const s=T.stufen[k];
+    const b=el("button","",`${stern}  ${esc(s.name)}<small>${D.untertitel[k-1]}</small>`);b.setAttribute("aria-pressed","false");
+    const sec=el("section","stufe");sec.hidden=true;
+    sec.appendChild(el("h2","",esc(stern+"  "+s.name)));
+    s.aufg.forEach((a,i)=>sec.appendChild(aufgabe(stern+" "+(i+2),a)));
+    sec.appendChild(loesung(s.aufg.map((a,i)=>[stern+" "+(i+2),a])));
+    b.onclick=()=>{wahl.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));st.querySelectorAll(".stufe").forEach(x=>x.hidden=x!==sec);};
+    wahl.appendChild(b);st.appendChild(sec);
+  });
+  return root;
+}
+const box=document.getElementById("teile"),secs=D.teile.map(teil);
+secs.forEach(s=>box.appendChild(s));
+if(D.mehrteilig){
+  document.getElementById("teilwahl").hidden=false;const tw=document.getElementById("tw");
+  const zeig=i=>{secs.forEach((s,j)=>s.hidden=j!==i);tw.querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));};
+  D.teile.forEach((T,i)=>{const b=el("button","",esc(T.stunde)+`<small>${esc(T.kurz)}</small>`);b.onclick=()=>zeig(i);tw.appendChild(b);});
+  zeig(D.teile.length-1);
+}
+</script>
+</body>
+</html>
