@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Animation: Wie viele Punkte braucht man?</title>
+<!-- Lila Tipp-Animation (tipp_anim.py): zeichnet Schritt für Schritt im Koordinatensystem. Anderes Beispiel als im Skript – nie die Lösung. -->
+<style>
+  :root{--tipp:#6d4a9e;--tippH:#f1eaf8;--tippL:#b79bd6;--hl:#c0700f;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f7f4fb;--card:#fff;--line:#d8cce8;--gitter:#e6e0ef}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--tipp);color:#fff} header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:980px;margin:0 auto}
+  .start{font-size:18px;color:var(--tipp);font-weight:700;margin:4px 0 10px}
+  .knoepfe{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+  .knoepfe button{flex:1 1 180px;min-height:52px;border-radius:12px;font-size:18px;font-weight:700;border:2px solid var(--tipp);background:#fff;color:var(--tipp)}
+  .knoepfe button.haupt{background:var(--tipp);color:#fff} .knoepfe button:disabled{opacity:.4}
+  .wrap{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+  svg{flex:1 1 380px;width:100%;max-width:520px;height:auto;background:var(--card);border:1px solid var(--line);border-radius:14px}
+  .tafel{flex:1 1 300px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;min-height:120px}
+  .tafel .m{font-size:24px;font-weight:700;line-height:1.4} .tafel .k{font-size:18px;color:var(--tipp);margin-top:6px;line-height:1.45}
+  .nr{font-size:14px;color:var(--muted)}
+  .du{display:none;margin-top:14px;background:var(--tippH);border:1px solid var(--tippL);border-radius:12px;padding:10px 14px;font-size:19px;line-height:1.45} .du.da{display:block}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:14px 0}
+  svg text{font-family:inherit}
+</style>
+</head>
+<body>
+<header><h1>Animation: Wie viele Punkte braucht man?</h1></header>
+<main>
+  <div class="start">Gesucht ist eine Normalparabel  y = x² + b · x + c  – zwei Zahlen fehlen.</div>
+  <div class="knoepfe"><button class="haupt" id="play">▶ Abspielen</button><button id="next">Nächster Schritt</button><button id="reset">Von vorn</button></div>
+  <div class="wrap"><svg id="s" viewBox="0 0 440 440"></svg><div class="tafel"><div class="nr" id="nr"></div><div class="m" id="m"></div><div class="k" id="k"></div></div></div>
+  <div class="du" id="du"><b>Jetzt du:</b> Zähle bei deiner Aufgabe: Wie viele Zahlen fehlen? So viele Punkte setzt du ein.</div>
+</main>
+<footer>Fehling · V.11 Fehlende Zahlen durch Punkte · Tipp</footer>
+<script>
+"use strict";
+const D={"ymin": -3, "ymax": 8, "xmin": -4, "xmax": 4, "basis": [["p", 1, 4, "#c0392b"], ["t", 1.2, 4.5, "A ( 1 | 4 )", "#c0392b"]], "schritte": [["Eine Parabel durch A", "y = x² − 3x + 6 geht durch A.", [["k", "quad", 1, 3.75, "#b5432f", 1.5]]], ["Noch eine – und noch eine", "y = x² − x + 4 und y = x² + x + 2 gehen auch durch A …", [["k", "quad", 1, 3.75, "#c0700f", 0.5], ["k", "quad", 1, 1.75, "#2e5d9f", -0.5]]], ["… und noch viel mehr", "y = x² + 3x geht ebenfalls durch A. Mit EINEM Punkt bekommt man unendlich viele Parabeln – zwei Zahlen fehlen, ein Punkt reicht nicht.", [["k", "quad", 1, -2.25, "#7b4fa0", -1.5]]], ["Der zweite Punkt entscheidet", "B ( −1 | 2 ) liegt nur auf EINER davon: y = x² + x + 2 (blau). Zwei Zahlen fehlen → zwei Punkte → zwei Gleichungen.", [["p", -1, 2, "#3f8f3a"], ["t", -3.6, 2.5, "B ( −1 | 2 )", "#3f8f3a"], ["k", "quad", 1, 1.75, "#2e5d9f", -0.5]]]]};
+const NS="http://www.w3.org/2000/svg",svg=document.getElementById("s");
+const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
+const XMIN=D.xmin??-5,XMAX=D.xmax??7,YMIN=D.ymin,YMAX=D.ymax,L=30,R=420,T=20,B=410;
+const X=x=>L+(R-L)*(x-XMIN)/(XMAX-XMIN),Y=y=>B-(B-T)*(y-YMIN)/(YMAX-YMIN);
+function el(e){
+  if(e[0]==="p")mk("circle",{cx:X(e[1]),cy:Y(e[2]),r:7,fill:e[3],stroke:"#fff","stroke-width":2});
+  if(e[0]==="l")mk("line",{x1:X(e[1]),y1:Y(e[2]),x2:X(e[3]),y2:Y(e[4]),stroke:e[5],"stroke-width":4,"stroke-dasharray":e[6]?"7 5":"none"});
+  if(e[0]==="t"){const t=mk("text",{x:X(e[1]),y:Y(e[2]),"font-size":e[5]||18,"font-weight":700,fill:e[4]});t.textContent=e[3];}
+  if(e[0]==="r"){mk("rect",{x:X(e[1]),y:Y(e[4]),width:X(e[3])-X(e[1]),height:Y(e[2])-Y(e[4]),fill:e[5],opacity:1});
+    mk("line",{x1:X(e[1]),x2:X(e[3]),y1:Y(e[4]),y2:Y(e[4]),stroke:"#7a8796","stroke-width":2,"stroke-dasharray":"6 4"});
+    if(e[6]){const t=mk("text",{x:X(e[3])-8,y:Y(e[2])-10,"text-anchor":"end","font-size":14,"font-weight":700,fill:"#5b6b7c"});t.textContent=e[6];}}
+  if(e[0]==="w"){const r=0.35;mk("polyline",{points:[[e[1]+r*e[3],e[2]+r*e[4]],[e[1]+r*(e[3]+e[5]),e[2]+r*(e[4]+e[6])],[e[1]+r*e[5],e[2]+r*e[6]]].map(([x,y])=>X(x)+","+Y(y)).join(" "),fill:"none",stroke:e[7],"stroke-width":2.5});}
+  if(e[0]==="k"){let d="";for(let i=0;i<=200;i++){const x=XMIN+(XMAX-XMIN)*i/200,y=e[1]==="lin"?e[2]*x+e[3]:e[2]*(x-(e[5]||0))**2+e[3];if(y<YMIN-0.5||y>YMAX+0.5)continue;d+=(d?"L":"M")+X(x).toFixed(1)+" "+Y(y).toFixed(1);}
+    mk("path",{d,fill:"none",stroke:e[4],"stroke-width":3.5});}
+}
+function gitter(){svg.replaceChildren();
+  for(let x=XMIN;x<=XMAX+1e-9;x+=0.5)mk("line",{x1:X(x),x2:X(x),y1:Y(YMIN),y2:Y(YMAX),stroke:"var(--gitter)"});
+  for(let y=YMIN;y<=YMAX+1e-9;y+=0.5)mk("line",{x1:X(XMIN),x2:X(XMAX),y1:Y(y),y2:Y(y),stroke:"var(--gitter)"});
+  mk("line",{x1:X(XMIN),x2:X(XMAX),y1:Y(0),y2:Y(0),stroke:"#333","stroke-width":2});mk("line",{x1:X(0),x2:X(0),y1:Y(YMIN),y2:Y(YMAX),stroke:"#333","stroke-width":2});
+  for(let x=XMIN;x<=XMAX;x++){if(!x)continue;const t=mk("text",{x:X(x),y:Y(0)+17,"text-anchor":"middle","font-size":13});t.textContent=x<0?"−"+(-x):x;}
+  for(let y=YMIN;y<=YMAX;y++){if(!y)continue;const t=mk("text",{x:X(0)-6,y:Y(y)+5,"text-anchor":"end","font-size":13});t.textContent=y<0?"−"+(-y):y;}
+  D.basis.forEach(el);}
+let n=0,timer=null;
+function zeig(){gitter();for(let i=0;i<n;i++)D.schritte[i][2].forEach(el);
+  const s=n?D.schritte[n-1]:["Los geht's","Tippe auf „Nächster Schritt“ oder „Abspielen“.",[]];
+  document.getElementById("nr").textContent=n?`Schritt ${n} von ${D.schritte.length}`:"";
+  document.getElementById("m").textContent=s[0];document.getElementById("k").textContent=s[1];
+  document.getElementById("du").classList.toggle("da",n>=D.schritte.length);document.getElementById("next").disabled=n>=D.schritte.length;}
+const weiter=()=>{if(n<D.schritte.length){n++;zeig();}};
+document.getElementById("next").onclick=()=>{clearInterval(timer);weiter();};
+document.getElementById("reset").onclick=()=>{clearInterval(timer);n=0;zeig();};
+document.getElementById("play").onclick=()=>{clearInterval(timer);n=0;zeig();weiter();timer=setInterval(()=>{weiter();if(n>=D.schritte.length)clearInterval(timer);},3000);};
+zeig();
+</script>
+</body>
+</html>
