@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Labor: Grundseite und Höhe</title>
+<!-- V.13 Std 1 (1.11.2026, Malte): Wiederholung A = g · h : 2. Grundseite fest, Spitze C frei ziehbar, Höhe live (senkrecht auf g,
+     auch außerhalb mit verlängerter Grundseite). „Höhe festhalten“: C wandert nur parallel zur Grundseite → Fläche bleibt gleich.
+     Reiter 2: Grundseite auf der y-Achse (wie Aufgabe B im Skript). -->
+<style>
+  :root{--acc:#1f4e79;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f4f7fb;--line:#c9d6e5;--rot:#c0392b;--gr:#3f8f3a;--bl:#2e5d9f;--blH:#dbe7f6;--or:#c0700f}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button,input{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff} header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:980px;margin:0 auto}
+  .tabs{display:flex;gap:8px;margin-bottom:12px}
+  .tabs button{flex:1;min-height:48px;border-radius:12px;border:2px solid var(--acc);background:#fff;color:var(--acc);font-weight:700;font-size:17px}
+  .tabs button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;align-items:start}
+  @media (max-width:760px){.wrap{grid-template-columns:1fr}}
+  .karte{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+  svg{width:100%;height:auto;display:block;touch-action:none}
+  .formel{font-size:24px;font-weight:700;margin-bottom:8px}
+  .werte{font-size:20px;line-height:1.8;font-variant-numeric:tabular-nums}
+  .werte b{display:inline-block;min-width:72px}
+  label.fest{display:flex;align-items:center;gap:10px;min-height:48px;font-size:18px;font-weight:600;margin-top:6px}
+  label.fest input{width:26px;height:26px}
+  .hinweis{margin-top:8px;font-size:17px;color:var(--acc);font-weight:600;min-height:48px}
+  .frage{margin-top:12px;background:#fdf6ea;border:1px solid #fbd9a8;border-radius:12px;padding:10px 14px;font-size:18px;line-height:1.45}
+  .frage button{margin-top:8px;min-height:44px;border-radius:10px;border:2px solid var(--acc);background:#fff;color:var(--acc);font-weight:700;padding:0 14px}
+  .antwort{display:none;margin-top:8px;color:var(--acc);font-weight:600} .antwort.da{display:block}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:12px 0}
+</style>
+</head>
+<body>
+<header><h1>Labor: Grundseite und Höhe</h1></header>
+<main>
+  <div class="tabs"><button id="t1" aria-pressed="true">Grundseite auf der x-Achse</button><button id="t2" aria-pressed="false">Grundseite auf der y-Achse</button></div>
+  <div class="wrap">
+    <div class="karte"><svg id="s" viewBox="0 0 440 440" aria-label="Koordinatensystem mit Dreieck, Grundseite und Höhe"></svg></div>
+    <div>
+      <div class="karte">
+        <div class="formel">A = <span style="color:var(--or)">g</span> · <span style="color:var(--gr)">h</span> : 2</div>
+        <p style="margin:0 0 6px;color:var(--muted)">Ziehe die rote Spitze C. Die Grundseite bleibt, wo sie ist.</p>
+        <div class="werte">
+          <div><b>C</b> <span id="wc"></span></div>
+          <div><b style="color:var(--or)">g</b> <span id="wg"></span></div>
+          <div><b style="color:var(--gr)">h</b> <span id="wh"></span></div>
+          <div><b style="color:var(--bl)">A</b> <span id="wa"></span></div>
+        </div>
+        <label class="fest"><input type="checkbox" id="fest"> Höhe festhalten</label>
+        <div class="hinweis" id="hin"></div>
+      </div>
+      <div class="frage"><b>Frage:</b> Die Spitze wandert parallel zur Grundseite – das Dreieck wird ganz schief. Was passiert mit der Fläche? Und was musst du ändern, damit sie größer wird?
+        <br><button id="zeig">Antwort zeigen</button>
+        <div class="antwort" id="ant">Die Fläche bleibt gleich: g bleibt gleich und h auch – die Höhe ist immer der <b>senkrechte</b> Abstand der Spitze zur Grundseite. Größer wird die Fläche nur, wenn die Spitze <b>weiter weg</b> von der Grundseite rückt (h größer) oder die Grundseite länger wird.</div></div>
+    </div>
+  </div>
+</main>
+<footer>Fehling · V.13 Rechnen im Koordinatensystem · Labor</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id),NS="http://www.w3.org/2000/svg",svg=$("s");
+// Modus 0: Grundseite A ( −1 | 0 ) – B ( 3 | 0 ) auf der x-Achse · Modus 1: A ( 0 | −1 ) – B ( 0 | 3 ) auf der y-Achse
+const MOD=[{A:[-1,0],B:[3,0],C:[1,3],xa:true},{A:[0,-1],B:[0,3],C:[3,1],xa:false}];
+const R={min:-5,max:6};                           // Koordinatenbereich für beide Achsen
+let m=MOD[0],C=[...m.C];
+const X=x=>30+390*(x-R.min)/(R.max-R.min), Y=y=>420-390*(y-R.min)/(R.max-R.min);
+const fmt=v=>(Math.round(v*100)/100).toString().replace(".",",").replace("-","−");
+const mk=(t,a,txt)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!==undefined)e.textContent=txt;svg.appendChild(e);return e;};
+function zeichne(){svg.innerHTML="";
+  for(let v=R.min;v<=R.max;v++){mk("line",{x1:X(v),x2:X(v),y1:Y(R.min),y2:Y(R.max),stroke:"#e3e9f1"});mk("line",{x1:X(R.min),x2:X(R.max),y1:Y(v),y2:Y(v),stroke:"#e3e9f1"});}
+  mk("line",{x1:X(R.min),x2:X(R.max),y1:Y(0),y2:Y(0),stroke:"#333","stroke-width":2});mk("line",{x1:X(0),x2:X(0),y1:Y(R.min),y2:Y(R.max),stroke:"#333","stroke-width":2});
+  for(let v=R.min;v<=R.max;v++){if(!v)continue;const s=v<0?"−"+(-v):""+v;
+    mk("text",{x:X(v),y:Y(0)+16,"text-anchor":"middle","font-size":12,fill:"#555"},s);mk("text",{x:X(0)-6,y:Y(v)+4,"text-anchor":"end","font-size":12,fill:"#555"},s);}
+  const [A,B]=[m.A,m.B];
+  // Fußpunkt der Höhe: senkrecht auf die Achse, auf der die Grundseite liegt
+  const F=m.xa?[C[0],0]:[0,C[1]];
+  const lo=m.xa?Math.min(A[0],B[0]):Math.min(A[1],B[1]), hi=m.xa?Math.max(A[0],B[0]):Math.max(A[1],B[1]), t=m.xa?F[0]:F[1];
+  const aussen=t<lo-1e-9||t>hi+1e-9;
+  mk("polygon",{points:[A,B,C].map(([a,b])=>X(a)+","+Y(b)).join(" "),fill:"#dbe7f6",stroke:"#2e5d9f","stroke-width":2});
+  if(aussen){const n=t<lo?lo:hi;   // Grundseite verlängern bis zum Fußpunkt
+    const P1=m.xa?[n,0]:[0,n];mk("line",{x1:X(P1[0]),y1:Y(P1[1]),x2:X(F[0]),y2:Y(F[1]),stroke:"#c0700f","stroke-width":2,"stroke-dasharray":"5 4"});}
+  mk("line",{x1:X(A[0]),y1:Y(A[1]),x2:X(B[0]),y2:Y(B[1]),stroke:"#c0700f","stroke-width":6,"stroke-linecap":"round"});
+  const h=m.xa?Math.abs(C[1]):Math.abs(C[0]);
+  if(h>0.01){mk("line",{x1:X(C[0]),y1:Y(C[1]),x2:X(F[0]),y2:Y(F[1]),stroke:"#3f8f3a","stroke-width":3,"stroke-dasharray":"7 4"});
+    // rechter Winkel am Fußpunkt
+    const s=0.35,sx=m.xa?(C[0]>=lo&&C[0]<=hi&&C[0]>hi-0.4?-s:s):(C[0]>0?s:-s),sy=m.xa?(C[1]>0?s:-s):(C[1]>hi-0.4&&!aussen?-s:s);
+    const p=m.xa?[[F[0]+sx,0],[F[0]+sx,sy],[F[0],sy]]:[[sx,F[1]],[sx,F[1]+sy],[0,F[1]+sy]];
+    mk("polyline",{points:p.map(([a,b])=>X(a)+","+Y(b)).join(" "),fill:"none",stroke:"#3f8f3a","stroke-width":1.6});
+    const mid=[(C[0]+F[0])/2,(C[1]+F[1])/2];mk("text",{x:X(mid[0])+(m.xa?8:0),y:Y(mid[1])+(m.xa?5:-8),"font-size":18,"font-weight":700,fill:"#3f8f3a"},"h");}
+  const gm=[(A[0]+B[0])/2,(A[1]+B[1])/2];mk("text",{x:X(gm[0])+(m.xa?0:-40),y:Y(gm[1])+(m.xa?(C[1]>0?24:-12):5),"font-size":18,"font-weight":700,fill:"#c0700f","text-anchor":"middle"},"g");
+  [[A,"A"],[B,"B"]].forEach(([p,n])=>{mk("circle",{cx:X(p[0]),cy:Y(p[1]),r:6,fill:"#c0700f"});});
+  mk("circle",{cx:X(C[0]),cy:Y(C[1]),r:12,fill:"#c0392b",stroke:"#fff","stroke-width":3,style:"cursor:grab"});
+  mk("text",{x:X(C[0])+14,y:Y(C[1])-12,"font-size":18,"font-weight":700,fill:"#c0392b"},"C");
+  const g=hi-lo,Af=g*h/2;
+  $("wc").textContent=`( ${fmt(C[0])} | ${fmt(C[1])} )`;$("wg").textContent=`= ${fmt(g)}  (fest)`;
+  $("wh").textContent=`= ${fmt(h)}`+(m.xa?"  (Abstand von C zur x-Achse)":"  (Abstand von C zur y-Achse)");
+  $("wa").textContent=`= ${fmt(g)} · ${fmt(h)} : 2 = ${fmt(Af)}`;
+  $("hin").textContent=h<0.01?"C liegt auf der Grundseite – kein Dreieck mehr, A = 0.":aussen?"Die Höhe liegt jetzt außerhalb des Dreiecks – die Grundseite wird gedanklich verlängert. Gerechnet wird trotzdem mit g.":$("fest").checked?"Höhe festgehalten: C wandert nur parallel zur Grundseite.":"";}
+let zieht=false;
+function ziehen(ev){const r=svg.getBoundingClientRect(),sx=(ev.clientX-r.left)/r.width*440,sy=(ev.clientY-r.top)/r.height*440;
+  let x=R.min+(sx-30)/390*(R.max-R.min),y=R.min+(420-sy)/390*(R.max-R.min);
+  x=Math.max(R.min+0.5,Math.min(R.max-0.5,Math.round(x*2)/2));y=Math.max(R.min+0.5,Math.min(R.max-0.5,Math.round(y*2)/2));   // auf halbe Kästchen einrasten
+  if($("fest").checked){if(m.xa)y=C[1];else x=C[0];}
+  C=[x,y];zeichne();}
+svg.addEventListener("pointerdown",e=>{zieht=true;svg.setPointerCapture(e.pointerId);ziehen(e);});
+svg.addEventListener("pointermove",e=>{if(zieht)ziehen(e);});svg.addEventListener("pointerup",()=>zieht=false);
+$("fest").onchange=zeichne;
+function wahl(i){m=MOD[i];C=[...m.C];$("t1").setAttribute("aria-pressed",i===0);$("t2").setAttribute("aria-pressed",i===1);$("ant").classList.remove("da");zeichne();}
+$("t1").onclick=()=>wahl(0);$("t2").onclick=()=>wahl(1);$("zeig").onclick=()=>$("ant").classList.add("da");
+zeichne();
+</script>
+</body>
+</html>
