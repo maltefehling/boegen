@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Labor: Ein Punkt wandert</title>
+<!-- V.13 Std 2 (31.10.2026): P wandert auf y = x² − 4 zwischen den Nullstellen. Dreieck N1 N2 P: Grundseite 4 fest, Höhe = Abstand von P zur x-Achse.
+     Fläche live, Rekordanzeige, Frage „Wo ist die Fläche am größten?“ → im Scheitel (größte Höhe), A = 8. Zweiter Reiter: andere Parabel zum Prüfen. -->
+<style>
+  :root{--acc:#1f4e79;--ink:#1b2a3a;--muted:#5b6b7c;--bg:#f4f7fb;--line:#c9d6e5;--rot:#c0392b;--gr:#3f8f3a;--bl:#2e5d9f;--blH:#dbe7f6;--or:#c0700f}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+  button,input{font:inherit;touch-action:manipulation}
+  header{padding:12px 16px;background:var(--acc);color:#fff} header h1{font-size:20px;margin:0}
+  main{padding:12px 16px 24px;max-width:980px;margin:0 auto}
+  .tabs{display:flex;gap:8px;margin-bottom:12px}
+  .tabs button{flex:1;min-height:48px;border-radius:12px;border:2px solid var(--acc);background:#fff;color:var(--acc);font-weight:700;font-size:17px}
+  .tabs button[aria-pressed="true"]{background:var(--acc);color:#fff}
+  .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;align-items:start}
+  @media (max-width:760px){.wrap{grid-template-columns:1fr}}
+  .karte{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+  svg{width:100%;height:auto;display:block;touch-action:none}
+  .gl{font-size:22px;font-weight:700;margin-bottom:8px}
+  .werte{font-size:20px;line-height:1.8;font-variant-numeric:tabular-nums}
+  .werte b{display:inline-block;min-width:72px}
+  input[type=range]{width:100%;height:36px}
+  .rekord{margin-top:8px;font-size:18px;color:var(--gr);font-weight:700}
+  .frage{margin-top:12px;background:#fdf6ea;border:1px solid #fbd9a8;border-radius:12px;padding:10px 14px;font-size:18px;line-height:1.45}
+  .frage button{margin-top:8px;min-height:44px;border-radius:10px;border:2px solid var(--acc);background:#fff;color:var(--acc);font-weight:700;padding:0 14px}
+  .antwort{display:none;margin-top:8px;color:var(--acc);font-weight:600} .antwort.da{display:block}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:12px 0}
+</style>
+</head>
+<body>
+<header><h1>Labor: Ein Punkt wandert</h1></header>
+<main>
+  <div class="tabs"><button id="t1" aria-pressed="true">Parabel 1</button><button id="t2" aria-pressed="false">Parabel 2</button></div>
+  <div class="wrap">
+    <div class="karte"><svg id="s" viewBox="0 0 440 420" aria-label="Koordinatensystem mit Parabel und Dreieck"></svg></div>
+    <div>
+      <div class="karte">
+        <div class="gl" id="gl"></div>
+        <p style="margin:0 0 8px;color:var(--muted)">Ziehe den roten Punkt P oder den Regler. P bleibt auf der Parabel unterhalb der x-Achse.</p>
+        <input type="range" id="r" min="0" max="1000" value="250" aria-label="Lage von P">
+        <div class="werte">
+          <div><b>P</b> <span id="wp"></span></div>
+          <div><b style="color:var(--or)">g</b> <span id="wg"></span></div>
+          <div><b style="color:var(--gr)">h</b> <span id="wh"></span></div>
+          <div><b style="color:var(--bl)">A</b> <span id="wa"></span></div>
+        </div>
+        <div class="rekord" id="rek"></div>
+      </div>
+      <div class="frage"><b>Frage:</b> Wo muss P liegen, damit die Fläche am größten wird – und warum?
+        <br><button id="zeig">Antwort zeigen</button>
+        <div class="antwort" id="ant">Die Grundseite g bleibt immer gleich. Die Fläche hängt nur von der Höhe h ab – und die ist am größten, wenn P am tiefsten liegt: im <b>Scheitel</b>.</div></div>
+    </div>
+  </div>
+</main>
+<footer>Fehling · V.13 Rechnen im Koordinatensystem · Labor</footer>
+<script>
+"use strict";
+const $=id=>document.getElementById(id),NS="http://www.w3.org/2000/svg",svg=$("s");
+const PAR=[{gl:"y = x² − 4",d:0,e:-4,n:[-2,2]},{gl:"y = ( x − 1 )² − 9",d:1,e:-9,n:[-2,4]}];
+let p=PAR[0],rek=0;
+const fmt=v=>(Math.round(v*100)/100).toString().replace(".",",").replace("-","−");
+function geo(){const ymin=p.e-1,ymax=3,xmin=p.n[0]-2,xmax=p.n[1]+2;return {xmin,xmax,ymin,ymax,X:x=>30+390*(x-xmin)/(xmax-xmin),Y:y=>400-380*(y-ymin)/(ymax-ymin)};}
+const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
+const f=x=>(x-p.d)**2+p.e;
+function zeichne(){svg.innerHTML="";const G=geo();
+  for(let x=Math.ceil(G.xmin);x<=G.xmax;x++)mk("line",{x1:G.X(x),x2:G.X(x),y1:G.Y(G.ymin),y2:G.Y(G.ymax),stroke:"#e3e9f1"});
+  for(let y=Math.ceil(G.ymin);y<=G.ymax;y++)mk("line",{x1:G.X(G.xmin),x2:G.X(G.xmax),y1:G.Y(y),y2:G.Y(y),stroke:"#e3e9f1"});
+  mk("line",{x1:G.X(G.xmin),x2:G.X(G.xmax),y1:G.Y(0),y2:G.Y(0),stroke:"#333","stroke-width":2});mk("line",{x1:G.X(0),x2:G.X(0),y1:G.Y(G.ymin),y2:G.Y(G.ymax),stroke:"#333","stroke-width":2});
+  for(let x=Math.ceil(G.xmin);x<=G.xmax;x++){if(!x)continue;const t=mk("text",{x:G.X(x),y:G.Y(0)+16,"text-anchor":"middle","font-size":12});t.textContent=x<0?"−"+(-x):x;}
+  for(let y=Math.ceil(G.ymin);y<=G.ymax;y++){if(!y)continue;const t=mk("text",{x:G.X(0)-5,y:G.Y(y)+4,"text-anchor":"end","font-size":12});t.textContent=y<0?"−"+(-y):y;}
+  let d="";for(let i=0;i<=300;i++){const x=G.xmin+(G.xmax-G.xmin)*i/300,y=f(x);if(y<G.ymin||y>G.ymax)continue;d+=(d?"L":"M")+G.X(x).toFixed(1)+" "+G.Y(y).toFixed(1);}
+  mk("path",{d,fill:"none",stroke:"#b5432f","stroke-width":3});
+  const t=+$("r").value/1000,x=p.n[0]+0.02+(p.n[1]-p.n[0]-0.04)*t,y=f(x),g=p.n[1]-p.n[0],h=-y,A=g*h/2;
+  mk("polygon",{points:[[p.n[0],0],[p.n[1],0],[x,y]].map(([a,b])=>G.X(a)+","+G.Y(b)).join(" "),fill:"#dbe7f6",stroke:"#2e5d9f","stroke-width":2});
+  mk("line",{x1:G.X(p.n[0]),x2:G.X(p.n[1]),y1:G.Y(0),y2:G.Y(0),stroke:"#c0700f","stroke-width":5});
+  mk("line",{x1:G.X(x),x2:G.X(x),y1:G.Y(0),y2:G.Y(y),stroke:"#3f8f3a","stroke-width":3,"stroke-dasharray":"6 4"});
+  p.n.forEach(n=>mk("circle",{cx:G.X(n),cy:G.Y(0),r:6,fill:"#3f8f3a"}));
+  const P=mk("circle",{cx:G.X(x),cy:G.Y(y),r:11,fill:"#c0392b",stroke:"#fff","stroke-width":3,style:"cursor:grab"});
+  $("gl").textContent=p.gl;$("wp").textContent=`( ${fmt(x)} | ${fmt(y)} )`;$("wg").textContent=`= ${fmt(g)}  (fest)`;$("wh").textContent=`= ${fmt(h)}`;
+  $("wa").textContent=`= ${fmt(g)} · ${fmt(h)} : 2 = ${fmt(A)}`;if(A>rek)rek=A;$("rek").textContent=`Größte Fläche bisher: ${fmt(rek)}`;}
+function ziehen(ev){const G=geo(),r=svg.getBoundingClientRect(),sx=(ev.clientX-r.left)/r.width*440,xv=G.xmin+(sx-30)/390*(G.xmax-G.xmin);
+  const t=Math.min(1,Math.max(0,(xv-p.n[0]-0.02)/(p.n[1]-p.n[0]-0.04)));$("r").value=Math.round(t*1000);zeichne();}
+let zieht=false;svg.addEventListener("pointerdown",e=>{zieht=true;svg.setPointerCapture(e.pointerId);ziehen(e);});
+svg.addEventListener("pointermove",e=>{if(zieht)ziehen(e);});svg.addEventListener("pointerup",()=>zieht=false);
+$("r").oninput=zeichne;
+function wahl(i){p=PAR[i];rek=0;$("t1").setAttribute("aria-pressed",i===0);$("t2").setAttribute("aria-pressed",i===1);$("r").value=250;$("ant").classList.remove("da");zeichne();}
+$("t1").onclick=()=>wahl(0);$("t2").onclick=()=>wahl(1);$("zeig").onclick=()=>$("ant").classList.add("da");
+zeichne();
+</script>
+</body>
+</html>
