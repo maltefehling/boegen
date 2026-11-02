@@ -77,7 +77,9 @@ function zeichne(){svg.replaceChildren();
   mk("circle",{cx:X(d),cy:Y(e),r:8,fill:"#c0392b",stroke:"#fff","stroke-width":2});
   const t=mk("text",{x:X(d)+12,y:Y(e)+(s>0?24:-12),"font-size":18,"font-weight":700,fill:"#c0392b"});t.textContent=`S ( ${mi(d)} | ${mi(e)} )`;
   document.getElementById("gl").innerHTML=gleichung(d,e,s);
-  document.getElementById("zahl").innerHTML=`Scheitel S ( <b style="color:var(--d)">${mi(d)}</b> | <b style="color:var(--e)">${mi(e)}</b> )`;
+  // 2.11.2026 (Malte): d und e ausdrücklich anzeigen – sonst lesen manche bei ( x + 3 )² „d = 3“. In der Klammer steht das Gegenteil von d.
+  const kl=d===0?"In der Klammer steht nur x.":`In der Klammer steht <b>${d>0?"− "+d:"+ "+(-d)}</b> – das Gegenteil von d.`;
+  document.getElementById("zahl").innerHTML=`<b style="color:var(--d)">d = ${mi(d)}</b> &nbsp;&nbsp; <b style="color:var(--e)">e = ${mi(e)}</b><br><span style="font-size:17px">${kl}</span><br>Scheitel S ( <b style="color:var(--d)">${mi(d)}</b> | <b style="color:var(--e)">${mi(e)}</b> )`;
   if(mode==="ziel"&&Z){const ok=d===Z[0]&&e===Z[1]&&s===Z[2];const m=document.getElementById("meld");m.classList.toggle("ok",ok);
     m.innerHTML=ok?"<b>Getroffen!</b> Lies die Gleichung oben ab – passt sie zum Scheitel?":"Stelle die rote Parabel auf die gestrichelte.";}
 }
